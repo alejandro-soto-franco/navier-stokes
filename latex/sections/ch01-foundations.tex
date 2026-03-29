@@ -1,1 +1,566 @@
 \chapter{Functional Analytic Foundations}\label{ch:foundations}
+
+This chapter collects the functional analytic prerequisites for the Leray--Hopf theory
+developed in \cref{ch:weak-solutions}.
+We build the framework in six steps: distributions and test functions
+(\cref{sec:distributions}), weak derivatives and Sobolev spaces (\cref{sec:sobolev}),
+Sobolev embedding theorems (\cref{sec:embeddings}), the Rellich--Kondrachov compact
+embedding theorem (\cref{sec:rellich}), the Poincar\'{e} inequality (\cref{sec:poincare}),
+and the Helmholtz decomposition together with the Leray projector (\cref{sec:helmholtz}).
+The standard references are Evans~\cite{evans2010} and Adams--Fournier~\cite{adams2003};
+for the Navier--Stokes setting see Temam~\cite{temam2001} and Robinson et al.\
+\cite{robinson2016}.
+
+Throughout, $\Omega \subset \R^{n}$ denotes an open set, and $n \ge 1$ unless otherwise
+stated.
+For the fluid applications in \cref{ch:weak-solutions} we set $n = 3$.
+
+% ---------------------------------------------------------------------------
+\section{Distributions and test functions}\label{sec:distributions}
+% ---------------------------------------------------------------------------
+
+\subsection*{Test functions and the LF topology}
+
+\begin{definition}[Test functions]\label{def:test-functions}
+  Let $K \subset \Omega$ be compact.  Define
+  \[
+    \mathcal{D}_{K}(\Omega)
+    \;=\;
+    \bigl\{\,\varphi \in C^{\infty}(\Omega) : \supp \varphi \subseteq K\,\bigr\}
+  \]
+  with the Fr\'{e}chet topology induced by the family of seminorms
+  \[
+    p_{m}(\varphi)
+    \;=\;
+    \max_{\abs{\alpha} \le m}
+    \sup_{x \in \Omega} \abs{\partial^{\alpha}\varphi(x)},
+    \qquad m \in \N.
+  \]
+  The \emph{space of test functions} is
+  \[
+    \mathcal{D}(\Omega)
+    \;=\;
+    \Ccinf(\Omega)
+    \;=\;
+    \bigcup_{K \Subset \Omega} \mathcal{D}_{K}(\Omega),
+  \]
+  equipped with the \emph{LF (strict inductive limit) topology}: a sequence
+  $(\varphi_{j})$ converges in $\mathcal{D}(\Omega)$ if and only if there exists a
+  compact set $K \Subset \Omega$ such that $\supp \varphi_{j} \subseteq K$ for all $j$
+  and $p_{m}(\varphi_{j} - \varphi) \to 0$ for every $m \in \N$.
+\end{definition}
+
+\begin{remark}
+  The LF topology makes $\mathcal{D}(\Omega)$ a complete locally convex space,
+  though it is not metrizable.
+  Sequential continuity nevertheless suffices for the theory of distributions.
+\end{remark}
+
+\subsection*{Distributions}
+
+\begin{definition}[Distributions]\label{def:distributions}
+  A \emph{distribution} on $\Omega$ is a sequentially continuous linear functional
+  $T : \mathcal{D}(\Omega) \to \R$.  The space of all distributions is the topological
+  dual
+  \[
+    \mathcal{D}'(\Omega),
+  \]
+  equipped with the weak-$*$ topology.  We write $\langle T, \varphi \rangle$ for the
+  duality pairing.
+\end{definition}
+
+\begin{example}[Locally integrable functions]\label{ex:L1loc}
+  Every $f \in L^{1}_{\mathrm{loc}}(\Omega)$ defines a distribution $T_{f} \in
+  \mathcal{D}'(\Omega)$ by
+  \[
+    \langle T_{f}, \varphi \rangle
+    \;=\;
+    \int_{\Omega} f(x)\,\varphi(x)\,\dd x,
+    \qquad \varphi \in \mathcal{D}(\Omega).
+  \]
+  The assignment $f \mapsto T_{f}$ is injective, so $L^{1}_{\mathrm{loc}}(\Omega)$ embeds
+  continuously into $\mathcal{D}'(\Omega)$.
+\end{example}
+
+\subsection*{Distributional derivatives}
+
+\begin{definition}[Distributional derivative]\label{def:distrib-deriv}
+  For a multi-index $\alpha \in \N^{n}$ with $\abs{\alpha} = \alpha_{1} + \cdots +
+  \alpha_{n}$, the \emph{distributional (partial) derivative} of $T \in
+  \mathcal{D}'(\Omega)$ is the distribution $\partial^{\alpha} T$ defined by
+  \[
+    \langle \partial^{\alpha} T, \varphi \rangle
+    \;=\;
+    (-1)^{\abs{\alpha}}
+    \langle T, \partial^{\alpha} \varphi \rangle,
+    \qquad \varphi \in \mathcal{D}(\Omega).
+  \]
+  The sign is chosen so that, for smooth $f$, the distributional derivative $\partial^{\alpha}
+  T_{f}$ coincides with $T_{\partial^{\alpha} f}$ (integration by parts).
+\end{definition}
+
+% ---------------------------------------------------------------------------
+\section{Weak derivatives and Sobolev spaces}\label{sec:sobolev}
+% ---------------------------------------------------------------------------
+
+\subsection*{Weak partial derivatives}
+
+\begin{definition}[Weak partial derivative%
+  \footnote{Lean 4: \texttt{NavierStokes.IsWeakPartialDeriv}}]%
+  \label{def:weak-deriv}
+  Let $u \in L^{1}_{\mathrm{loc}}(\Omega)$ and $\alpha \in \N^{n}$.  A function
+  $v \in L^{1}_{\mathrm{loc}}(\Omega)$ is a \emph{weak $\alpha$-th partial derivative} of
+  $u$, written $v = D^{\alpha} u$, if
+  \[
+    \int_{\Omega} v(x)\,\varphi(x)\,\dd x
+    \;=\;
+    (-1)^{\abs{\alpha}}
+    \int_{\Omega} u(x)\,\partial^{\alpha}\varphi(x)\,\dd x
+    \qquad \text{for all } \varphi \in \Ccinf(\Omega).
+  \]
+\end{definition}
+
+\begin{theorem}[Uniqueness of weak derivatives%
+  \footnote{Lean 4: \texttt{NavierStokes.weakPartialDeriv\_unique}}]%
+  \label{thm:weak-deriv-unique}
+  If $v_{1}, v_{2} \in L^{1}_{\mathrm{loc}}(\Omega)$ are both weak $\alpha$-th partial
+  derivatives of $u$, then $v_{1} = v_{2}$ almost everywhere in $\Omega$.
+\end{theorem}
+
+\begin{proof}
+  Let $w = v_{1} - v_{2}$.  By definition,
+  \[
+    \int_{\Omega} w(x)\,\varphi(x)\,\dd x = 0
+    \qquad \text{for all } \varphi \in \Ccinf(\Omega).
+  \]
+  This is precisely the content of the \emph{fundamental lemma of the calculus of
+  variations}: if $w \in L^{1}_{\mathrm{loc}}(\Omega)$ satisfies $\int_{\Omega} w \varphi
+  = 0$ for all $\varphi \in \Ccinf(\Omega)$, then $w = 0$ almost everywhere.  Indeed,
+  for any Lebesgue point $x_{0}$ of $w$ and any sequence of mollifiers
+  $\varphi_{\eps} = \rho_{\eps}(\cdot - x_{0})$ supported in $\Omega$, one obtains
+  $w(x_{0}) = \lim_{\eps \to 0} \int w \varphi_{\eps} = 0$.
+\end{proof}
+
+\subsection*{Sobolev spaces}
+
+\begin{definition}[$W^{1,p}(\Omega)$%
+  \footnote{Lean 4: \texttt{NavierStokes.SobolevW1p}}]%
+  \label{def:W1p}
+  For $1 \le p \le \infty$, the \emph{Sobolev space} $W^{1,p}(\Omega)$ consists of
+  all $u \in \Lp{p}(\Omega)$ whose weak partial derivatives $D_{i} u$ exist in
+  $\Lp{p}(\Omega)$ for each $i = 1, \ldots, n$.  It is a Banach space under
+  \[
+    \norm{u}_{W^{1,p}(\Omega)}
+    \;=\;
+    \begin{cases}
+      \displaystyle
+      \Bigl(\norm{u}_{\Lp{p}}^{p}
+        + \sum_{i=1}^{n} \norm{D_{i} u}_{\Lp{p}}^{p}\Bigr)^{1/p},
+      & 1 \le p < \infty, \\[8pt]
+      \norm{u}_{L^{\infty}} + \displaystyle\sum_{i=1}^{n} \norm{D_{i} u}_{L^{\infty}},
+      & p = \infty.
+    \end{cases}
+  \]
+\end{definition}
+
+\begin{definition}[$\Sob{1}(\Omega) = W^{1,2}(\Omega)$%
+  \footnote{Lean 4: \texttt{NavierStokes.SobolevH1}}]%
+  \label{def:H1}
+  The space $\Sob{1}(\Omega) = W^{1,2}(\Omega)$ is a \emph{Hilbert space} with inner
+  product
+  \[
+    \ip{u}{v}_{\Sob{1}}
+    \;=\;
+    \int_{\Omega} u(x)\,v(x)\,\dd x
+    \;+\;
+    \sum_{i=1}^{n} \int_{\Omega} D_{i} u(x)\,D_{i} v(x)\,\dd x.
+  \]
+\end{definition}
+
+\begin{definition}[$\Sobz{1}(\Omega)$%
+  \footnote{Lean 4: \texttt{NavierStokes.SobolevH1Zero}}]%
+  \label{def:H10}
+  The space $\Sobz{1}(\Omega)$ is defined as the closure of $\Ccinf(\Omega)$ in
+  $\Sob{1}(\Omega)$:
+  \[
+    \Sobz{1}(\Omega)
+    \;=\;
+    \overline{\Ccinf(\Omega)}^{\,\norm{\cdot}_{\Sob{1}}}.
+  \]
+  Functions in $\Sobz{1}(\Omega)$ satisfy a homogeneous Dirichlet boundary condition in
+  the trace sense: $u\big|_{\partial\Omega} = 0$ whenever $\partial\Omega$ is
+  sufficiently regular.
+\end{definition}
+
+% ---------------------------------------------------------------------------
+\section{Sobolev embedding theorems}\label{sec:embeddings}
+% ---------------------------------------------------------------------------
+
+The embedding theorems quantify how membership in a Sobolev space controls pointwise
+or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
+\[
+  p^{*}
+  \;=\;
+  \frac{np}{n - p},
+  \qquad 1 \le p < n.
+\]
+
+\subsection*{Subcritical (Gagliardo--Nirenberg--Sobolev) embedding}
+
+\begin{theorem}[Subcritical Sobolev embedding%
+  \footnote{Lean 4: \texttt{NavierStokes.sobolev\_embedding\_subcritical}}]%
+  \label{thm:sobolev-subcritical}
+  Let $1 \le p < n$.  There exists a constant $C = C(n, p) > 0$ such that for all
+  $u \in W^{1,p}(\R^{n})$,
+  \[
+    \norm{u}_{\Lp{p^{*}}(\R^{n})}
+    \;\le\;
+    C\,\norm{\nabla u}_{\Lp{p}(\R^{n})}.
+  \]
+  Consequently, $W^{1,p}(\R^{n}) \hookrightarrow \Lp{p^{*}}(\R^{n})$ continuously.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+  The case $p = 1$ is the Gagliardo--Nirenberg inequality, obtained by writing
+  $\abs{u(x)}^{n/(n-1)} \le \prod_{i=1}^{n} \bigl(\int \abs{\partial_{i} u}\,\dd
+  x_{i}\bigr)^{1/(n-1)}$ and applying the generalized H\"{o}lder inequality.
+  The case $1 < p < n$ follows by applying the $p = 1$ result to $\abs{u}^{(p-1)n/(n-p)}$
+  and optimizing via Young's inequality.
+  For general domains with Lipschitz boundary, the result extends by density: every
+  $u \in W^{1,p}(\Omega)$ is approximated by $\Ccinf(\R^{n})$ functions via a Stein
+  extension operator.
+  See \cite{evans2010}, Section~5.6.
+\end{proof}
+
+\begin{remark}[The case $n = 3$, $p = 2$]
+  For the Navier--Stokes problem with $n = 3$ and $p = 2$, one has
+  \[
+    p^{*} = \frac{3 \cdot 2}{3 - 2} = 6,
+  \]
+  so $\Sob{1}(\R^{3}) \hookrightarrow \Lp{6}(\R^{3})$ with the explicit bound
+  \[
+    \norm{u}_{\Lp{6}(\R^{3})}
+    \;\le\;
+    C\,\norm{\nabla u}_{\Lp{2}(\R^{3})}.
+  \]
+  This embedding is used repeatedly in the energy estimates of \cref{ch:weak-solutions}.
+\end{remark}
+
+\subsection*{Supercritical (Morrey) embedding}
+
+\begin{theorem}[Morrey embedding%
+  \footnote{Lean 4: \texttt{NavierStokes.sobolev\_embedding\_supercritical}}]%
+  \label{thm:sobolev-morrey}
+  Let $p > n$ and set $\alpha = 1 - n/p \in (0, 1)$.  Then there exists a constant
+  $C = C(n, p) > 0$ such that for all $u \in W^{1,p}(\R^{n})$,
+  \[
+    \abs{u(x) - u(y)}
+    \;\le\;
+    C\,\abs{x - y}^{\alpha}\,\norm{u}_{W^{1,p}(\R^{n})},
+    \qquad \text{a.e.\ } x, y \in \R^{n}.
+  \]
+  In particular, $W^{1,p}(\R^{n}) \hookrightarrow C^{0,\alpha}(\R^{n})$ continuously.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+  For any ball $B_{r}(x)$, represent $u(x) - u_{B_{r}}$ (where $u_{B_{r}}$ denotes the
+  average) via the Poincar\'{e}--Sobolev representation formula
+  \[
+    u(x) - u_{B_{r}}
+    \;=\;
+    c_{n} \int_{B_{r}(x)} \frac{(x - y) \cdot \nabla u(y)}{\abs{x - y}^{n}}\,\dd y.
+  \]
+  Apply H\"{o}lder's inequality and send $r \to 0$ to recover pointwise H\"{o}lder
+  continuity.  See \cite{evans2010}, Section~5.6.2.
+\end{proof}
+
+% ---------------------------------------------------------------------------
+\section{Compact embeddings: Rellich--Kondrachov}\label{sec:rellich}
+% ---------------------------------------------------------------------------
+
+The Rellich--Kondrachov theorem upgrades the continuous Sobolev embedding to a
+\emph{compact} one, at the cost of passing to a lower-order space.
+Compactness is essential for the convergence of Galerkin approximations in
+\cref{ch:weak-solutions}.
+
+\begin{theorem}[Rellich--Kondrachov%
+  \footnote{Lean 4: \texttt{NavierStokes.rellich\_kondrachov}}]%
+  \label{thm:rellich-kondrachov}
+  Let $\Omega \subset \R^{n}$ be a bounded open set with Lipschitz boundary.  Then the
+  inclusion
+  \[
+    \Sob{1}(\Omega) \hookrightarrow \Lp{2}(\Omega)
+  \]
+  is \emph{compact}: every bounded sequence in $\Sob{1}(\Omega)$ has a subsequence that
+  converges strongly in $\Lp{2}(\Omega)$.  More generally, for $1 \le p < n$ and
+  $1 \le q < p^{*}$, the inclusion $W^{1,p}(\Omega) \hookrightarrow \Lp{q}(\Omega)$ is
+  compact.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+  Let $(u_{j})$ be bounded in $\Sob{1}(\Omega)$.  We verify precompactness in
+  $\Lp{2}(\Omega)$ via the Fr\'{e}chet--Kolmogorov criterion:
+  \begin{enumerate}[label=(\roman*)]
+    \item \emph{$\Lp{2}$ boundedness.}  By the continuous embedding
+      $\Sob{1}(\Omega) \hookrightarrow \Lp{2^{*}}(\Omega)$ (\cref{thm:sobolev-subcritical})
+      and H\"{o}lder's inequality (since $\Omega$ is bounded), $(u_{j})$ is bounded in
+      $\Lp{2}(\Omega)$.
+    \item \emph{Equicontinuity in mean.}  Let $\rho_{\eps}$ be a standard mollifier.
+      For the mollifications $u_{j}^{\eps} = \rho_{\eps} * \tilde{u}_{j}$ (where
+      $\tilde{u}_{j}$ is the zero extension), one has
+      \[
+        \norm{u_{j}^{\eps} - u_{j}}_{\Lp{2}(\Omega)}
+        \;\le\;
+        \eps\,\norm{\nabla u_{j}}_{\Lp{2}(\Omega)}
+        \;\le\;
+        C\,\eps,
+      \]
+      using the $\Sob{1}$ bound on $(u_{j})$.
+    \item \emph{Equicontinuity of the mollified family.}  By Young's convolution
+      inequality, $\norm{\nabla u_{j}^{\eps}}_{\Lp{\infty}} \le
+      C(\eps)\,\norm{u_{j}}_{\Lp{2}}$, so $(u_{j}^{\eps})_j$ is equicontinuous on
+      $\Omega$ for each fixed $\eps > 0$.
+    \item \emph{Conclusion.}  By Arzel\`{a}--Ascoli, $(u_{j}^{\eps})_j$ is precompact
+      in $C(\overline{\Omega})$ (hence in $\Lp{2}(\Omega)$) for each $\eps$.  A
+      diagonal argument and the triangle inequality
+      $\norm{u_{j} - u_{k}}_{\Lp{2}} \le \norm{u_{j} - u_{j}^{\eps}}_{\Lp{2}} +
+       \norm{u_{j}^{\eps} - u_{k}^{\eps}}_{\Lp{2}} + \norm{u_{k}^{\eps} - u_{k}}_{\Lp{2}}$
+      yield a Cauchy subsequence in $\Lp{2}(\Omega)$.
+  \end{enumerate}
+  See \cite{evans2010}, Section~5.7.
+\end{proof}
+
+\begin{remark}[Role in the Galerkin method]
+  In \cref{ch:weak-solutions}, the Galerkin approximations $(u_{m})$ are constructed
+  as bounded sequences in the energy class $L^{\infty}(0,T;\Lp{2}) \cap
+  L^{2}(0,T;\Sob{1})$.  The Rellich--Kondrachov theorem (together with the Aubin--Lions
+  lemma) provides the strong $\Lp{2}$ convergence needed to pass nonlinear terms to the
+  limit.
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\section{The Poincar\'{e} inequality}\label{sec:poincare}
+% ---------------------------------------------------------------------------
+
+\begin{theorem}[Poincar\'{e} inequality%
+  \footnote{Lean 4: \texttt{NavierStokes.poincare\_inequality}}]%
+  \label{thm:poincare}
+  Let $\Omega \subset \R^{n}$ be a bounded open set.  There exists a constant
+  $C_{\mathrm{P}} = C_{\mathrm{P}}(\Omega) > 0$ such that
+  \[
+    \norm{u}_{\Lp{2}(\Omega)}
+    \;\le\;
+    C_{\mathrm{P}}\,\norm{\nabla u}_{\Lp{2}(\Omega)}
+    \qquad \text{for all } u \in \Sobz{1}(\Omega).
+  \]
+\end{theorem}
+
+\begin{proof}
+  Suppose for contradiction that no such constant exists.  Then there is a sequence
+  $(u_{j}) \subset \Sobz{1}(\Omega)$ with
+  \[
+    \norm{u_{j}}_{\Lp{2}} = 1
+    \qquad \text{and} \qquad
+    \norm{\nabla u_{j}}_{\Lp{2}} \to 0.
+  \]
+  The sequence is bounded in $\Sob{1}(\Omega)$ (since $\norm{u_{j}}_{\Sob{1}}^{2} =
+  \norm{u_{j}}_{\Lp{2}}^{2} + \norm{\nabla u_{j}}_{\Lp{2}}^{2} \le 1 + 1 = 2$), so by
+  Rellich--Kondrachov (\cref{thm:rellich-kondrachov}), there exists a subsequence
+  (still denoted $(u_{j})$) with $u_{j} \to u$ strongly in $\Lp{2}(\Omega)$.
+  In particular $\norm{u}_{\Lp{2}} = 1$.
+
+  On the other hand, $\nabla u_{j} \to 0$ in $\Lp{2}(\Omega)$, and weak lower
+  semicontinuity of the norm gives $\nabla u = 0$ almost everywhere.
+  Since $\Omega$ is connected, $u$ is constant almost everywhere; since $u \in
+  \Sobz{1}(\Omega)$, the trace of $u$ on $\partial\Omega$ is zero, so $u \equiv 0$.
+  This contradicts $\norm{u}_{\Lp{2}} = 1$.
+\end{proof}
+
+\begin{corollary}[Equivalent norm on $\Sobz{1}(\Omega)$]\label{cor:poincare-norm}
+  On $\Sobz{1}(\Omega)$, the seminorm $u \mapsto \norm{\nabla u}_{\Lp{2}(\Omega)}$ is a
+  norm equivalent to $\norm{\cdot}_{\Sob{1}(\Omega)}$.  Concretely,
+  \[
+    \norm{\nabla u}_{\Lp{2}}
+    \;\le\;
+    \norm{u}_{\Sob{1}}
+    \;\le\;
+    \sqrt{1 + C_{\mathrm{P}}^{2}}\,\norm{\nabla u}_{\Lp{2}}.
+  \]
+  In particular, $(\Sobz{1}(\Omega),\, \ip{\nabla \cdot}{\nabla \cdot}_{\Lp{2}})$ is a
+  Hilbert space.
+\end{corollary}
+
+% ---------------------------------------------------------------------------
+\section{Divergence-free fields and the Helmholtz decomposition}%
+\label{sec:helmholtz}
+% ---------------------------------------------------------------------------
+
+The incompressibility constraint $\divergence u = 0$ is encoded variationally via the
+distributional divergence-free condition.
+
+\subsection*{Distributional divergence-free fields}
+
+\begin{definition}[Distributional divergence-free%
+  \footnote{Lean 4: \texttt{NavierStokes.IsDistribDivFree}}]%
+  \label{def:distrib-divfree}
+  A vector field $u \in \Lp{2}(\Omega;\R^{n})$ is \emph{distributionally divergence-free}
+  if
+  \[
+    \int_{\Omega} u \cdot \nabla \varphi \,\dd x = 0
+    \qquad \text{for all } \varphi \in \Ccinf(\Omega).
+  \]
+  Equivalently, $\langle \divergence T_{u},\, \varphi \rangle = 0$ for all $\varphi \in
+  \Ccinf(\Omega)$, i.e., $\divergence u = 0$ in $\mathcal{D}'(\Omega)$.
+\end{definition}
+
+\subsection*{The space $\Lsig(\Omega)$}
+
+\begin{definition}[$\Lsig(\Omega)$%
+  \footnote{Lean 4: \texttt{NavierStokes.L2sigma}}]%
+  \label{def:L2sigma}
+  Define
+  \[
+    \Lsig(\Omega)
+    \;=\;
+    \overline{
+      \bigl\{\,
+        u \in \Ccinf(\Omega;\R^{n}) : \divergence u = 0
+      \,\bigr\}
+    }^{\,\norm{\cdot}_{\Lp{2}}}.
+  \]
+  This is the $\Lp{2}$-closure of smooth, compactly supported, divergence-free vector
+  fields.
+\end{definition}
+
+\begin{proposition}[$\Lsig(\Omega)$ is closed%
+  \footnote{Lean 4: \texttt{NavierStokes.l2sigma\_isClosed}}]%
+  \label{prop:L2sigma-closed}
+  $\Lsig(\Omega)$ is a closed subspace of $\Lp{2}(\Omega;\R^{n})$, hence itself a
+  Hilbert space.
+\end{proposition}
+
+\begin{proof}
+  $\Lsig(\Omega)$ is defined as a closure, so it is closed by construction.
+  Alternatively: the distributional divergence operator
+  $\divergence : \Lp{2}(\Omega;\R^{n}) \to H^{-1}(\Omega)$ is continuous, so its kernel
+  $\{u : \divergence u = 0\}$ is closed.  One verifies that this kernel equals the
+  closure of the smooth divergence-free fields when $\Omega$ has the appropriate
+  topology (e.g., $\Omega = \R^{n}$ or $\Omega$ simply connected with Lipschitz
+  boundary).
+\end{proof}
+
+\subsection*{Helmholtz decomposition}
+
+\begin{theorem}[Helmholtz decomposition%
+  \footnote{Lean 4: \texttt{NavierStokes.helmholtz\_decomposition}}]%
+  \label{thm:helmholtz}
+  Let $\Omega \subset \R^{n}$ be a simply connected bounded open set with $C^{1}$
+  boundary, or $\Omega = \R^{n}$.  Then $\Lp{2}(\Omega;\R^{n})$ admits the orthogonal
+  decomposition
+  \[
+    \Lp{2}(\Omega;\R^{n})
+    \;=\;
+    \Lsig(\Omega)
+    \;\oplus_{\perp}\;
+    G(\Omega),
+  \]
+  where
+  \[
+    G(\Omega)
+    \;=\;
+    \bigl\{\,
+      \nabla p : p \in \Sob{1}(\Omega)
+    \,\bigr\}.
+  \]
+  Every $u \in \Lp{2}(\Omega;\R^{n})$ decomposes uniquely as
+  $u = v + \nabla p$ with $v \in \Lsig(\Omega)$ and $\nabla p \in G(\Omega)$.
+\end{theorem}
+
+\begin{proof}[Proof sketch via orthogonal projection and de Rham]
+  \emph{Step 1 (orthogonality).}  For any $v \in \Lsig(\Omega)$ and $\nabla p \in
+  G(\Omega)$,
+  \[
+    \ip{v}{\nabla p}_{\Lp{2}}
+    \;=\;
+    \int_{\Omega} v \cdot \nabla p\,\dd x
+    \;=\;
+    -\int_{\Omega} (\divergence v)\,p\,\dd x
+    \;=\;
+    0,
+  \]
+  the last step using $\divergence v = 0$ in $\mathcal{D}'(\Omega)$.
+
+  \emph{Step 2 (decomposition).}  Given $u \in \Lp{2}(\Omega;\R^{n})$, seek $p \in
+  \Sob{1}(\Omega)$ satisfying the Neumann problem
+  \[
+    -\Delta p = -\divergence u \quad \text{in } \Omega,
+    \qquad
+    \frac{\partial p}{\partial \nu} = u \cdot \nu \quad \text{on } \partial\Omega.
+  \]
+  The Lax--Milgram theorem (applied to the coercive form on $\Sob{1}(\Omega)/\R$ given by
+  $a(p, q) = \int_\Omega \nabla p \cdot \nabla q\,\dd x$, right-hand side $\ell(q) =
+  \int_\Omega u \cdot \nabla q\,\dd x$) provides a unique $p$.  Setting $v = u - \nabla
+  p$ yields $\divergence v = 0$ distributionally, and a density argument shows $v \in
+  \Lsig(\Omega)$.
+
+  \emph{Step 3 (de Rham cohomology).}  On $\R^{n}$ (or simply connected $\Omega$), every
+  curl-free $L^{2}$ vector field is a gradient, ensuring $G(\Omega)^{\perp} \cap
+  G(\Omega) = \{0\}$ and hence that the decomposition is orthogonal.
+  See \cite{temam2001}, Chapter~I.
+\end{proof}
+
+\subsection*{The Leray projector}
+
+\begin{definition}[Leray projector%
+  \footnote{Lean 4: \texttt{NavierStokes.lerayProjector}}]%
+  \label{def:leray-projector}
+  The \emph{Leray (or Helmholtz--Leray) projector} is the bounded linear operator
+  \[
+    \Leray : \Lp{2}(\Omega;\R^{n}) \longrightarrow \Lsig(\Omega)
+  \]
+  defined by $\Leray u = v$, where $u = v + \nabla p$ is the Helmholtz decomposition of
+  $u$.  Equivalently, $\Leray$ is the orthogonal projection onto $\Lsig(\Omega)$.
+\end{definition}
+
+\begin{proposition}[Properties of the Leray projector]\label{prop:leray-props}
+  The operator $\Leray$ satisfies:
+  \begin{enumerate}[label=(\roman*)]
+    \item \emph{Boundedness.} $\norm{\Leray u}_{\Lp{2}} \le \norm{u}_{\Lp{2}}$ for all
+      $u \in \Lp{2}(\Omega;\R^{n})$.
+    \item \emph{Idempotency.} $\Leray^{2} = \Leray$.
+    \item \emph{Self-adjointness.} $\ip{\Leray u}{v}_{\Lp{2}} = \ip{u}{\Leray
+      v}_{\Lp{2}}$ for all $u, v \in \Lp{2}(\Omega;\R^{n})$.
+    \item \emph{Projection onto divergence-free fields.} $\divergence(\Leray u) = 0$ for
+      all $u$.
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  Properties (i)--(iii) are standard consequences of orthogonal projection in Hilbert
+  space.  Property (iv) holds by definition of $\Lsig(\Omega)$.
+\end{proof}
+
+\begin{remark}[Role in the Navier--Stokes equations]
+  Applying $\Leray$ to the momentum equation
+  $\partial_{t} u + (u \cdot \nabla) u - \nu \Delta u + \nabla p = f$ eliminates the
+  pressure gradient $\nabla p$ (which lies in $G(\Omega)$) and yields the projected
+  equation
+  \[
+    \partial_{t} u + \Leray\bigl[(u \cdot \nabla) u\bigr] - \nu \Delta u = \Leray f.
+  \]
+  This is the form amenable to semigroup theory and the Galerkin method of
+  \cref{ch:weak-solutions}.
+\end{remark}
+
+\bigskip
+
+\noindent\textbf{Summary.}
+The tools assembled in this chapter form the complete functional analytic toolkit for
+the weak theory of the Navier--Stokes equations.
+The Sobolev space $\Sobz{1}(\Omega)$ provides the energy space for the velocity field;
+the subcritical embedding $\Sob{1} \hookrightarrow \Lp{6}$ (for $n = 3$) controls the
+nonlinear term; Rellich--Kondrachov furnishes the compactness needed in Galerkin limits;
+the Poincar\'{e} inequality ensures coercivity; and the Helmholtz decomposition decouples
+velocity from pressure via the Leray projector $\Leray$.
+\cref{ch:weak-solutions} combines these ingredients to construct Leray--Hopf weak
+solutions.
