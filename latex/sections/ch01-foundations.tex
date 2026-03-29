@@ -1,7 +1,7 @@
 \chapter{Functional Analytic Foundations}\label{ch:foundations}
 
 This chapter collects the functional analytic prerequisites for the Leray--Hopf theory
-developed in \cref{ch:weak-solutions}.
+developed in \cref{ch:leray-hopf}.
 We build the framework in six steps: distributions and test functions
 (\cref{sec:distributions}), weak derivatives and Sobolev spaces (\cref{sec:sobolev}),
 Sobolev embedding theorems (\cref{sec:embeddings}), the Rellich--Kondrachov compact
@@ -13,7 +13,7 @@ for the Navier--Stokes setting see Temam~\cite{temam2001} and Robinson et al.\
 
 Throughout, $\Omega \subset \R^{n}$ denotes an open set, and $n \ge 1$ unless otherwise
 stated.
-For the fluid applications in \cref{ch:weak-solutions} we set $n = 3$.
+For the fluid applications in \cref{ch:leray-hopf} we set $n = 3$.
 
 % ---------------------------------------------------------------------------
 \section{Distributions and test functions}\label{sec:distributions}
@@ -111,13 +111,13 @@ For the fluid applications in \cref{ch:weak-solutions} we set $n = 3$.
   Let $u \in L^{1}_{\mathrm{loc}}(\Omega)$ and $\alpha \in \N^{n}$.  A function
   $v \in L^{1}_{\mathrm{loc}}(\Omega)$ is a \emph{weak $\alpha$-th partial derivative} of
   $u$, written $v = D^{\alpha} u$, if
-  \[
+  \begin{equation}\label{eq:weak-deriv}
     \int_{\Omega} v(x)\,\varphi(x)\,\dd x
     \;=\;
     (-1)^{\abs{\alpha}}
     \int_{\Omega} u(x)\,\partial^{\alpha}\varphi(x)\,\dd x
     \qquad \text{for all } \varphi \in \Ccinf(\Omega).
-  \]
+  \end{equation}
 \end{definition}
 
 \begin{theorem}[Uniqueness of weak derivatives%
@@ -149,7 +149,7 @@ For the fluid applications in \cref{ch:weak-solutions} we set $n = 3$.
   For $1 \le p \le \infty$, the \emph{Sobolev space} $W^{1,p}(\Omega)$ consists of
   all $u \in \Lp{p}(\Omega)$ whose weak partial derivatives $D_{i} u$ exist in
   $\Lp{p}(\Omega)$ for each $i = 1, \ldots, n$.  It is a Banach space under
-  \[
+  \begin{equation}\label{eq:W1p-norm}
     \norm{u}_{W^{1,p}(\Omega)}
     \;=\;
     \begin{cases}
@@ -160,7 +160,7 @@ For the fluid applications in \cref{ch:weak-solutions} we set $n = 3$.
       \norm{u}_{L^{\infty}} + \displaystyle\sum_{i=1}^{n} \norm{D_{i} u}_{L^{\infty}},
       & p = \infty.
     \end{cases}
-  \]
+  \end{equation}
 \end{definition}
 
 \begin{definition}[$\Sob{1}(\Omega) = W^{1,2}(\Omega)$%
@@ -168,13 +168,13 @@ For the fluid applications in \cref{ch:weak-solutions} we set $n = 3$.
   \label{def:H1}
   The space $\Sob{1}(\Omega) = W^{1,2}(\Omega)$ is a \emph{Hilbert space} with inner
   product
-  \[
+  \begin{equation}\label{eq:H1-inner-product}
     \ip{u}{v}_{\Sob{1}}
     \;=\;
     \int_{\Omega} u(x)\,v(x)\,\dd x
     \;+\;
     \sum_{i=1}^{n} \int_{\Omega} D_{i} u(x)\,D_{i} v(x)\,\dd x.
-  \]
+  \end{equation}
 \end{definition}
 
 \begin{definition}[$\Sobz{1}(\Omega)$%
@@ -212,11 +212,11 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
   \label{thm:sobolev-subcritical}
   Let $1 \le p < n$.  There exists a constant $C = C(n, p) > 0$ such that for all
   $u \in W^{1,p}(\R^{n})$,
-  \[
+  \begin{equation}\label{eq:sobolev-subcritical}
     \norm{u}_{\Lp{p^{*}}(\R^{n})}
     \;\le\;
     C\,\norm{\nabla u}_{\Lp{p}(\R^{n})}.
-  \]
+  \end{equation}
   Consequently, $W^{1,p}(\R^{n}) \hookrightarrow \Lp{p^{*}}(\R^{n})$ continuously.
 \end{theorem}
 
@@ -238,12 +238,12 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
     p^{*} = \frac{3 \cdot 2}{3 - 2} = 6,
   \]
   so $\Sob{1}(\R^{3}) \hookrightarrow \Lp{6}(\R^{3})$ with the explicit bound
-  \[
+  \begin{equation}\label{eq:H1-L6-embedding}
     \norm{u}_{\Lp{6}(\R^{3})}
     \;\le\;
     C\,\norm{\nabla u}_{\Lp{2}(\R^{3})}.
-  \]
-  This embedding is used repeatedly in the energy estimates of \cref{ch:weak-solutions}.
+  \end{equation}
+  This embedding is used repeatedly in the energy estimates of \cref{ch:leray-hopf}.
 \end{remark}
 
 \subsection*{Supercritical (Morrey) embedding}
@@ -253,12 +253,12 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
   \label{thm:sobolev-morrey}
   Let $p > n$ and set $\alpha = 1 - n/p \in (0, 1)$.  Then there exists a constant
   $C = C(n, p) > 0$ such that for all $u \in W^{1,p}(\R^{n})$,
-  \[
+  \begin{equation}\label{eq:morrey}
     \abs{u(x) - u(y)}
     \;\le\;
     C\,\abs{x - y}^{\alpha}\,\norm{u}_{W^{1,p}(\R^{n})},
     \qquad \text{a.e.\ } x, y \in \R^{n}.
-  \]
+  \end{equation}
   In particular, $W^{1,p}(\R^{n}) \hookrightarrow C^{0,\alpha}(\R^{n})$ continuously.
 \end{theorem}
 
@@ -281,7 +281,7 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
 The Rellich--Kondrachov theorem upgrades the continuous Sobolev embedding to a
 \emph{compact} one, at the cost of passing to a lower-order space.
 Compactness is essential for the convergence of Galerkin approximations in
-\cref{ch:weak-solutions}.
+\cref{ch:leray-hopf}.
 
 \begin{theorem}[Rellich--Kondrachov%
   \footnote{Lean 4: \texttt{NavierStokes.rellich\_kondrachov}}]%
@@ -331,7 +331,7 @@ Compactness is essential for the convergence of Galerkin approximations in
 \end{proof}
 
 \begin{remark}[Role in the Galerkin method]
-  In \cref{ch:weak-solutions}, the Galerkin approximations $(u_{m})$ are constructed
+  In \cref{ch:leray-hopf}, the Galerkin approximations $(u_{m})$ are constructed
   as bounded sequences in the energy class $L^{\infty}(0,T;\Lp{2}) \cap
   L^{2}(0,T;\Sob{1})$.  The Rellich--Kondrachov theorem (together with the Aubin--Lions
   lemma) provides the strong $\Lp{2}$ convergence needed to pass nonlinear terms to the
@@ -347,12 +347,12 @@ Compactness is essential for the convergence of Galerkin approximations in
   \label{thm:poincare}
   Let $\Omega \subset \R^{n}$ be a bounded open set.  There exists a constant
   $C_{\mathrm{P}} = C_{\mathrm{P}}(\Omega) > 0$ such that
-  \[
+  \begin{equation}\label{eq:poincare}
     \norm{u}_{\Lp{2}(\Omega)}
     \;\le\;
     C_{\mathrm{P}}\,\norm{\nabla u}_{\Lp{2}(\Omega)}
     \qquad \text{for all } u \in \Sobz{1}(\Omega).
-  \]
+  \end{equation}
 \end{theorem}
 
 \begin{proof}
@@ -379,13 +379,13 @@ Compactness is essential for the convergence of Galerkin approximations in
 \begin{corollary}[Equivalent norm on $\Sobz{1}(\Omega)$]\label{cor:poincare-norm}
   On $\Sobz{1}(\Omega)$, the seminorm $u \mapsto \norm{\nabla u}_{\Lp{2}(\Omega)}$ is a
   norm equivalent to $\norm{\cdot}_{\Sob{1}(\Omega)}$.  Concretely,
-  \[
+  \begin{equation}\label{eq:poincare-equivalence}
     \norm{\nabla u}_{\Lp{2}}
     \;\le\;
     \norm{u}_{\Sob{1}}
     \;\le\;
     \sqrt{1 + C_{\mathrm{P}}^{2}}\,\norm{\nabla u}_{\Lp{2}}.
-  \]
+  \end{equation}
   In particular, $(\Sobz{1}(\Omega),\, \ip{\nabla \cdot}{\nabla \cdot}_{\Lp{2}})$ is a
   Hilbert space.
 \end{corollary}
@@ -405,10 +405,10 @@ distributional divergence-free condition.
   \label{def:distrib-divfree}
   A vector field $u \in \Lp{2}(\Omega;\R^{n})$ is \emph{distributionally divergence-free}
   if
-  \[
+  \begin{equation}\label{eq:distrib-divfree}
     \int_{\Omega} u \cdot \nabla \varphi \,\dd x = 0
     \qquad \text{for all } \varphi \in \Ccinf(\Omega).
-  \]
+  \end{equation}
   Equivalently, $\langle \divergence T_{u},\, \varphi \rangle = 0$ for all $\varphi \in
   \Ccinf(\Omega)$, i.e., $\divergence u = 0$ in $\mathcal{D}'(\Omega)$.
 \end{definition}
@@ -457,13 +457,13 @@ distributional divergence-free condition.
   Let $\Omega \subset \R^{n}$ be a simply connected bounded open set with $C^{1}$
   boundary, or $\Omega = \R^{n}$.  Then $\Lp{2}(\Omega;\R^{n})$ admits the orthogonal
   decomposition
-  \[
+  \begin{equation}\label{eq:helmholtz}
     \Lp{2}(\Omega;\R^{n})
     \;=\;
     \Lsig(\Omega)
     \;\oplus_{\perp}\;
     G(\Omega),
-  \]
+  \end{equation}
   where
   \[
     G(\Omega)
@@ -545,11 +545,11 @@ distributional divergence-free condition.
   $\partial_{t} u + (u \cdot \nabla) u - \nu \Delta u + \nabla p = f$ eliminates the
   pressure gradient $\nabla p$ (which lies in $G(\Omega)$) and yields the projected
   equation
-  \[
+  \begin{equation}\label{eq:projected-ns}
     \partial_{t} u + \Leray\bigl[(u \cdot \nabla) u\bigr] - \nu \Delta u = \Leray f.
-  \]
+  \end{equation}
   This is the form amenable to semigroup theory and the Galerkin method of
-  \cref{ch:weak-solutions}.
+  \cref{ch:leray-hopf}.
 \end{remark}
 
 \bigskip
@@ -562,5 +562,5 @@ the subcritical embedding $\Sob{1} \hookrightarrow \Lp{6}$ (for $n = 3$) control
 nonlinear term; Rellich--Kondrachov furnishes the compactness needed in Galerkin limits;
 the Poincar\'{e} inequality ensures coercivity; and the Helmholtz decomposition decouples
 velocity from pressure via the Leray projector $\Leray$.
-\cref{ch:weak-solutions} combines these ingredients to construct Leray--Hopf weak
+\cref{ch:leray-hopf} combines these ingredients to construct Leray--Hopf weak
 solutions.
