@@ -1,19 +1,19 @@
 \chapter{Functional Analytic Foundations}\label{ch:foundations}
 
 This chapter collects the functional analytic prerequisites for the Leray--Hopf theory
-developed in \cref{ch:leray-hopf}.
+developed in \Cref{ch:leray-hopf}.
 We build the framework in six steps: distributions and test functions
-(\cref{sec:distributions}), weak derivatives and Sobolev spaces (\cref{sec:sobolev}),
-Sobolev embedding theorems (\cref{sec:embeddings}), the Rellich--Kondrachov compact
-embedding theorem (\cref{sec:rellich}), the Poincar\'{e} inequality (\cref{sec:poincare}),
-and the Helmholtz decomposition together with the Leray projector (\cref{sec:helmholtz}).
+(\Cref{sec:distributions}), weak derivatives and Sobolev spaces (\Cref{sec:sobolev}),
+Sobolev embedding theorems (\Cref{sec:embeddings}), the Rellich--Kondrachov compact
+embedding theorem (\Cref{sec:rellich}), the Poincar\'{e} inequality (\Cref{sec:poincare}),
+and the Helmholtz decomposition together with the Leray projector (\Cref{sec:helmholtz}).
 The standard references are Evans~\cite{evans2010} and Adams--Fournier~\cite{adams2003};
 for the Navier--Stokes setting see Temam~\cite{temam2001} and Robinson et al.\
 \cite{robinson2016}.
 
 Throughout, $\Omega \subset \R^{n}$ denotes an open set, and $n \ge 1$ unless otherwise
 stated.
-For the fluid applications in \cref{ch:leray-hopf} we set $n = 3$.
+For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
 
 % ---------------------------------------------------------------------------
 \section{Distributions and test functions}\label{sec:distributions}
@@ -243,7 +243,7 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
     \;\le\;
     C\,\norm{\nabla u}_{\Lp{2}(\R^{3})}.
   \end{equation}
-  This embedding is used repeatedly in the energy estimates of \cref{ch:leray-hopf}.
+  This embedding is used repeatedly in the energy estimates of \Cref{ch:leray-hopf}.
 \end{remark}
 
 \subsection*{Supercritical (Morrey) embedding}
@@ -281,7 +281,7 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
 The Rellich--Kondrachov theorem upgrades the continuous Sobolev embedding to a
 \emph{compact} one, at the cost of passing to a lower-order space.
 Compactness is essential for the convergence of Galerkin approximations in
-\cref{ch:leray-hopf}.
+\Cref{ch:leray-hopf}.
 
 \begin{theorem}[Rellich--Kondrachov%
   \footnote{Lean 4: \texttt{NavierStokes.rellich\_kondrachov}}]%
@@ -302,7 +302,7 @@ Compactness is essential for the convergence of Galerkin approximations in
   $\Lp{2}(\Omega)$ via the Fr\'{e}chet--Kolmogorov criterion:
   \begin{enumerate}[label=(\roman*)]
     \item \emph{$\Lp{2}$ boundedness.}  By the continuous embedding
-      $\Sob{1}(\Omega) \hookrightarrow \Lp{2^{*}}(\Omega)$ (\cref{thm:sobolev-subcritical})
+      $\Sob{1}(\Omega) \hookrightarrow \Lp{2^{*}}(\Omega)$ (\Cref{thm:sobolev-subcritical})
       and H\"{o}lder's inequality (since $\Omega$ is bounded), $(u_{j})$ is bounded in
       $\Lp{2}(\Omega)$.
     \item \emph{Equicontinuity in mean.}  Let $\rho_{\eps}$ be a standard mollifier.
@@ -331,7 +331,7 @@ Compactness is essential for the convergence of Galerkin approximations in
 \end{proof}
 
 \begin{remark}[Role in the Galerkin method]
-  In \cref{ch:leray-hopf}, the Galerkin approximations $(u_{m})$ are constructed
+  In \Cref{ch:leray-hopf}, the Galerkin approximations $(u_{m})$ are constructed
   as bounded sequences in the energy class $L^{\infty}(0,T;\Lp{2}) \cap
   L^{2}(0,T;\Sob{1})$.  The Rellich--Kondrachov theorem (together with the Aubin--Lions
   lemma) provides the strong $\Lp{2}$ convergence needed to pass nonlinear terms to the
@@ -365,7 +365,7 @@ Compactness is essential for the convergence of Galerkin approximations in
   \]
   The sequence is bounded in $\Sob{1}(\Omega)$ (since $\norm{u_{j}}_{\Sob{1}}^{2} =
   \norm{u_{j}}_{\Lp{2}}^{2} + \norm{\nabla u_{j}}_{\Lp{2}}^{2} \le 1 + 1 = 2$), so by
-  Rellich--Kondrachov (\cref{thm:rellich-kondrachov}), there exists a subsequence
+  Rellich--Kondrachov (\Cref{thm:rellich-kondrachov}), there exists a subsequence
   (still denoted $(u_{j})$) with $u_{j} \to u$ strongly in $\Lp{2}(\Omega)$.
   In particular $\norm{u}_{\Lp{2}} = 1$.
 
@@ -549,7 +549,7 @@ distributional divergence-free condition.
     \partial_{t} u + \Leray\bigl[(u \cdot \nabla) u\bigr] - \nu \Delta u = \Leray f.
   \end{equation}
   This is the form amenable to semigroup theory and the Galerkin method of
-  \cref{ch:leray-hopf}.
+  \Cref{ch:leray-hopf}.
 \end{remark}
 
 \bigskip
@@ -562,5 +562,5 @@ the subcritical embedding $\Sob{1} \hookrightarrow \Lp{6}$ (for $n = 3$) control
 nonlinear term; Rellich--Kondrachov furnishes the compactness needed in Galerkin limits;
 the Poincar\'{e} inequality ensures coercivity; and the Helmholtz decomposition decouples
 velocity from pressure via the Leray projector $\Leray$.
-\cref{ch:leray-hopf} combines these ingredients to construct Leray--Hopf weak
+\Cref{ch:leray-hopf} combines these ingredients to construct Leray--Hopf weak
 solutions.
