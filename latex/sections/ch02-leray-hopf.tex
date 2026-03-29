@@ -973,71 +973,126 @@ smooth.
 The Clay Mathematics Institute formulated the Navier--Stokes existence and smoothness
 problem in 2000 as one of the seven Millennium Prize Problems, with a prize of one
 million dollars.  The precise mathematical statement, due to
-Fefferman~\cite{fefferman2006}, is as follows.
+Fefferman~\cite{fefferman2006}, poses four related problems.  We first set up the
+common hypotheses and then state each problem.
 
-\begin{conjecture}[Navier--Stokes regularity (Clay)]%
-  \label{conj:clay}
-  Let $\nu > 0$ and let $u_{0} \in C^{\infty}(\R^{3}; \R^{3})$ be divergence-free with
-  \begin{equation}\label{eq:clay-decay}
-    \abs{\partial^{\alpha} u_{0}(x)}
-    \;\le\;
-    C_{\alpha K}\,(1 + \abs{x})^{-K}
-    \qquad
-    \text{for all } \alpha \in \N^{3},\; K > 0,
-  \end{equation}
-  and let $f = 0$.  Then there exist
-  \[
-    p \in C^{\infty}(\R^{3} \times [0, \infty))
-    \qquad \text{and} \qquad
-    u \in C^{\infty}(\R^{3} \times [0, \infty); \R^{3})
-  \]
-  satisfying the Navier--Stokes equations~\eqref{eq:ns-momentum}--\eqref{eq:ns-initial}
-  pointwise, together with the finite-energy condition
-  \begin{equation}\label{eq:clay-finite-energy}
-    \int_{\R^{3}} \abs{u(x, t)}^{2} \,\dd x
-    \;<\;
-    \infty
-    \qquad \text{for all } t \ge 0.
-  \end{equation}
+Fefferman considers the Navier--Stokes equations on $\R^{3}$ with viscosity $\nu > 0$,
+external force $f$, and initial velocity $u_{0}$.  A solution $(p, u)$ is called
+\emph{physically reasonable} if it is smooth and has bounded energy:
+\begin{equation}\label{eq:clay-smooth}
+  p, u \in C^{\infty}(\R^{3} \times [0, \infty)),
+\end{equation}
+\begin{equation}\label{eq:clay-finite-energy}
+  \int_{\R^{3}} \abs{u(x, t)}^{2} \,\dd x < C
+  \qquad \text{for all } t \ge 0
+  \quad \text{and some constant } C > 0.
+\end{equation}
+For the whole-space problems, Fefferman requires the initial data and force to be smooth
+with rapid decay: for every multi-index $\alpha$, every $m \ge 0$, and every $K > 0$,
+\begin{equation}\label{eq:clay-decay}
+  \abs{\partial^{\alpha}_{x} u_{0}(x)}
+  \;\le\;
+  C_{\alpha K}\,(1 + \abs{x})^{-K}
+  \qquad \text{on } \R^{3},
+\end{equation}
+\begin{equation}\label{eq:clay-force-decay}
+  \abs{\partial^{\alpha}_{x} \partial^{m}_{t} f(x,t)}
+  \;\le\;
+  C_{\alpha m K}\,(1 + \abs{x} + t)^{-K}
+  \qquad \text{on } \R^{3} \times [0, \infty).
+\end{equation}
+For the periodic problems on the torus $\R^{3}/\Z^{3}$, these decay conditions are
+replaced by periodicity:
+\begin{equation}\label{eq:clay-periodic}
+  u_{0}(x + e_{j}) = u_{0}(x), \quad
+  f(x + e_{j}, t) = f(x, t), \quad
+  p(x + e_{j}, t) = p(x, t),
+\end{equation}
+for $1 \le j \le 3$, where $e_{j}$ are the standard unit vectors, and the solution
+$u(x,t) = u(x + e_{j}, t)$ is required to be periodic as well.
+
+With these conventions, Fefferman poses the following four problems.  A positive answer
+to the Millennium Problem consists of proving either (A) or (B); a negative answer
+consists of proving either (C) or (D).
+
+\begin{conjecture}[Existence and smoothness on $\R^{3}$ (Problem A)]%
+  \label{conj:clay-A}
+  Take $\nu > 0$.  Let $u_{0}$ be any smooth, divergence-free vector field
+  satisfying~\eqref{eq:clay-decay}, and take $f \equiv 0$.  Then there exist smooth
+  functions $p(x,t)$ and $u(x,t)$ on $\R^{3} \times [0, \infty)$ satisfying the
+  Navier--Stokes equations~\eqref{eq:ns-momentum}--\eqref{eq:ns-initial} together
+  with~\eqref{eq:clay-smooth} and~\eqref{eq:clay-finite-energy}.
+\end{conjecture}
+
+\begin{conjecture}[Existence and smoothness on $\R^{3}/\Z^{3}$ (Problem B)]%
+  \label{conj:clay-B}
+  Take $\nu > 0$.  Let $u_{0}$ be any smooth, divergence-free vector field
+  satisfying~\eqref{eq:clay-periodic}, and take $f \equiv 0$.  Then there exist smooth
+  functions $p(x,t)$ and $u(x,t)$ on $\R^{3} \times [0, \infty)$ satisfying the
+  Navier--Stokes equations~\eqref{eq:ns-momentum}--\eqref{eq:ns-initial} together
+  with~\eqref{eq:clay-periodic} (for the solution),~\eqref{eq:clay-smooth},
+  and~\eqref{eq:clay-finite-energy}.
+\end{conjecture}
+
+Fefferman also poses the complementary breakdown problems.
+
+\begin{conjecture}[Breakdown on $\R^{3}$ (Problem C)]%
+  \label{conj:clay-C}
+  Take $\nu > 0$.  Then there exist a smooth, divergence-free vector field $u_{0}$ on
+  $\R^{3}$ and a smooth force $f(x,t)$ on $\R^{3} \times [0, \infty)$,
+  satisfying~\eqref{eq:clay-decay} and~\eqref{eq:clay-force-decay}, for which there exist
+  no physically reasonable
+  solutions~\eqref{eq:clay-smooth}--\eqref{eq:clay-finite-energy} of the Navier--Stokes
+  equations on $\R^{3} \times [0, \infty)$.
+\end{conjecture}
+
+\begin{conjecture}[Breakdown on $\R^{3}/\Z^{3}$ (Problem D)]%
+  \label{conj:clay-D}
+  Take $\nu > 0$.  Then there exist a smooth, divergence-free vector field $u_{0}$ on
+  $\R^{3}$ and a smooth force $f(x,t)$ on $\R^{3} \times [0, \infty)$,
+  satisfying~\eqref{eq:clay-periodic}, for which there exist no physically reasonable
+  solutions of the Navier--Stokes equations on $\R^{3} \times [0, \infty)$.
 \end{conjecture}
 
 \begin{remark}[Interpretation of the problem]
-  \Cref{conj:clay} asks two things simultaneously: \emph{existence} (there is a smooth
+  Problems~(A) and~(B) ask two things simultaneously: \emph{existence} (there is a smooth
   solution for all time) and \emph{smoothness} (the solution does not develop
   singularities).  The decay condition~\eqref{eq:clay-decay} ensures that $u_{0}$ lies in
   every Sobolev space $\Sob{k}(\R^{3})$ and in $\Lp{p}(\R^{3})$ for all $p$, so the
-  initial data is as regular as one could wish.  The finite-energy
-  condition~\eqref{eq:clay-finite-energy} is a natural physical requirement (infinite
-  kinetic energy is unphysical) and connects the problem to the Leray--Hopf framework.
+  initial data is as regular as one could wish.  The bounded energy
+  condition~\eqref{eq:clay-finite-energy} (note: bounded by a \emph{constant}, not merely
+  finite at each time) is a natural physical requirement and connects the problem to the
+  Leray--Hopf framework.
 
-  The word ``smooth'' in \Cref{conj:clay} means $C^{\infty}$ in both space and time.
-  A negative answer to the conjecture would consist of exhibiting smooth, rapidly
-  decaying initial data $u_{0}$ for which the solution develops a singularity: a point
-  $(x_{0}, t_{0})$ at which $u$ or its derivatives become unbounded.
+  Problems~(A) and~(B) set $f = 0$ to give solvers ``reasonable leeway''
+  (Fefferman's words).  The breakdown problems~(C) and~(D) allow a nonzero force, since
+  exhibiting blowup with no external forcing would be strictly harder.  A negative answer
+  to the Millennium Problem via~(C) or~(D) would demonstrate initial data and forces for
+  which smooth, bounded-energy solutions simply do not exist globally.
 \end{remark}
 
 \subsection{Relation to the Leray--Hopf framework}
 
 \begin{remark}[From Leray--Hopf to the Clay Problem]\label{rem:leray-hopf-to-clay}
   The Leray--Hopf theory provides a global weak solution $u$ for any $u_{0} \in
-  \Lsig(\R^{3})$, but this solution may not be smooth.  The Clay Problem asks whether,
+  \Lsig(\R^{3})$, but this solution may not be smooth.  Problem~(A) asks whether,
   for smooth and rapidly decaying $u_{0}$, the weak solution is in fact a classical
   (smooth) solution.  Since smooth solutions are unique in the Leray--Hopf class (by the
-  weak-strong uniqueness principle), a positive answer to the Clay Problem would imply
-  that the Leray--Hopf weak solution \emph{is} the unique smooth solution.
+  weak-strong uniqueness principle), a positive answer would imply that the Leray--Hopf
+  weak solution \emph{is} the unique smooth solution.
 
   The connection is made precise by the following chain of implications.  If $u_{0}$ is
   smooth and rapidly decaying, classical local existence theory (Fujita--Kato, 1964)
   produces a unique smooth solution $u$ on some time interval $[0, T^{*})$.  This smooth
   local solution is also a Leray--Hopf weak solution (it satisfies all four conditions of
-  \Cref{def:leray-hopf}).  The Clay Problem reduces to showing that $T^{*} = \infty$,
+  \Cref{def:leray-hopf}).  Problem~(A) reduces to showing that $T^{*} = \infty$,
   i.e., the smooth local solution never breaks down.
 \end{remark}
 
 \subsection{What is known}
 
 \begin{remark}[Partial results]\label{rem:partial-results}
-  The following results are known, falling short of resolving \Cref{conj:clay}:
+  The following results are known, falling short of resolving Problem~(A):
   \begin{enumerate}[label=(\roman*)]
     \item \emph{Local existence.} For $u_{0} \in \Sob{1}(\R^{3})$ (or more generally in
       various critical spaces), there exists $T^{*} > 0$ and a unique smooth solution on
@@ -1078,13 +1133,12 @@ Fefferman~\cite{fefferman2006}, is as follows.
   integrability at or above the critical scaling (Serrin-type conditions).  In three
   dimensions without additional assumptions, neither mechanism is available.
 
-  Resolving the Clay Problem would require either (a) proving that smooth
-  solutions of the three-dimensional Navier--Stokes equations never develop
-  singularities (a positive answer), or (b) constructing an explicit example
-  of smooth initial data leading to finite-time blowup (a negative answer).
-  As of the time of writing, neither direction has produced a definitive
-  result, and the problem remains one of the deepest open questions in
-  mathematical analysis.
+  Resolving the Clay Problem requires proving one of Problems~(A)--(D) above.
+  A positive answer (Problem~A or~B) would show that smooth data always produce globally
+  smooth solutions.  A negative answer (Problem~C or~D) would exhibit specific data for
+  which no physically reasonable solution exists globally.  As of the time of writing, neither direction has
+  produced a definitive result, and the problem remains one of the deepest open questions
+  in mathematical analysis.
 \end{remark}
 
 \bigskip
@@ -1100,5 +1154,5 @@ satisfy a priori energy estimates (\Cref{thm:galerkin-energy}), compactness argu
 the nonlinear term to the limit (\Cref{thm:passage-limit}).  The resulting weak solution
 satisfies the energy inequality (\Cref{thm:energy-inequality}) but not necessarily energy
 equality.  The Leray--Hopf framework connects directly to the Clay Millennium Problem
-(\Cref{conj:clay}): a positive resolution would show that, for smooth initial data, the
+(\Cref{conj:clay-A}): a positive resolution would show that, for smooth initial data, the
 Leray--Hopf weak solution is in fact the unique smooth solution for all time.
