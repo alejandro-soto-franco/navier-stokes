@@ -44,14 +44,12 @@
 \renewcommand{\footnoterule}{%
   \kern-3pt{\color{darkrule}\hrule width 0.4\columnwidth height 0.4pt}\kern2.6pt}
 
-% --- TOC / LOF / LOT page numbers and dots in foreground colour ---
-\let\darkmode@olddottedtocline\@dottedtocline
-\renewcommand{\@dottedtocline}[5]{%
-  {\color{darkfg}\darkmode@olddottedtocline{#1}{#2}{#3}{#4}{#5}}}
-% Chapter-level TOC entries use \l@chapter, patch it too
-\let\darkmode@oldlchapter\l@chapter
-\renewcommand{\l@chapter}[2]{%
-  {\color{darkfg}\darkmode@oldlchapter{#1}{#2}}}
+% --- TOC: force ALL elements (numbers, titles, dots, page numbers) to darkfg ---
+% The nuclear option: wrap \@starttoc so the entire TOC block is in darkfg.
+% This catches \l@chapter, \l@section, \l@subsection, \@dottedtocline,
+% \numberline, dot leaders, and page numbers in one shot.
+\let\darkmode@oldstarttoc\@starttoc
+\renewcommand{\@starttoc}[1]{{\color{darkfg}\darkmode@oldstarttoc{#1}}}
 
 % --- Apply all colour changes after \begin{document} ---
 \AtBeginDocument{%
