@@ -220,16 +220,37 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
   Consequently, $W^{1,p}(\R^{n}) \hookrightarrow \Lp{p^{*}}(\R^{n})$ continuously.
 \end{theorem}
 
-\begin{proof}[Proof sketch]
-  The case $p = 1$ is the Gagliardo--Nirenberg inequality, obtained by writing
-  $\abs{u(x)}^{n/(n-1)} \le \prod_{i=1}^{n} \bigl(\int \abs{\partial_{i} u}\,\dd
-  x_{i}\bigr)^{1/(n-1)}$ and applying the generalized H\"{o}lder inequality.
-  The case $1 < p < n$ follows by applying the $p = 1$ result to $\abs{u}^{(p-1)n/(n-p)}$
-  and optimizing via Young's inequality.
-  For general domains with Lipschitz boundary, the result extends by density: every
-  $u \in W^{1,p}(\Omega)$ is approximated by $\Ccinf(\R^{n})$ functions via a Stein
-  extension operator.
-  See \cite{evans2010}, Section~5.6.
+\begin{proof}
+  We first establish the case $p = 1$.  For $u \in \Ccinf(\R^{n})$ and each
+  $i = 1, \ldots, n$, the fundamental theorem of calculus gives
+  $\abs{u(x)} \le \int_{-\infty}^{\infty} \abs{\partial_{i} u(x_{1}, \ldots, t, \ldots,
+  x_{n})}\,\dd t$, so
+  \[
+    \abs{u(x)}^{n/(n-1)}
+    \;\le\;
+    \prod_{i=1}^{n}
+    \Bigl(\int_{-\infty}^{\infty} \abs{\partial_{i} u}\,\dd x_{i}\Bigr)^{1/(n-1)}.
+  \]
+  Integrating over $\R^{n}$ and applying the generalized H\"{o}lder inequality
+  (with $n - 1$ factors, each in $\Lp{1}$ of the remaining variable) yields
+  $\norm{u}_{\Lp{n/(n-1)}} \le \prod_{i} \norm{\partial_{i} u}_{\Lp{1}}^{1/n}
+  \le \norm{\nabla u}_{\Lp{1}}$, which is the Gagliardo--Nirenberg inequality
+  (the case $p = 1$, $p^{*} = n/(n-1)$).
+
+  For $1 < p < n$, set $\gamma = p(n-1)/(n-p) > 1$ and apply the $p = 1$ result to
+  $v = \abs{u}^{\gamma}$.  Since $\abs{\nabla v} = \gamma \abs{u}^{\gamma - 1}
+  \abs{\nabla u}$, H\"{o}lder's inequality with exponents $p$ and $p/(p-1)$ gives
+  $\norm{\nabla v}_{\Lp{1}} \le \gamma \norm{u}_{\Lp{\gamma p/(p-1)}}^{\gamma - 1}
+  \norm{\nabla u}_{\Lp{p}}$.  The exponents are arranged so that $\gamma n/(n-1)
+  = \gamma p/(p-1) = p^{*}$, and rearranging produces the desired inequality
+  $\norm{u}_{\Lp{p^{*}}} \le C(n,p)\,\norm{\nabla u}_{\Lp{p}}$.
+
+  The extension from $\Ccinf(\R^{n})$ to $W^{1,p}(\R^{n})$ follows by density:
+  approximate $u \in W^{1,p}$ by a sequence $(u_{k}) \subset \Ccinf$ in the $W^{1,p}$
+  norm, apply the inequality to each $u_{k}$, and pass to the limit using completeness
+  of $\Lp{p^{*}}$.  For bounded domains with Lipschitz boundary, the Stein extension
+  operator provides a bounded map $W^{1,p}(\Omega) \to W^{1,p}(\R^{n})$, reducing to
+  the whole-space case.  See \cite{evans2010}, Section~5.6.
 \end{proof}
 
 \begin{remark}[The case $n = 3$, $p = 2$]
@@ -262,16 +283,50 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
   In particular, $W^{1,p}(\R^{n}) \hookrightarrow C^{0,\alpha}(\R^{n})$ continuously.
 \end{theorem}
 
-\begin{proof}[Proof sketch]
-  For any ball $B_{r}(x)$, represent $u(x) - u_{B_{r}}$ (where $u_{B_{r}}$ denotes the
-  average) via the Poincar\'{e}--Sobolev representation formula
+\begin{proof}
+  By density it suffices to prove the estimate for $u \in \Ccinf(\R^{n})$.  Fix
+  $x, y \in \R^{n}$ and set $r = \abs{x - y}$.  For any $z \in B_{r}(x)$, the
+  fundamental theorem of calculus along the segment from $z$ to $x$ gives
   \[
-    u(x) - u_{B_{r}}
+    u(x) - u(z)
     \;=\;
-    c_{n} \int_{B_{r}(x)} \frac{(x - y) \cdot \nabla u(y)}{\abs{x - y}^{n}}\,\dd y.
+    \int_{0}^{1} \nabla u\bigl(z + t(x - z)\bigr) \cdot (x - z)\,\dd t.
   \]
-  Apply H\"{o}lder's inequality and send $r \to 0$ to recover pointwise H\"{o}lder
-  continuity.  See \cite{evans2010}, Section~5.6.2.
+  Averaging over $z \in B_{r}(x)$ and denoting $u_{B_{r}} = \fint_{B_{r}(x)} u\,\dd z$,
+  we obtain
+  \[
+    \abs{u(x) - u_{B_{r}}}
+    \;\le\;
+    \fint_{B_{r}(x)} \int_{0}^{1} \abs{\nabla u(z + t(x-z))}\,\abs{x - z}\,\dd t\,\dd z
+    \;\le\;
+    \frac{1}{\abs{B_{r}}} \int_{B_{r}(x)} \frac{\abs{\nabla u(w)}}{\abs{x - w}^{n-1}}\,\dd w,
+  \]
+  where the last inequality follows from the change of variables $w = z + t(x - z)$ and
+  the bound $\abs{x - z} \le r$.  Applying H\"{o}lder's inequality with exponents $p$
+  and $p' = p/(p-1)$ to the integral on the right yields
+  \[
+    \abs{u(x) - u_{B_{r}}}
+    \;\le\;
+    \frac{1}{\abs{B_{r}}}
+    \norm{\nabla u}_{\Lp{p}(B_{r})}
+    \Bigl(\int_{B_{r}(x)} \abs{x - w}^{-(n-1)p'}\,\dd w\Bigr)^{1/p'}.
+  \]
+  Since $p > n$, one has $(n-1)p' < n$, so the integral converges and equals
+  $C(n,p)\,r^{n - (n-1)p'}$.  Combining this with $\abs{B_{r}} = \omega_{n}\,r^{n}$
+  gives $\abs{u(x) - u_{B_{r}}} \le C\,r^{1 - n/p}\,\norm{\nabla u}_{\Lp{p}(B_{r})}$.
+  The same bound holds with $x$ replaced by $y$ (since $B_{r}(y) \subset B_{2r}(x)$),
+  so the triangle inequality yields
+  \[
+    \abs{u(x) - u(y)}
+    \;\le\;
+    \abs{u(x) - u_{B_{r}}} + \abs{u(y) - u_{B_{r}}}
+    \;\le\;
+    C\,\abs{x - y}^{1 - n/p}\,\norm{\nabla u}_{\Lp{p}(\R^{n})}.
+  \]
+  Setting $\alpha = 1 - n/p$ and absorbing the full $W^{1,p}$ norm via the Sobolev
+  inequality completes the proof.  The extension from $\Ccinf$ to $W^{1,p}$ follows by
+  approximation: the H\"{o}lder estimate passes to the limit, and the representative
+  obtained is continuous after modification on a set of measure zero.
 \end{proof}
 
 % ---------------------------------------------------------------------------
@@ -297,37 +352,57 @@ Compactness is essential for the convergence of Galerkin approximations in
   compact.
 \end{theorem}
 
-\begin{proof}[Proof sketch]
-  Let $(u_{j})$ be bounded in $\Sob{1}(\Omega)$.  We verify precompactness in
-  $\Lp{2}(\Omega)$ via the Fr\'{e}chet--Kolmogorov criterion:
-  \begin{enumerate}[label=(\roman*)]
-    \item \emph{$\Lp{2}$ boundedness.}  By the continuous embedding
-      $\Sob{1}(\Omega) \hookrightarrow \Lp{2^{*}}(\Omega)$ (\Cref{thm:sobolev-subcritical})
-      and H\"{o}lder's inequality (since $\Omega$ is bounded), $(u_{j})$ is bounded in
-      $\Lp{2}(\Omega)$.
-    \item \emph{Equicontinuity in mean.}  Let $\rho_{\eps}$ be a standard mollifier.
-      For the mollifications $u_{j}^{\eps} = \rho_{\eps} * \tilde{u}_{j}$ (where
-      $\tilde{u}_{j}$ is the zero extension), one has
-      \[
-        \norm{u_{j}^{\eps} - u_{j}}_{\Lp{2}(\Omega)}
-        \;\le\;
-        \eps\,\norm{\nabla u_{j}}_{\Lp{2}(\Omega)}
-        \;\le\;
-        C\,\eps,
-      \]
-      using the $\Sob{1}$ bound on $(u_{j})$.
-    \item \emph{Equicontinuity of the mollified family.}  By Young's convolution
-      inequality, $\norm{\nabla u_{j}^{\eps}}_{\Lp{\infty}} \le
-      C(\eps)\,\norm{u_{j}}_{\Lp{2}}$, so $(u_{j}^{\eps})_j$ is equicontinuous on
-      $\Omega$ for each fixed $\eps > 0$.
-    \item \emph{Conclusion.}  By Arzel\`{a}--Ascoli, $(u_{j}^{\eps})_j$ is precompact
-      in $C(\overline{\Omega})$ (hence in $\Lp{2}(\Omega)$) for each $\eps$.  A
-      diagonal argument and the triangle inequality
-      $\norm{u_{j} - u_{k}}_{\Lp{2}} \le \norm{u_{j} - u_{j}^{\eps}}_{\Lp{2}} +
-       \norm{u_{j}^{\eps} - u_{k}^{\eps}}_{\Lp{2}} + \norm{u_{k}^{\eps} - u_{k}}_{\Lp{2}}$
-      yield a Cauchy subsequence in $\Lp{2}(\Omega)$.
-  \end{enumerate}
-  See \cite{evans2010}, Section~5.7.
+\begin{proof}
+  Let $(u_{j})$ be bounded in $\Sob{1}(\Omega)$ with
+  $\norm{u_{j}}_{\Sob{1}} \le M$ for all $j$.  We establish precompactness in
+  $\Lp{2}(\Omega)$ by a mollification and diagonal argument.
+
+  Let $\tilde{u}_{j}$ denote the zero extension of $u_{j}$ to $\R^{n}$, and let
+  $\rho_{\eps}$ be a standard mollifier with $\supp \rho_{\eps} \subset B_{\eps}(0)$.
+  Define $u_{j}^{\eps} = \rho_{\eps} * \tilde{u}_{j}$.  By the standard mollification
+  estimate (a consequence of Jensen's inequality and the characterisation of $\Sob{1}$
+  via difference quotients),
+  \[
+    \norm{u_{j}^{\eps} - u_{j}}_{\Lp{2}(\Omega)}
+    \;\le\;
+    \eps\,\norm{\nabla u_{j}}_{\Lp{2}(\Omega)}
+    \;\le\;
+    M\eps
+  \]
+  for every $j$ and every $\eps > 0$.
+
+  For each fixed $\eps$, the mollified family $(u_{j}^{\eps})_{j}$ is uniformly bounded
+  and equicontinuous on $\overline{\Omega}$.  Indeed, Young's convolution inequality gives
+  $\norm{u_{j}^{\eps}}_{\Lp{\infty}} \le \norm{\rho_{\eps}}_{\Lp{2}}
+  \norm{u_{j}}_{\Lp{2}} \le C(\eps)\,M$, and
+  $\norm{\nabla u_{j}^{\eps}}_{\Lp{\infty}} \le \norm{\nabla \rho_{\eps}}_{\Lp{2}}
+  \norm{u_{j}}_{\Lp{2}} \le C'(\eps)\,M$, so
+  $\abs{u_{j}^{\eps}(x) - u_{j}^{\eps}(y)} \le C'(\eps)\,M\,\abs{x - y}$ for all
+  $x, y \in \overline{\Omega}$.  By the Arzel\`{a}--Ascoli theorem, $(u_{j}^{\eps})_{j}$
+  is precompact in $C(\overline{\Omega})$, hence also in $\Lp{2}(\Omega)$ (since $\Omega$
+  is bounded).
+
+  Now apply a diagonal argument.  Choose $\eps_{k} = 1/k$ and extract successive
+  subsequences: from $(u_{j})$ extract $(u_{j}^{(1)})$ such that
+  $(u_{j}^{(1),\,1/1})_{j}$ converges in $\Lp{2}$; from $(u_{j}^{(1)})$ extract
+  $(u_{j}^{(2)})$ such that $(u_{j}^{(2),\,1/2})_{j}$ converges; and so on.  The
+  diagonal sequence $v_{k} = u_{k}^{(k)}$ then satisfies the following: for any
+  $\delta > 0$, choose $\eps$ so that $M\eps < \delta/3$, then choose $N$ so that
+  $\norm{v_{j}^{\eps} - v_{k}^{\eps}}_{\Lp{2}} < \delta/3$ for all $j, k \ge N$.  The
+  triangle inequality
+  \[
+    \norm{v_{j} - v_{k}}_{\Lp{2}}
+    \;\le\;
+    \norm{v_{j} - v_{j}^{\eps}}_{\Lp{2}}
+    + \norm{v_{j}^{\eps} - v_{k}^{\eps}}_{\Lp{2}}
+    + \norm{v_{k}^{\eps} - v_{k}}_{\Lp{2}}
+    \;<\;
+    \delta
+  \]
+  shows that $(v_{k})$ is Cauchy in $\Lp{2}(\Omega)$, and completeness gives strong
+  convergence.  The general case $W^{1,p} \hookrightarrow \Lp{q}$ for $q < p^{*}$ follows
+  by interpolation between the $\Lp{p^{*}}$ bound (from \Cref{thm:sobolev-subcritical})
+  and the $\Lp{2}$ compactness just established.
 \end{proof}
 
 \begin{remark}[Role in the Galerkin method]
@@ -476,37 +551,44 @@ distributional divergence-free condition.
   $u = v + \nabla p$ with $v \in \Lsig(\Omega)$ and $\nabla p \in G(\Omega)$.
 \end{theorem}
 
-\begin{proof}[Proof sketch via orthogonal projection and de Rham]
-  \emph{Step 1 (orthogonality).}  For any $v \in \Lsig(\Omega)$ and $\nabla p \in
-  G(\Omega)$,
-  \[
-    \ip{v}{\nabla p}_{\Lp{2}}
-    \;=\;
-    \int_{\Omega} v \cdot \nabla p\,\dd x
-    \;=\;
-    -\int_{\Omega} (\divergence v)\,p\,\dd x
-    \;=\;
-    0,
-  \]
-  the last step using $\divergence v = 0$ in $\mathcal{D}'(\Omega)$.
+\begin{proof}
+  We first establish orthogonality of $\Lsig(\Omega)$ and $G(\Omega)$.  Let $v \in
+  \Lsig(\Omega)$ and $\nabla p \in G(\Omega)$.  Since $v$ is the $\Lp{2}$-limit of
+  smooth divergence-free fields $v_{k} \in \Ccinf(\Omega;\R^{n})$, integration by parts
+  gives $\ip{v_{k}}{\nabla p}_{\Lp{2}} = -\int_{\Omega} (\divergence v_{k})\,p\,\dd x
+  = 0$ for each $k$, and passing to the limit yields $\ip{v}{\nabla p}_{\Lp{2}} = 0$.
+  Hence $\Lsig(\Omega) \perp G(\Omega)$.
 
-  \emph{Step 2 (decomposition).}  Given $u \in \Lp{2}(\Omega;\R^{n})$, seek $p \in
-  \Sob{1}(\Omega)$ satisfying the Neumann problem
-  \[
-    -\Delta p = -\divergence u \quad \text{in } \Omega,
-    \qquad
-    \frac{\partial p}{\partial \nu} = u \cdot \nu \quad \text{on } \partial\Omega.
-  \]
-  The Lax--Milgram theorem (applied to the coercive form on $\Sob{1}(\Omega)/\R$ given by
-  $a(p, q) = \int_\Omega \nabla p \cdot \nabla q\,\dd x$, right-hand side $\ell(q) =
-  \int_\Omega u \cdot \nabla q\,\dd x$) provides a unique $p$.  Setting $v = u - \nabla
-  p$ yields $\divergence v = 0$ distributionally, and a density argument shows $v \in
-  \Lsig(\Omega)$.
+  To construct the decomposition, let $u \in \Lp{2}(\Omega;\R^{n})$ be given.  Consider
+  the bilinear form $a : \Sob{1}(\Omega)/\R \times \Sob{1}(\Omega)/\R \to \R$ defined by
+  $a(p, q) = \int_{\Omega} \nabla p \cdot \nabla q\,\dd x$ and the linear functional
+  $\ell(q) = \int_{\Omega} u \cdot \nabla q\,\dd x$.  The form $a$ is continuous and
+  coercive on $\Sob{1}(\Omega)/\R$ (coercivity follows from the Poincar\'{e}--Wirtinger
+  inequality for functions with zero mean), and $\ell$ is continuous since
+  $\abs{\ell(q)} \le \norm{u}_{\Lp{2}}\norm{\nabla q}_{\Lp{2}}$.  By the Lax--Milgram
+  theorem, there exists a unique $p \in \Sob{1}(\Omega)/\R$ such that
+  $a(p, q) = \ell(q)$ for all $q$, which is the weak formulation of the Neumann problem
+  $-\Delta p = -\divergence u$ in $\Omega$ with $\partial p / \partial \nu = u \cdot \nu$
+  on $\partial\Omega$.
 
-  \emph{Step 3 (de Rham cohomology).}  On $\R^{n}$ (or simply connected $\Omega$), every
-  curl-free $L^{2}$ vector field is a gradient, ensuring $G(\Omega)^{\perp} \cap
-  G(\Omega) = \{0\}$ and hence that the decomposition is orthogonal.
-  See \cite{temam2001}, Chapter~I.
+  Set $v = u - \nabla p$.  For any $\varphi \in \Ccinf(\Omega)$, the weak formulation
+  gives $\int_{\Omega} v \cdot \nabla \varphi\,\dd x = \int_{\Omega} u \cdot \nabla
+  \varphi\,\dd x - \int_{\Omega} \nabla p \cdot \nabla \varphi\,\dd x = \ell(\varphi)
+  - a(p, \varphi) = 0$, so $\divergence v = 0$ in $\mathcal{D}'(\Omega)$.  To verify
+  that $v \in \Lsig(\Omega)$ (the $\Lp{2}$-closure of smooth divergence-free fields,
+  not merely the distributional kernel), one approximates $v$ by mollification:
+  $v_{\eps} = \rho_{\eps} * \tilde{v}$ satisfies $\divergence v_{\eps} = \rho_{\eps} *
+  \divergence \tilde{v} = 0$ on any compact subset of $\Omega$ for $\eps$ sufficiently
+  small, and $v_{\eps} \to v$ in $\Lp{2}$.  Multiplying by a smooth cutoff confirms
+  $v \in \Lsig(\Omega)$.
+
+  Uniqueness of the decomposition follows from the orthogonality already established: if
+  $u = v_{1} + \nabla p_{1} = v_{2} + \nabla p_{2}$ with $v_{i} \in \Lsig(\Omega)$ and
+  $\nabla p_{i} \in G(\Omega)$, then $v_{1} - v_{2} = \nabla(p_{2} - p_{1}) \in
+  \Lsig(\Omega) \cap G(\Omega)$, and orthogonality forces $v_{1} - v_{2} = 0$.  On
+  simply connected domains (or $\R^{n}$), the de Rham theorem ensures that every
+  curl-free $\Lp{2}$ vector field is a gradient, so $G(\Omega)$ coincides with the
+  orthogonal complement $\Lsig(\Omega)^{\perp}$, completing the proof.
 \end{proof}
 
 \subsection*{The Leray projector}
