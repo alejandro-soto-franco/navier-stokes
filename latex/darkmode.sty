@@ -36,11 +36,22 @@
   \renewcommand{\footrulewidth}{0pt}%
 }
 
-% --- Footnotes in foreground colour ---
+% --- Footnotes in foreground colour (marker + body + rule) ---
 \let\darkmode@oldfootnotetext\@makefntext
 \long\def\@makefntext#1{\darkmode@oldfootnotetext{\color{darkfg}#1}}
+\let\darkmode@oldmakefnmark\@makefnmark
+\renewcommand{\@makefnmark}{\color{darkfg}\darkmode@oldmakefnmark}
 \renewcommand{\footnoterule}{%
   \kern-3pt{\color{darkrule}\hrule width 0.4\columnwidth height 0.4pt}\kern2.6pt}
+
+% --- TOC / LOF / LOT page numbers and dots in foreground colour ---
+\let\darkmode@olddottedtocline\@dottedtocline
+\renewcommand{\@dottedtocline}[5]{%
+  {\color{darkfg}\darkmode@olddottedtocline{#1}{#2}{#3}{#4}{#5}}}
+% Chapter-level TOC entries use \l@chapter, patch it too
+\let\darkmode@oldlchapter\l@chapter
+\renewcommand{\l@chapter}[2]{%
+  {\color{darkfg}\darkmode@oldlchapter{#1}{#2}}}
 
 % --- Apply all colour changes after \begin{document} ---
 \AtBeginDocument{%
