@@ -36,6 +36,12 @@
   \renewcommand{\footrulewidth}{0pt}%
 }
 
+% --- Footnotes in foreground colour ---
+\let\darkmode@oldfootnotetext\@makefntext
+\long\def\@makefntext#1{\darkmode@oldfootnotetext{\color{darkfg}#1}}
+\renewcommand{\footnoterule}{%
+  \kern-3pt{\color{darkrule}\hrule width 0.4\columnwidth height 0.4pt}\kern2.6pt}
+
 % --- Apply all colour changes after \begin{document} ---
 \AtBeginDocument{%
   \pagecolor{darkbg}%
