@@ -1,0 +1,41 @@
+# Superpowers docs (brainstorming specs, plans)
+docs/superpowers/
+
+# LaTeX build artifacts
+latex/*.aux
+latex/*.log
+latex/*.out
+latex/*.toc
+latex/*.lof
+latex/*.lot
+latex/*.bbl
+latex/*.blg
+latex/*.fls
+latex/*.fdb_latexmk
+latex/*.synctex.gz
+latex/*.pdf
+
+# Lean build
+lean/.lake/
+lean/build/
+lean/lake-packages/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+
+# Rust
+numerics/rust/target/
+
+# OS
+.DS_Store
+*~
+*.swp
+
+# Large simulation data
+*.hdf5
+*.h5
+*.vtk
+*.vtu

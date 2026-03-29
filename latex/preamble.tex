@@ -1,0 +1,68 @@
+% Packages
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{fontspec}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[style=alphabetic,backend=biber]{biblatex}
+\addbibresource{bibliography.bib}
+
+% Theorem environments
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{assumption}[theorem]{Assumption}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{notation}[theorem]{Notation}
+
+% Upright differential operator
+\newcommand{\dd}{\mathrm{d}}
+
+% Norms and inner products
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+
+% Function spaces
+\newcommand{\Lp}[1]{L^{#1}}
+\newcommand{\Lsig}{\Lp{2}_\sigma}
+\newcommand{\Sob}[1]{H^{#1}}
+\newcommand{\Sobz}[1]{H^{#1}_0}
+\newcommand{\Schwartz}{\mathcal{S}}
+\newcommand{\Dist}{\mathcal{S}'}
+\newcommand{\Ccinf}{C^\infty_c}
+
+% Operators
+\newcommand{\Leray}{\mathbb{P}}
+\newcommand{\BS}{\mathcal{K}}
+\newcommand{\curl}{\operatorname{curl}}
+\newcommand{\divergence}{\operatorname{div}}
+\newcommand{\supp}{\operatorname{supp}}
+
+% Vorticity decomposition
+\newcommand{\vort}{\boldsymbol{\omega}}
+\newcommand{\xidir}{\boldsymbol{\xi}}
+\newcommand{\Ximat}{\boldsymbol{\Xi}}
+
+% Connection and curvature
+\newcommand{\conn}{\nabla^{\mathrm{BS}}}
+\newcommand{\curv}{\Omega^{\mathrm{BS}}}
+
+% Misc
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\eps}{\varepsilon}
