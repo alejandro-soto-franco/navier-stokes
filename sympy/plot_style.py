@@ -56,12 +56,12 @@ def apply_style():
         # Font
         "font.family": "serif",
         "font.serif": ["Computer Modern Roman"],
-        "font.size": 10,
-        "axes.labelsize": 10,
-        "axes.titlesize": 10,
-        "xtick.labelsize": 9,
-        "ytick.labelsize": 9,
-        "legend.fontsize": 9,
+        "font.size": 11,
+        "axes.labelsize": 11,
+        "axes.titlesize": 11,
+        "xtick.labelsize": 10,
+        "ytick.labelsize": 10,
+        "legend.fontsize": 10,
         # Legend
         "legend.frameon": True,
         "legend.framealpha": 0.85,
