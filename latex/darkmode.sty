@@ -11,6 +11,7 @@
 \ProvidesPackage{darkmode}[2026/03/30 Dark mode colour scheme for book]
 
 \RequirePackage{xcolor}
+\RequirePackage{fancyhdr}
 
 % --- Base colours ---
 \definecolor{darkbg}{HTML}{2B2B2B}
@@ -19,11 +20,27 @@
 \definecolor{darkcite}{HTML}{6CB4EE}
 \definecolor{darkrule}{HTML}{555555}
 
+% --- Headers and footers in foreground colour ---
+\fancypagestyle{darkheadings}{%
+  \fancyhf{}%
+  \fancyhead[LE]{\color{darkfg}\thepage\hspace{1.5em}\leftmark}%
+  \fancyhead[RO]{\color{darkfg}\rightmark\hspace{1.5em}\thepage}%
+  \renewcommand{\headrulewidth}{0.4pt}%
+  \renewcommand{\headrule}{\color{darkrule}\hrule width\headwidth height\headrulewidth\vskip-\headrulewidth}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\color{darkfg}\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
 % --- Apply all colour changes after \begin{document} ---
 \AtBeginDocument{%
-  % Page background via xcolor (no pagecolor package needed)
   \pagecolor{darkbg}%
   \color{darkfg}%
+  \pagestyle{darkheadings}%
   \hypersetup{%
     colorlinks=true,
     linkcolor=darklink,
