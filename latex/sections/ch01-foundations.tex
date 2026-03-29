@@ -19,7 +19,7 @@ For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
 \section{Distributions and test functions}\label{sec:distributions}
 % ---------------------------------------------------------------------------
 
-\subsection*{Test functions and the LF topology}
+\subsection{Test functions and the LF topology}
 
 \begin{definition}[Test functions]\label{def:test-functions}
   Let $K \subset \Omega$ be compact.  Define
@@ -56,7 +56,7 @@ For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
   Sequential continuity nevertheless suffices for the theory of distributions.
 \end{remark}
 
-\subsection*{Distributions}
+\subsection{Distributions}
 
 \begin{definition}[Distributions]\label{def:distributions}
   A \emph{distribution} on $\Omega$ is a sequentially continuous linear functional
@@ -82,7 +82,7 @@ For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
   continuously into $\mathcal{D}'(\Omega)$.
 \end{example}
 
-\subsection*{Distributional derivatives}
+\subsection{Distributional derivatives}
 
 \begin{definition}[Distributional derivative]\label{def:distrib-deriv}
   For a multi-index $\alpha \in \N^{n}$ with $\abs{\alpha} = \alpha_{1} + \cdots +
@@ -103,7 +103,7 @@ For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
 \section{Weak derivatives and Sobolev spaces}\label{sec:sobolev}
 % ---------------------------------------------------------------------------
 
-\subsection*{Weak partial derivatives}
+\subsection{Weak partial derivatives}
 
 \begin{definition}[Weak partial derivative%
   \footnote{Lean 4: \texttt{NavierStokes.IsWeakPartialDeriv}}]%
@@ -141,7 +141,7 @@ For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
   $w(x_{0}) = \lim_{\eps \to 0} \int w \varphi_{\eps} = 0$.
 \end{proof}
 
-\subsection*{Sobolev spaces}
+\subsection{Sobolev spaces}
 
 \begin{definition}[$W^{1,p}(\Omega)$%
   \footnote{Lean 4: \texttt{NavierStokes.SobolevW1p}}]%
@@ -205,7 +205,7 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
   \qquad 1 \le p < n.
 \]
 
-\subsection*{Subcritical (Gagliardo--Nirenberg--Sobolev) embedding}
+\subsection{Subcritical (Gagliardo--Nirenberg--Sobolev) embedding}
 
 \begin{theorem}[Subcritical Sobolev embedding%
   \footnote{Lean 4: \texttt{NavierStokes.sobolev\_embedding\_subcritical}}]%
@@ -272,7 +272,7 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
   This embedding is used repeatedly in the energy estimates of \Cref{ch:leray-hopf}.
 \end{remark}
 
-\subsection*{Supercritical (Morrey) embedding}
+\subsection{Supercritical (Morrey) embedding}
 
 \begin{theorem}[Morrey embedding%
   \footnote{Lean 4: \texttt{NavierStokes.sobolev\_embedding\_supercritical}}]%
@@ -490,7 +490,7 @@ Compactness is essential for the convergence of Galerkin approximations in
 The incompressibility constraint $\divergence u = 0$ is encoded variationally via the
 distributional divergence-free condition.
 
-\subsection*{Distributional divergence-free fields}
+\subsection{Distributional divergence-free fields}
 
 \begin{definition}[Divergence-free fields]%
   \label{def:distrib-divfree}%
@@ -505,7 +505,7 @@ distributional divergence-free condition.
   \Ccinf(\Omega)$, i.e., $\divergence u = 0$ in $\mathcal{D}'(\Omega)$.
 \end{definition}
 
-\subsection*{The space $\Lsig(\Omega)$}
+\subsection{The space $\Lsig(\Omega)$}
 
 \begin{definition}[$\Lsig(\Omega)$%
   \footnote{Lean 4: \texttt{NavierStokes.L2sigma}}]%
@@ -541,7 +541,7 @@ distributional divergence-free condition.
   boundary).
 \end{proof}
 
-\subsection*{Helmholtz decomposition}
+\subsection{Helmholtz decomposition}
 
 \begin{theorem}[Helmholtz decomposition%
   \footnote{Lean 4: \texttt{NavierStokes.helmholtz\_decomposition}}]%
@@ -608,7 +608,7 @@ distributional divergence-free condition.
   orthogonal complement $\Lsig(\Omega)^{\perp}$, completing the proof.
 \end{proof}
 
-\subsection*{The Leray projector}
+\subsection{The Leray projector}
 
 \begin{definition}[Leray projector%
   \footnote{Lean 4: \texttt{NavierStokes.lerayProjector}}]%
