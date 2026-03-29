@@ -1,0 +1,82 @@
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
+\markboth{PREFACE}{PREFACE}
+
+This monograph develops a geometric approach to the regularity problem for
+the three-dimensional incompressible Navier--Stokes equations, one of the
+seven Clay Millennium Problems.  The question, in its simplest form, asks
+whether smooth initial data of finite energy necessarily give rise to a
+globally smooth solution, or whether singularities can form in finite time.
+Despite decades of progress in harmonic analysis, partial differential
+equations, and geometric measure theory, the problem remains open.
+
+\medskip
+
+The central idea pursued here is to define a connection on the
+infinite-dimensional bundle of divergence-free velocity fields, constructed
+from the Biot--Savart kernel and the Leray projection, and to classify
+solutions by the curvature of this connection.  The vorticity direction
+dyadic $\boldsymbol{\Xi} = \boldsymbol{\xi} \otimes \boldsymbol{\xi}$,
+which encodes the geometric content of the Constantin--Fefferman--Majda
+direction field nonlocally, lives naturally on the Veronese surface
+$V^{2} \subset S^{5}$.  By working with this object rather than the
+pointwise vorticity direction $\boldsymbol{\omega}/|\boldsymbol{\omega}|$,
+one avoids the regularity difficulties inherent in controlling the direction
+field at points where the vorticity vanishes.  The programme then asks
+whether incompressibility, combined with the curvature constraints imposed
+by the connection, obstructs finite-time blowup.
+
+\medskip
+
+A distinguishing feature of this work is its three-track architecture.
+Every chapter is developed simultaneously along three parallel lines:
+
+\begin{itemize}
+  \item \textbf{Formal verification (Lean 4 and Mathlib).}
+    All definitions, theorem statements, and (where completed) proofs are
+    formalised in the Lean 4 proof assistant, building on the Mathlib
+    library.  Lean serves as the final arbiter of correctness: a claim
+    is accepted only when the type-checker confirms it.  The current
+    formalisation contains a catalogue of \texttt{sorry} obligations
+    corresponding to known theorems whose Lean proofs are deferred;
+    these are tracked explicitly and do not represent gaps in the
+    mathematical argument.
+
+  \item \textbf{Theory (LaTeX and SymPy).}
+    The mathematical narrative is written as a self-contained book,
+    with complete proofs for all results.  Symbolic computation in SymPy
+    independently verifies key identities, exponents, and estimates,
+    providing a computational cross-check on the analytic arguments.
+
+  \item \textbf{Numerics.}
+    Numerical simulations (planned for later chapters) will test the
+    geometric predictions of the theory against direct computation of
+    the Navier--Stokes equations, using spectral and finite-element
+    solvers.  The numerical track is not a substitute for proof, but
+    a source of intuition and a check against false conjectures.
+\end{itemize}
+
+At each chapter boundary, a formal sync point reconciles the three tracks:
+Lean definitions must match LaTeX definitions, SymPy verifications must
+confirm the identities stated in the text, and (where applicable) numerical
+experiments must be consistent with the theoretical predictions.  Lean is
+the authority on ties.
+
+\medskip
+
+\textbf{Status of the programme.}
+This document records an ongoing research programme.  As of the current
+writing, Chapter~1 (functional analytic foundations) is complete across all
+three tracks: the Lean formalisation compiles, the LaTeX proofs are
+self-contained, and the SymPy verifications pass.  The remaining chapters
+are in various stages of development.  \emph{We do not claim to have
+resolved the Millennium Problem.}  The approach may ultimately succeed or
+fail; this text is an honest record of the attempt, written so that the
+mathematical community can evaluate, critique, and build upon the ideas
+presented here.
+
+\bigskip
+
+\hfill Alejandro Jos\'e Soto Franco
+
+\hfill \today
