@@ -223,8 +223,13 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
 \begin{proof}
   We first establish the case $p = 1$.  For $u \in \Ccinf(\R^{n})$ and each
   $i = 1, \ldots, n$, the fundamental theorem of calculus gives
-  $\abs{u(x)} \le \int_{-\infty}^{\infty} \abs{\partial_{i} u(x_{1}, \ldots, t, \ldots,
-  x_{n})}\,\dd t$, so
+  \[
+    \abs{u(x)}
+    \;\le\;
+    \int_{-\infty}^{\infty}
+    \abs{\partial_{i} u(x_{1}, \ldots, t, \ldots, x_{n})}\,\dd t,
+  \]
+  so
   \[
     \abs{u(x)}^{n/(n-1)}
     \;\le\;
@@ -294,13 +299,15 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
   \]
   Averaging over $z \in B_{r}(x)$ and denoting $u_{B_{r}} = \fint_{B_{r}(x)} u\,\dd z$,
   we obtain
-  \[
+  \begin{align*}
     \abs{u(x) - u_{B_{r}}}
-    \;\le\;
-    \fint_{B_{r}(x)} \int_{0}^{1} \abs{\nabla u(z + t(x-z))}\,\abs{x - z}\,\dd t\,\dd z
-    \;\le\;
-    \frac{1}{\abs{B_{r}}} \int_{B_{r}(x)} \frac{\abs{\nabla u(w)}}{\abs{x - w}^{n-1}}\,\dd w,
-  \]
+    &\;\le\;
+    \fint_{B_{r}(x)} \int_{0}^{1}
+      \abs{\nabla u\bigl(z + t(x-z)\bigr)}\,\abs{x - z}\,\dd t\,\dd z \\
+    &\;\le\;
+    \frac{1}{\abs{B_{r}}}
+    \int_{B_{r}(x)} \frac{\abs{\nabla u(w)}}{\abs{x - w}^{n-1}}\,\dd w,
+  \end{align*}
   where the last inequality follows from the change of variables $w = z + t(x - z)$ and
   the bound $\abs{x - z} \le r$.  Applying H\"{o}lder's inequality with exponents $p$
   and $p' = p/(p-1)$ to the integral on the right yields
@@ -373,12 +380,22 @@ Compactness is essential for the convergence of Galerkin approximations in
 
   For each fixed $\eps$, the mollified family $(u_{j}^{\eps})_{j}$ is uniformly bounded
   and equicontinuous on $\overline{\Omega}$.  Indeed, Young's convolution inequality gives
-  $\norm{u_{j}^{\eps}}_{\Lp{\infty}} \le \norm{\rho_{\eps}}_{\Lp{2}}
-  \norm{u_{j}}_{\Lp{2}} \le C(\eps)\,M$, and
-  $\norm{\nabla u_{j}^{\eps}}_{\Lp{\infty}} \le \norm{\nabla \rho_{\eps}}_{\Lp{2}}
-  \norm{u_{j}}_{\Lp{2}} \le C'(\eps)\,M$, so
-  $\abs{u_{j}^{\eps}(x) - u_{j}^{\eps}(y)} \le C'(\eps)\,M\,\abs{x - y}$ for all
-  $x, y \in \overline{\Omega}$.  By the Arzel\`{a}--Ascoli theorem, $(u_{j}^{\eps})_{j}$
+  \[
+    \norm{u_{j}^{\eps}}_{\Lp{\infty}}
+    \;\le\;
+    \norm{\rho_{\eps}}_{\Lp{2}}\,\norm{u_{j}}_{\Lp{2}}
+    \;\le\;
+    C(\eps)\,M,
+  \]
+  and similarly
+  $\norm{\nabla u_{j}^{\eps}}_{\Lp{\infty}} \le
+  \norm{\nabla \rho_{\eps}}_{\Lp{2}}\,\norm{u_{j}}_{\Lp{2}} \le C'(\eps)\,M$, so
+  \[
+    \abs{u_{j}^{\eps}(x) - u_{j}^{\eps}(y)}
+    \;\le\;
+    C'(\eps)\,M\,\abs{x - y}
+  \]
+  for all $x, y \in \overline{\Omega}$.  By the Arzel\`{a}--Ascoli theorem, $(u_{j}^{\eps})_{j}$
   is precompact in $C(\overline{\Omega})$, hence also in $\Lp{2}(\Omega)$ (since $\Omega$
   is bounded).
 
@@ -466,7 +483,7 @@ Compactness is essential for the convergence of Galerkin approximations in
 \end{corollary}
 
 % ---------------------------------------------------------------------------
-\section{Divergence-free fields and the Helmholtz decomposition}%
+\section[Divergence-free fields and Helmholtz]{Divergence-free fields and the Helmholtz decomposition}%
 \label{sec:helmholtz}
 % ---------------------------------------------------------------------------
 
@@ -475,9 +492,9 @@ distributional divergence-free condition.
 
 \subsection*{Distributional divergence-free fields}
 
-\begin{definition}[Distributional divergence-free%
-  \footnote{Lean 4: \texttt{NavierStokes.IsDistribDivFree}}]%
-  \label{def:distrib-divfree}
+\begin{definition}[Divergence-free fields]%
+  \label{def:distrib-divfree}%
+  \footnote{Lean 4: \texttt{NavierStokes.IsDistribDivFree}.}
   A vector field $u \in \Lp{2}(\Omega;\R^{n})$ is \emph{distributionally divergence-free}
   if
   \begin{equation}\label{eq:distrib-divfree}
@@ -507,11 +524,11 @@ distributional divergence-free condition.
   fields.
 \end{definition}
 
-\begin{proposition}[$\Lsig(\Omega)$ is closed%
-  \footnote{Lean 4: \texttt{NavierStokes.l2sigma\_isClosed}}]%
-  \label{prop:L2sigma-closed}
-  $\Lsig(\Omega)$ is a closed subspace of $\Lp{2}(\Omega;\R^{n})$, hence itself a
-  Hilbert space.
+\begin{proposition}[Closedness of $\Lsig$]%
+  \label{prop:L2sigma-closed}%
+  \footnote{Lean 4: \texttt{NavierStokes.l2sigma\_isClosed}.}
+  The space $\Lsig(\Omega)$ is a closed subspace of $\Lp{2}(\Omega;\R^{n})$, hence
+  itself a Hilbert space.
 \end{proposition}
 
 \begin{proof}
