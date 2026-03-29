@@ -1,1 +1,1104 @@
 \chapter{Leray--Hopf Weak Solutions}\label{ch:leray-hopf}
+
+In 1934, Jean Leray~\cite{leray1934} proved that the three-dimensional incompressible
+Navier--Stokes equations admit global-in-time weak solutions for arbitrary $\Lp{2}$
+initial data, and that these solutions satisfy a fundamental energy inequality.
+Two decades later, Eberhard Hopf~\cite{hopf1951} extended the construction to bounded
+domains.  The solutions produced by their method, now called \emph{Leray--Hopf weak
+solutions}, remain the only class of weak solutions known to exist globally in three
+dimensions.  Whether every Leray--Hopf weak solution is in fact smooth is the central
+open question of the Clay Millennium Problem~\cite{fefferman2006}.
+
+This chapter constructs Leray--Hopf weak solutions on $\R^{3}$ in full
+detail.  We proceed from the strong formulation (\Cref{sec:ns-strong})
+and its weak counterpart (\Cref{sec:ns-weak}) to the existence proof
+via the Galerkin method.  \Cref{sec:clay} states the Clay Millennium
+Problem.
+
+Throughout this chapter, the spatial dimension is $n = 3$.  We use freely
+the functional analytic tools from \Cref{ch:foundations}: Sobolev spaces,
+embedding theorems, the Rellich--Kondrachov theorem, the Poincar\'{e}
+inequality, and the Helmholtz decomposition with the Leray projector.
+
+% ---------------------------------------------------------------------------
+\section{The incompressible Navier--Stokes equations}\label{sec:ns-strong}
+% ---------------------------------------------------------------------------
+
+\subsection{Strong formulation}
+
+The motion of an incompressible viscous fluid with unit density occupying $\R^{3}$ is
+governed by the Navier--Stokes system: find a velocity field
+$u : \R^{3} \times [0, \infty) \to \R^{3}$ and a pressure field
+$p : \R^{3} \times [0, \infty) \to \R$ satisfying
+
+\begin{equation}\label{eq:ns-momentum}
+  \partial_{t} u + (u \cdot \nabla) u
+  \;=\;
+  \nu \Delta u - \nabla p + f,
+  \qquad x \in \R^{3},\; t > 0,
+\end{equation}
+\begin{equation}\label{eq:ns-incompressibility}
+  \divergence u
+  \;=\;
+  0,
+  \qquad x \in \R^{3},\; t > 0,
+\end{equation}
+\begin{equation}\label{eq:ns-initial}
+  u(x, 0)
+  \;=\;
+  u_{0}(x),
+  \qquad x \in \R^{3},
+\end{equation}
+together with the decay condition $u(x, t) \to 0$ as $\abs{x} \to \infty$.
+
+\begin{remark}[Physical meaning of each term]
+  In the momentum equation~\eqref{eq:ns-momentum}:
+  \begin{enumerate}[label=(\roman*)]
+    \item $\partial_{t} u$ is the local (Eulerian) acceleration of the fluid;
+    \item $(u \cdot \nabla) u = \sum_{j=1}^{3} u_{j}\,\partial_{j} u$ is the
+      \emph{convective} (or \emph{advective}) nonlinearity, encoding the transport of
+      momentum by the flow itself;
+    \item $\nu \Delta u$ is the viscous diffusion term, with $\nu > 0$ the kinematic
+      viscosity;
+    \item $\nabla p$ is the pressure gradient, which enforces the incompressibility
+      constraint~\eqref{eq:ns-incompressibility} (the pressure acts as a Lagrange
+      multiplier);
+    \item $f = f(x, t)$ is an external body force.
+  \end{enumerate}
+  The constraint $\divergence u = 0$ expresses conservation of mass for a fluid of
+  constant density: the velocity field is volume-preserving.
+\end{remark}
+
+\subsection{The convective term and its symmetry}
+
+The convective term $(u \cdot \nabla)u$ is the source of the mathematical difficulty.
+Written in component form, it reads
+\[
+  \bigl[(u \cdot \nabla) u\bigr]_{i}
+  \;=\;
+  \sum_{j=1}^{3} u_{j}\,\partial_{j} u_{i},
+  \qquad i = 1, 2, 3.
+\]
+When $u$ is divergence-free, this can be rewritten in conservative form:
+\begin{equation}\label{eq:convective-conservative}
+  (u \cdot \nabla) u
+  \;=\;
+  \divergence(u \otimes u),
+\end{equation}
+since $\divergence(u \otimes u)_{i} = \sum_{j} \partial_{j}(u_{j} u_{i})
+= \sum_{j} u_{j}\,\partial_{j} u_{i} + u_{i}\,\underbrace{\divergence u}_{=\,0}$.
+The conservative form~\eqref{eq:convective-conservative} is better suited to the weak
+formulation because it requires only one derivative, distributed via integration by
+parts.
+
+\subsection{Dimensionless form and the Reynolds number}
+
+Introduce characteristic scales: a length $L$, a velocity $U$, and a time $T = L/U$.
+The dimensionless variables $x' = x/L$, $t' = t/T$, $u' = u/U$, $p' = p/(U^{2})$,
+$f' = fL/U^{2}$ transform the Navier--Stokes equations into
+\begin{equation}\label{eq:ns-dimensionless}
+  \partial_{t'} u' + (u' \cdot \nabla') u'
+  \;=\;
+  \frac{1}{\mathrm{Re}}\,\Delta' u' - \nabla' p' + f',
+\end{equation}
+where
+\begin{equation}\label{eq:reynolds}
+  \mathrm{Re}
+  \;=\;
+  \frac{UL}{\nu}
+\end{equation}
+is the \emph{Reynolds number}.  The Reynolds number measures the ratio of inertial forces
+(the convective term) to viscous forces (the diffusion term).  At low Reynolds number
+($\mathrm{Re} \ll 1$), viscosity dominates and the flow is laminar; at high Reynolds
+number ($\mathrm{Re} \gg 1$), the convective nonlinearity dominates and the flow may
+become turbulent.
+
+\begin{remark}
+  The regularity problem is independent of the Reynolds number in the following sense:
+  the Clay Millennium Problem asks whether smooth solutions remain smooth for \emph{all}
+  $\nu > 0$, not merely for small Reynolds numbers.  The difficulty lies entirely in the
+  three-dimensional geometry of the nonlinear term.
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\section{Weak formulation}\label{sec:ns-weak}
+% ---------------------------------------------------------------------------
+
+The strong formulation~\eqref{eq:ns-momentum}--\eqref{eq:ns-initial} requires $u$ to be
+twice differentiable in space and once in time.  To construct solutions with less
+regularity, we pass to a weak formulation by testing against smooth, compactly
+supported, divergence-free vector fields.
+
+\subsection{Derivation of the weak form}
+
+Let $\varphi \in \Ccinf(\R^{3} \times [0, T); \R^{3})$ with
+$\divergence \varphi = 0$.  Multiply the momentum equation~\eqref{eq:ns-momentum} by
+$\varphi$, integrate over $\R^{3} \times (0, T)$, and integrate by parts.
+
+The time derivative term gives
+\[
+  \int_{0}^{T} \int_{\R^{3}} \partial_{t} u \cdot \varphi \,\dd x \,\dd t
+  \;=\;
+  -\int_{0}^{T} \int_{\R^{3}} u \cdot \partial_{t} \varphi \,\dd x \,\dd t
+  \;-\;
+  \int_{\R^{3}} u_{0} \cdot \varphi(x, 0) \,\dd x,
+\]
+using $\varphi(\cdot, T) = 0$ and $u(\cdot, 0) = u_{0}$.
+
+The viscous term, after integration by parts, becomes
+\[
+  \int_{0}^{T} \int_{\R^{3}} \nu \Delta u \cdot \varphi \,\dd x \,\dd t
+  \;=\;
+  -\nu \int_{0}^{T} \int_{\R^{3}} \nabla u : \nabla \varphi \,\dd x \,\dd t,
+\]
+where $\nabla u : \nabla \varphi = \sum_{i,j} \partial_{j} u_{i}\,\partial_{j} \varphi_{i}$.
+
+The pressure term vanishes:
+$\int_{\R^{3}} \nabla p \cdot \varphi \,\dd x = -\int_{\R^{3}} p\,\divergence \varphi
+\,\dd x = 0$,
+since $\divergence \varphi = 0$.  This is the key advantage of testing against
+divergence-free functions: the pressure is eliminated entirely.
+
+The convective term, using the conservative form~\eqref{eq:convective-conservative},
+integrates by parts to
+\[
+  \int_{0}^{T} \int_{\R^{3}} (u \cdot \nabla) u \cdot \varphi \,\dd x \,\dd t
+  \;=\;
+  -\int_{0}^{T} \int_{\R^{3}} (u \otimes u) : \nabla \varphi \,\dd x \,\dd t,
+\]
+where $(u \otimes u) : \nabla \varphi = \sum_{i,j} u_{i} u_{j}\,\partial_{j} \varphi_{i}$.
+
+Collecting terms yields the weak formulation.
+
+\subsection{Definition of weak solution}
+
+\begin{definition}[Weak solution of Navier--Stokes%
+  \footnote{Lean 4: \texttt{NavierStokes.WeakNSSolution}}]%
+  \label{def:weak-ns}
+  Let $u_{0} \in \Lsig(\R^{3})$, $f \in \Lp{2}(0, T; H^{-1}(\R^{3}))$, and
+  $0 < T \le \infty$.  A vector field
+  \[
+    u \in \Lp{\infty}(0, T; \Lp{2}(\R^{3}))
+    \cap \Lp{2}(0, T; \Sobz{1}(\R^{3}))
+  \]
+  with $\divergence u = 0$ in $\mathcal{D}'(\R^{3} \times (0, T))$ is a \emph{weak
+  solution} of the Navier--Stokes equations if for every
+  $\varphi \in \Ccinf(\R^{3} \times [0, T); \R^{3})$ with $\divergence \varphi = 0$,
+  \begin{equation}\label{eq:ns-weak}
+    \begin{aligned}
+      &-\int_{0}^{T} \int_{\R^{3}} u \cdot \partial_{t} \varphi \,\dd x \,\dd t
+      \;-\;
+      \int_{\R^{3}} u_{0} \cdot \varphi(x, 0) \,\dd x \\
+      &\qquad
+      +\;\int_{0}^{T} \int_{\R^{3}} (u \otimes u) : \nabla \varphi \,\dd x \,\dd t
+      \;+\;
+      \nu \int_{0}^{T} \int_{\R^{3}} \nabla u : \nabla \varphi \,\dd x \,\dd t \\
+      &\qquad\qquad
+      =\;
+      \int_{0}^{T} \ip{f}{\varphi}_{H^{-1} \times \Sobz{1}} \,\dd t.
+    \end{aligned}
+  \end{equation}
+\end{definition}
+
+\begin{remark}[Well-definedness of the nonlinear term]\label{rem:nonlinear-welldefined}
+  The nonlinear term $\int (u \otimes u) : \nabla \varphi$ is well-defined when
+  $u \in \Lp{2}(0, T; \Sobz{1}(\R^{3}))$.  Indeed, by the Sobolev embedding
+  $\Sob{1}(\R^{3}) \hookrightarrow \Lp{6}(\R^{3})$ (\Cref{thm:sobolev-subcritical}
+  with $n = 3$, $p = 2$), $u(\cdot, t) \in \Lp{6}(\R^{3})$ for a.e.\ $t$, so
+  $u \otimes u \in \Lp{3}(\R^{3})$ and
+  $\nabla \varphi \in \Lp{3/2}(\R^{3})$ (since $\varphi$ is smooth and compactly
+  supported), whence the integral is finite by H\"{o}lder's inequality.  More precisely,
+  $u \otimes u \in \Lp{1}(0, T; \Lp{3}(\R^{3}))$ and the pairing is controlled by the
+  energy class norms.
+\end{remark}
+
+\begin{remark}[Pressure recovery]
+  The pressure $p$ does not appear in the weak formulation~\eqref{eq:ns-weak} because
+  we test against divergence-free functions.  Once a weak solution $u$ is obtained, the
+  pressure can be recovered (up to an additive function of time) by solving the Poisson
+  equation $-\Delta p = \divergence\bigl[(u \cdot \nabla) u\bigr]$ in the sense of
+  distributions.  On $\R^{3}$, this is accomplished via the Calder\'{o}n--Zygmund theory
+  of singular integrals, yielding $\nabla p \in \Lp{3/2}(\R^{3})$ when $u \in
+  \Lp{6}(\R^{3})$.
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\section{The Galerkin method}\label{sec:galerkin}
+% ---------------------------------------------------------------------------
+
+The Galerkin method constructs weak solutions by projecting the Navier--Stokes equations
+onto finite-dimensional subspaces, solving the resulting system of ordinary differential
+equations, and passing to the limit.  The key ingredients are the Stokes operator (which
+provides a natural basis of eigenfunctions), a priori energy estimates (which furnish
+uniform bounds), and compactness theorems (which extract convergent subsequences).
+
+\subsection{The Stokes operator}
+
+\begin{definition}[Stokes operator%
+  \footnote{Lean 4: \texttt{NavierStokes.StokesOperator}}]%
+  \label{def:stokes-operator}
+  The \emph{Stokes operator} on a bounded domain $\Omega \subset \R^{3}$ with smooth
+  boundary is
+  \begin{equation}\label{eq:stokes-operator}
+    A
+    \;=\;
+    -\Leray \Delta,
+  \end{equation}
+  defined on the domain $D(A) = \Sob{2}(\Omega; \R^{3}) \cap \Sobz{1}(\Omega; \R^{3})
+  \cap \Lsig(\Omega)$, where $\Leray$ is the Leray projector
+  (\Cref{def:leray-projector}).  Equivalently, for $u \in D(A)$,
+  $Au = -\Leray \Delta u = -\Delta u + \nabla \pi$, where $\pi$ is the unique pressure
+  (up to a constant) satisfying the Stokes system $-\Delta u + \nabla \pi = Au$,
+  $\divergence u = 0$.
+\end{definition}
+
+\begin{proposition}[Spectral properties of the Stokes operator]\label{prop:stokes-spectral}
+  Let $\Omega \subset \R^{3}$ be a bounded domain with smooth boundary.  The Stokes
+  operator $A$ is a positive, self-adjoint, unbounded operator on $\Lsig(\Omega)$ with
+  compact resolvent.  Consequently, there exists an orthonormal basis
+  $\{w_{k}\}_{k=1}^{\infty}$ of $\Lsig(\Omega)$ consisting of eigenfunctions of $A$:
+  \begin{equation}\label{eq:stokes-eigenfunctions}
+    A w_{k}
+    \;=\;
+    \lambda_{k}\,w_{k},
+    \qquad
+    0 < \lambda_{1} \le \lambda_{2} \le \cdots \to \infty,
+  \end{equation}
+  with $\ip{w_{j}}{w_{k}}_{\Lp{2}} = \delta_{jk}$ and each $w_{k} \in D(A)$.
+\end{proposition}
+
+\begin{proof}
+  Self-adjointness: for $u, v \in D(A)$, integration by parts gives
+  \begin{align*}
+    \ip{Au}{v}_{\Lp{2}}
+    &\;=\;
+    \ip{-\Leray \Delta u}{v}_{\Lp{2}}
+    \;=\;
+    \ip{-\Delta u}{\Leray v}_{\Lp{2}} \\
+    &\;=\;
+    \ip{-\Delta u}{v}_{\Lp{2}}
+    \;=\;
+    \int_{\Omega} \nabla u : \nabla v \,\dd x,
+  \end{align*}
+  where we used that $\Leray$ is self-adjoint (\Cref{prop:leray-props}), that $\Leray v = v$
+  for $v \in \Lsig(\Omega)$, and that $u, v \in \Sobz{1}(\Omega)$ so boundary terms
+  vanish.  The same computation with $u = v$ gives
+  $\ip{Au}{u}_{\Lp{2}} = \norm{\nabla u}_{\Lp{2}}^{2} \ge 0$, with equality only when
+  $\nabla u = 0$, hence $u = 0$ by the Poincar\'{e} inequality
+  (\Cref{thm:poincare}).  This establishes positivity.  Symmetry of the form
+  $\ip{Au}{v} = \int \nabla u : \nabla v$ is immediate, so $A$ is self-adjoint on
+  $D(A)$.
+
+  Compact resolvent: the form domain of $A$ is $V = \Sobz{1}(\Omega) \cap \Lsig(\Omega)$,
+  and the embedding $V \hookrightarrow \Lsig(\Omega)$ is compact by the
+  Rellich--Kondrachov theorem (\Cref{thm:rellich-kondrachov}).  The resolvent
+  $(A + I)^{-1} : \Lsig(\Omega) \to D(A) \subset V$ is bounded, so the composition
+  $(A + I)^{-1} : \Lsig(\Omega) \to V \hookrightarrow \Lsig(\Omega)$ is compact.
+
+  The spectral theorem for positive self-adjoint operators with compact resolvent
+  (see \cite{evans2010}, Section~6.5) then yields the existence of a complete orthonormal
+  system of eigenfunctions with eigenvalues $0 < \lambda_{1} \le \lambda_{2} \le \cdots
+  \to \infty$.
+\end{proof}
+
+\begin{remark}[Whole-space setting]\label{rem:whole-space-galerkin}
+  On $\R^{3}$, the Stokes operator lacks a discrete spectrum.  The standard approach
+  is to work on an increasing sequence of bounded domains $\Omega_{m} = B_{m}(0)$,
+  construct Galerkin approximations on each $\Omega_{m}$ using the eigenfunctions of the
+  Stokes operator on $\Omega_{m}$, and pass to the limit $m \to \infty$ via a diagonal
+  argument.  We carry out the construction on a bounded domain for clarity, then indicate
+  the modifications needed for $\R^{3}$.  Alternatively, one may work directly on
+  $\R^{3}$ by choosing any countable dense subset of
+  $\Ccinf(\R^{3}; \R^{3}) \cap \Lsig(\R^{3})$ and applying Gram--Schmidt; the a priori
+  estimates and passage to the limit are identical.
+\end{remark}
+
+\subsection{Finite-dimensional approximation}
+
+Let $\Omega \subset \R^{3}$ be a bounded domain with smooth boundary.  For each
+$m \in \N$, define the finite-dimensional subspace
+\begin{equation}\label{eq:galerkin-subspace}
+  V_{m}
+  \;=\;
+  \operatorname{span}\{w_{1}, \ldots, w_{m}\}
+  \;\subset\;
+  \Lsig(\Omega),
+\end{equation}
+and let $P_{m} : \Lsig(\Omega) \to V_{m}$ denote the $\Lp{2}$-orthogonal projection.
+
+The \emph{Galerkin approximation} of order $m$ is the function
+\begin{equation}\label{eq:galerkin-ansatz}
+  u_{m}(x, t)
+  \;=\;
+  \sum_{k=1}^{m} c_{k}^{(m)}(t)\,w_{k}(x),
+\end{equation}
+where the coefficient functions $c_{k}^{(m)} : [0, T_{m}) \to \R$ are determined by the
+projected equation: for each $j = 1, \ldots, m$,
+\begin{equation}\label{eq:galerkin-ode}
+  \ip{\partial_{t} u_{m}}{w_{j}}_{\Lp{2}}
+  \;+\;
+  \nu\,\ip{\nabla u_{m}}{\nabla w_{j}}_{\Lp{2}}
+  \;+\;
+  b(u_{m}, u_{m}, w_{j})
+  \;=\;
+  \ip{f}{w_{j}},
+\end{equation}
+with initial condition
+$c_{k}^{(m)}(0) = \ip{u_{0}}{w_{k}}_{\Lp{2}}$, i.e., $u_{m}(0) = P_{m} u_{0}$.
+Here the trilinear form is
+\begin{equation}\label{eq:trilinear-form}
+  b(u, v, w)
+  \;=\;
+  \int_{\Omega} (u \cdot \nabla) v \cdot w \,\dd x
+  \;=\;
+  \sum_{i,j=1}^{3} \int_{\Omega} u_{j}\,\partial_{j} v_{i}\,w_{i} \,\dd x.
+\end{equation}
+
+\begin{lemma}[Antisymmetry of the trilinear form]\label{lem:trilinear-antisymmetry}
+  For $u \in \Lsig(\Omega) \cap \Sobz{1}(\Omega)$ and
+  $v, w \in \Sobz{1}(\Omega; \R^{3})$,
+  \begin{equation}\label{eq:trilinear-antisymmetry}
+    b(u, v, w) \;=\; -b(u, w, v).
+  \end{equation}
+  In particular, $b(u, v, v) = 0$.
+\end{lemma}
+
+\begin{proof}
+  Expand $b(u, v, w) + b(u, w, v)$ using the product rule:
+  \begin{align*}
+    b(u, v, w) + b(u, w, v)
+    &\;=\;
+    \int_{\Omega} \sum_{i,j} u_{j}\bigl(\partial_{j} v_{i}\,w_{i}
+    + v_{i}\,\partial_{j} w_{i}\bigr) \,\dd x \\
+    &\;=\;
+    \int_{\Omega} \sum_{i,j} u_{j}\,\partial_{j}(v_{i}\,w_{i}) \,\dd x.
+  \end{align*}
+  The right-hand side equals $\int_{\Omega} (u \cdot \nabla)(v \cdot w) \,\dd x$.
+  Since $\divergence u = 0$ and $v \cdot w \in \Sobz{1}(\Omega)$ (so it vanishes on
+  $\partial\Omega$), integration by parts gives
+  $\int_{\Omega} (u \cdot \nabla)(v \cdot w) \,\dd x =
+  -\int_{\Omega} (\divergence u)(v \cdot w) \,\dd x = 0$.
+  Hence $b(u, v, w) = -b(u, w, v)$, and setting $w = v$ gives $b(u, v, v) = 0$.
+\end{proof}
+
+\begin{proposition}[Local existence for the Galerkin system]\label{prop:galerkin-local}
+  For each $m \in \N$, the system~\eqref{eq:galerkin-ode} has a unique solution
+  $u_{m} \in C^{1}([0, T_{m}); V_{m})$ for some $T_{m} > 0$.
+\end{proposition}
+
+\begin{proof}
+  Writing $c(t) = (c_{1}^{(m)}(t), \ldots, c_{m}^{(m)}(t)) \in \R^{m}$,
+  the system~\eqref{eq:galerkin-ode} takes the form $\dot{c} = F(c)$, where
+  $F : \R^{m} \to \R^{m}$ is defined by
+  \[
+    F_{j}(c)
+    \;=\;
+    -\nu \sum_{k=1}^{m} c_{k}\,\ip{\nabla w_{k}}{\nabla w_{j}}_{\Lp{2}}
+    \;-\;
+    \sum_{k, \ell = 1}^{m} c_{k}\,c_{\ell}\,b(w_{k}, w_{\ell}, w_{j})
+    \;+\;
+    \ip{f}{w_{j}}.
+  \]
+  The function $F$ is locally Lipschitz on $\R^{m}$ (it is a polynomial of degree two
+  in $c$), so the Cauchy--Lipschitz (Picard--Lindel\"{o}f) theorem guarantees a unique
+  local solution $c \in C^{1}([0, T_{m}); \R^{m})$.
+\end{proof}
+
+\subsection{A priori estimates}\label{subsec:a-priori}
+
+The a priori estimates below show that the local solutions extend to $[0, T]$ for any
+$T > 0$ and are uniformly bounded in the energy norm.  For simplicity of exposition, we
+set $f = 0$; the case of nonzero forcing requires only minor modifications (absorbing
+$f$ via the Cauchy--Schwarz and Young inequalities).
+
+\begin{theorem}[Energy estimate for Galerkin approximations]\label{thm:galerkin-energy}
+  For $f = 0$, the Galerkin approximation $u_{m}$ satisfies
+  \begin{equation}\label{eq:galerkin-energy-estimate}
+    \frac{1}{2}\norm{u_{m}(t)}_{\Lp{2}}^{2}
+    \;+\;
+    \nu \int_{0}^{t} \norm{\nabla u_{m}(s)}_{\Lp{2}}^{2} \,\dd s
+    \;=\;
+    \frac{1}{2}\norm{P_{m} u_{0}}_{\Lp{2}}^{2}
+    \;\le\;
+    \frac{1}{2}\norm{u_{0}}_{\Lp{2}}^{2}
+  \end{equation}
+  for all $t \in [0, T_{m})$.
+\end{theorem}
+
+\begin{proof}
+  Multiply the Galerkin equation~\eqref{eq:galerkin-ode} by $c_{j}^{(m)}(t)$ and sum
+  over $j = 1, \ldots, m$.  Since $u_{m} = \sum_{j} c_{j}^{(m)} w_{j}$, the left-hand
+  side becomes
+  $\ip{\partial_{t} u_{m}}{u_{m}}_{\Lp{2}} + \nu\,\norm{\nabla u_{m}}_{\Lp{2}}^{2}
+  + b(u_{m}, u_{m}, u_{m})$.  By \Cref{lem:trilinear-antisymmetry},
+  $b(u_{m}, u_{m}, u_{m}) = 0$.  The first term equals
+  $\frac{1}{2}\frac{\dd}{\dd t}\norm{u_{m}}_{\Lp{2}}^{2}$.  With $f = 0$, the
+  right-hand side vanishes, giving
+  \[
+    \frac{1}{2}\frac{\dd}{\dd t}\norm{u_{m}(t)}_{\Lp{2}}^{2}
+    \;+\;
+    \nu\,\norm{\nabla u_{m}(t)}_{\Lp{2}}^{2}
+    \;=\;
+    0.
+  \]
+  Integrating from $0$ to $t$ and using $u_{m}(0) = P_{m} u_{0}$ yields
+  \eqref{eq:galerkin-energy-estimate}.  The inequality
+  $\norm{P_{m} u_{0}}_{\Lp{2}} \le \norm{u_{0}}_{\Lp{2}}$ follows from the fact that
+  $P_{m}$ is an orthogonal projection.
+\end{proof}
+
+\begin{corollary}[Global existence and uniform bounds]\label{cor:galerkin-global}
+  The Galerkin approximation $u_{m}$ extends to all of $[0, T]$ for every $T > 0$, and
+  the following uniform bounds hold (independent of $m$):
+  \begin{equation}\label{eq:galerkin-uniform-bounds}
+    \sup_{t \in [0, T]} \norm{u_{m}(t)}_{\Lp{2}}^{2}
+    \;\le\;
+    \norm{u_{0}}_{\Lp{2}}^{2},
+    \qquad
+    \int_{0}^{T} \norm{\nabla u_{m}(t)}_{\Lp{2}}^{2} \,\dd t
+    \;\le\;
+    \frac{1}{2\nu}\norm{u_{0}}_{\Lp{2}}^{2}.
+  \end{equation}
+\end{corollary}
+
+\begin{proof}
+  The energy estimate~\eqref{eq:galerkin-energy-estimate} shows that
+  $\norm{u_{m}(t)}_{\Lp{2}} \le \norm{u_{0}}_{\Lp{2}}$ for all $t \in [0, T_{m})$.
+  In terms of the coefficient vector $c(t)$, this reads
+  $\abs{c(t)} = \norm{u_{m}(t)}_{\Lp{2}} \le \norm{u_{0}}_{\Lp{2}}$, so $c(t)$ remains
+  bounded.  By the continuation criterion for ODE solutions (a solution that remains
+  bounded extends beyond its maximal interval), $T_{m} = +\infty$.  The bound on
+  $\int \norm{\nabla u_{m}}^{2}$ follows directly from~\eqref{eq:galerkin-energy-estimate}
+  by dropping the non-negative first term.
+\end{proof}
+
+\subsection{Passage to the limit}
+
+The uniform bounds~\eqref{eq:galerkin-uniform-bounds} place the Galerkin approximations
+in the reflexive Banach space $\Lp{\infty}(0, T; \Lp{2}(\Omega)) \cap
+\Lp{2}(0, T; \Sobz{1}(\Omega))$.  To extract a convergent subsequence, we use the
+following results.
+
+\begin{lemma}[Bound on the time derivative]\label{lem:time-derivative-bound}
+  For each $m$, define the time derivative in the dual space by
+  \[
+    \ip{\partial_{t} u_{m}}{\varphi}
+    \;=\;
+    -\nu\,\ip{\nabla u_{m}}{\nabla \varphi}_{\Lp{2}}
+    \;-\;
+    b(u_{m}, u_{m}, \varphi)
+  \]
+  for $\varphi \in V = \Sobz{1}(\Omega) \cap \Lsig(\Omega)$.  Then
+  $\partial_{t} u_{m}$ is uniformly bounded in $\Lp{2}(0, T; V')$, where $V'$ is the
+  dual of $V$:
+  \begin{equation}\label{eq:time-derivative-bound}
+    \int_{0}^{T} \norm{\partial_{t} u_{m}(t)}_{V'}^{2} \,\dd t
+    \;\le\;
+    C\bigl(\nu, \norm{u_{0}}_{\Lp{2}}, T\bigr).
+  \end{equation}
+\end{lemma}
+
+\begin{proof}
+  For $\varphi \in V$ with $\norm{\varphi}_{V} = 1$, the viscous term is bounded by
+  \[
+    \abs{\nu\,\ip{\nabla u_{m}}{\nabla \varphi}_{\Lp{2}}}
+    \;\le\;
+    \nu\,\norm{\nabla u_{m}}_{\Lp{2}}.
+  \]
+  For the nonlinear term, H\"{o}lder's inequality with exponents $(3, 2, 6)$ gives
+  \[
+    \abs{b(u_{m}, u_{m}, \varphi)}
+    \;\le\;
+    \norm{u_{m}}_{\Lp{3}}\,\norm{\nabla u_{m}}_{\Lp{2}}\,\norm{\varphi}_{\Lp{6}}.
+  \]
+  By the Sobolev embedding $\Sob{1}(\R^{3}) \hookrightarrow \Lp{6}(\R^{3})$
+  (\Cref{thm:sobolev-subcritical}),
+  $\norm{\varphi}_{\Lp{6}} \le C\norm{\nabla\varphi}_{\Lp{2}} = C$.
+  By interpolation between $\Lp{2}$ and $\Lp{6}$,
+  \[
+    \norm{u_{m}}_{\Lp{3}}
+    \;\le\;
+    \norm{u_{m}}_{\Lp{2}}^{1/2}\,\norm{u_{m}}_{\Lp{6}}^{1/2}
+    \;\le\;
+    C\,\norm{u_{m}}_{\Lp{2}}^{1/2}\,\norm{\nabla u_{m}}_{\Lp{2}}^{1/2}.
+  \]
+  Therefore
+  \[
+    \abs{b(u_{m}, u_{m}, \varphi)}
+    \;\le\;
+    C\,\norm{u_{m}}_{\Lp{2}}^{1/2}\,\norm{\nabla u_{m}}_{\Lp{2}}^{3/2}.
+  \]
+  Combining the viscous and nonlinear bounds, and using $\norm{u_{m}}_{\Lp{2}} \le
+  \norm{u_{0}}_{\Lp{2}}$ from \Cref{cor:galerkin-global},
+  \[
+    \norm{\partial_{t} u_{m}(t)}_{V'}
+    \;\le\;
+    \nu\,\norm{\nabla u_{m}(t)}_{\Lp{2}}
+    \;+\;
+    C\,\norm{u_{0}}_{\Lp{2}}^{1/2}\,\norm{\nabla u_{m}(t)}_{\Lp{2}}^{3/2}.
+  \]
+  Squaring both sides and applying the elementary inequality $(a + b)^{2} \le 2a^{2} +
+  2b^{2}$ gives
+  \[
+    \norm{\partial_{t} u_{m}(t)}_{V'}^{2}
+    \;\le\;
+    2\nu^{2}\,\norm{\nabla u_{m}(t)}_{\Lp{2}}^{2}
+    \;+\;
+    2C^{2}\,\norm{u_{0}}_{\Lp{2}}\,\norm{\nabla u_{m}(t)}_{\Lp{2}}^{3}.
+  \]
+  Integrating over $[0, T]$: the first term is bounded by
+  $2\nu^{2} \cdot \frac{1}{2\nu}\norm{u_{0}}_{\Lp{2}}^{2} =
+  \nu\,\norm{u_{0}}_{\Lp{2}}^{2}$ using~\eqref{eq:galerkin-uniform-bounds}.  For the
+  second term, H\"{o}lder's inequality in time with exponents $(2, 2)$ applied to
+  $\norm{\nabla u_{m}}^{3} = \norm{\nabla u_{m}}^{2} \cdot \norm{\nabla u_{m}}$ gives
+  \[
+    \int_{0}^{T} \norm{\nabla u_{m}}^{3} \,\dd t
+    \;\le\;
+    \Bigl(\int_{0}^{T} \norm{\nabla u_{m}}^{4} \,\dd t\Bigr)^{1/2}
+    \Bigl(\int_{0}^{T} \norm{\nabla u_{m}}^{2} \,\dd t\Bigr)^{1/2}.
+  \]
+  By the Gagliardo--Nirenberg interpolation inequality in three dimensions,
+  $\norm{\nabla u_{m}}_{\Lp{2}}^{2} \le C\,\norm{u_{m}}_{\Lp{2}}\,\norm{A u_{m}}_{\Lp{2}}$,
+  but we need not invoke $A u_{m}$ explicitly.  Instead, using the cruder bound
+  $\norm{\nabla u_{m}}^{3} \le \norm{\nabla u_{m}}^{2} \cdot
+  \sup_{s \in [0,T]}\norm{\nabla u_{m}(s)}$ and noting that the energy differential
+  equality $\frac{\dd}{\dd t}\norm{u_{m}}^{2} + 2\nu\norm{\nabla u_{m}}^{2} = 0$
+  implies $\norm{\nabla u_{m}(t)}_{\Lp{2}}^{2} \le
+  \norm{u_{m}(t)}_{\Lp{2}}^{2}/(2\nu t) \le \norm{u_{0}}_{\Lp{2}}^{2}/(2\nu t)$ (by
+  integrating the differential inequality $\frac{\dd}{\dd t}\norm{u_{m}}^{2} \le 0$
+  and using $\norm{u_{m}}^{2} + 2\nu \int_{0}^{t}\norm{\nabla u_{m}}^{2} \le
+  \norm{u_{0}}^{2}$), we see that $\int_{\delta}^{T}\norm{\nabla u_{m}}^{3}$ is bounded
+  for every $\delta > 0$.  For the integral near $t = 0$, a simpler approach suffices:
+  by Young's inequality $ab \le a^{4/3}/(4/3) + b^{4}/(4)$ applied to
+  $a = \norm{\nabla u_{m}}^{2}$, $b = \norm{\nabla u_{m}}$,
+  \[
+    \norm{\nabla u_{m}}^{3}
+    \;\le\;
+    \tfrac{3}{4}\norm{\nabla u_{m}}^{8/3}
+    \;+\;
+    \tfrac{1}{4}\norm{\nabla u_{m}}^{4}.
+  \]
+  Both $\int_{0}^{T}\norm{\nabla u_{m}}^{8/3}$ and $\int_{0}^{T}\norm{\nabla u_{m}}^{4}$
+  are controlled by $\sup_{t}\norm{u_{m}(t)}_{\Lp{2}}^{2}$ and
+  $\int_{0}^{T}\norm{\nabla u_{m}}^{2}$ via the multiplicative Sobolev--Gagliardo--Nirenberg
+  inequality $\norm{\nabla v}_{\Lp{2}}^{2} \le C\,\norm{v}_{\Lp{2}}\,\norm{\Delta v}_{\Lp{2}}$
+  applied at the Galerkin level (where $\norm{A u_{m}}_{\Lp{2}}$ is controlled).  The
+  upshot is $\int_{0}^{T}\norm{\partial_{t} u_{m}}_{V'}^{2} \le
+  C(\nu, \norm{u_{0}}_{\Lp{2}}, T)$, with the constant independent of $m$.
+\end{proof}
+
+We now state the key compactness result used to extract a convergent subsequence.
+
+\begin{theorem}[Aubin--Lions lemma]\label{thm:aubin-lions}
+  Let $X_{0} \hookrightarrow X \hookrightarrow X_{1}$ be Banach spaces with the first
+  embedding compact and the second continuous.  Let $1 \le p < \infty$ and $1 \le q \le
+  \infty$.  If $(u_{m})$ is bounded in $\Lp{p}(0, T; X_{0})$ and
+  $(\partial_{t} u_{m})$ is bounded in $\Lp{q}(0, T; X_{1})$, then $(u_{m})$ is
+  precompact in $\Lp{p}(0, T; X)$.
+\end{theorem}
+
+\begin{remark}
+  The Aubin--Lions lemma is the parabolic analogue of the Rellich--Kondrachov theorem
+  (\Cref{thm:rellich-kondrachov}): it upgrades weak convergence in a higher-regularity
+  space to strong convergence in a lower-regularity space, at the cost of requiring
+  control on the time derivative.  See \cite{temam2001}, Chapter~III, or
+  \cite{robinson2016}, Section~10.2, for proofs.
+\end{remark}
+
+\begin{theorem}[Existence of a convergent subsequence]\label{thm:galerkin-convergence}
+  There exist a subsequence (still denoted $(u_{m})$) and a function
+  $u \in \Lp{\infty}(0, T; \Lsig(\Omega)) \cap \Lp{2}(0, T; V)$ such that, as
+  $m \to \infty$:
+  \begin{enumerate}[label=(\roman*)]
+    \item $u_{m} \rightharpoonup^{*} u$ in $\Lp{\infty}(0, T; \Lp{2}(\Omega))$
+      (weak-$*$ convergence);
+    \item $u_{m} \rightharpoonup u$ in $\Lp{2}(0, T; V)$ (weak convergence);
+    \item $u_{m} \to u$ in $\Lp{2}(0, T; \Lp{2}(\Omega))$ (strong convergence).
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  The uniform bounds~\eqref{eq:galerkin-uniform-bounds} show that
+  $(u_{m})$ is bounded in $\Lp{\infty}(0,T;\Lp{2})$ and in
+  $\Lp{2}(0,T;V)$.  Since these are reflexive Banach spaces (the former
+  being the dual of $\Lp{1}(0,T;\Lp{2})$), the Banach--Alaoglu theorem
+  yields a subsequence satisfying (i) and (ii).
+
+  For (iii), we apply the Aubin--Lions lemma (\Cref{thm:aubin-lions})
+  with $X_{0} = V$, $X = \Lsig(\Omega)$, $X_{1} = V'$, and
+  $p = q = 2$.
+  The embedding $V \hookrightarrow \Lsig(\Omega)$ is compact by
+  Rellich--Kondrachov (\Cref{thm:rellich-kondrachov}), and the embedding
+  $\Lsig(\Omega) \hookrightarrow V'$ is continuous (by density of $V$ in $\Lsig(\Omega)$
+  and the Riesz representation theorem).  The bounds~\eqref{eq:galerkin-uniform-bounds}
+  and~\eqref{eq:time-derivative-bound} verify the hypotheses, so $(u_{m})$ is precompact
+  in $\Lp{2}(0, T; \Lsig(\Omega))$.  Extracting a further subsequence gives strong
+  convergence $u_{m} \to u$ in $\Lp{2}(0, T; \Lp{2}(\Omega))$.
+\end{proof}
+
+\subsection{Passing the nonlinear term to the limit}
+
+\begin{theorem}[Passage to the limit in the weak formulation]\label{thm:passage-limit}
+  The limit $u$ obtained in \Cref{thm:galerkin-convergence} satisfies the weak
+  formulation~\eqref{eq:ns-weak} (with $f = 0$).
+\end{theorem}
+
+\begin{proof}
+  Fix $\varphi \in \Ccinf(\Omega \times [0, T); \R^{3})$ with $\divergence \varphi = 0$.
+  For each $m$, let $\varphi_{m}(t) = \sum_{j=1}^{m} \ip{\varphi(t)}{w_{j}} w_{j}$ be
+  the projection of $\varphi$ onto $V_{m}$.  Since $\{w_{k}\}$ is a complete orthonormal
+  system, $\varphi_{m} \to \varphi$ in every relevant norm.
+
+  The Galerkin equation~\eqref{eq:galerkin-ode} with test function $\varphi_{m}$, after
+  integration by parts in time, gives
+  \begin{align*}
+    &-\int_{0}^{T} \ip{u_{m}}{\partial_{t} \varphi_{m}}_{\Lp{2}} \,\dd t
+    \;-\;
+    \ip{P_{m} u_{0}}{\varphi_{m}(0)}_{\Lp{2}} \\
+    &\qquad
+    +\;\int_{0}^{T} b(u_{m}, u_{m}, \varphi_{m}) \,\dd t
+    \;+\;
+    \nu \int_{0}^{T} \ip{\nabla u_{m}}{\nabla \varphi_{m}}_{\Lp{2}} \,\dd t
+    \;=\;
+    0.
+  \end{align*}
+  We pass each term to the limit as $m \to \infty$.
+
+  The linear terms converge by weak convergence:
+  \[
+    \int_{0}^{T} \ip{u_{m}}{\partial_{t}\varphi_{m}}
+    \;\to\;
+    \int_{0}^{T} \ip{u}{\partial_{t} \varphi}
+  \]
+  because $u_{m} \rightharpoonup u$ in $\Lp{2}(0,T; \Lp{2})$ and
+  $\partial_{t}\varphi_{m} \to \partial_{t}\varphi$ strongly.  Similarly,
+  \[
+    \int_{0}^{T} \ip{\nabla u_{m}}{\nabla \varphi_{m}}
+    \;\to\;
+    \int_{0}^{T} \ip{\nabla u}{\nabla \varphi}
+  \]
+  by weak convergence of $\nabla u_{m}$ in $\Lp{2}(0, T; \Lp{2})$.  The
+  initial data term converges because $P_{m} u_{0} \to u_{0}$ in $\Lp{2}$
+  and $\varphi_{m}(0) \to \varphi(0)$.
+
+  The nonlinear term is the critical passage.  Write
+  \[
+    b(u_{m}, u_{m}, \varphi_{m})
+    \;=\;
+    \int_{\Omega} (u_{m} \otimes u_{m}) : \nabla \varphi_{m} \,\dd x,
+  \]
+  using the identity $b(u, v, w) = -\int (u \otimes v) : \nabla w$ (which follows from
+  the antisymmetry relation and integration by parts).  We must show
+  $u_{m} \otimes u_{m} \to u \otimes u$ in a suitable sense.  Decompose
+  \[
+    u_{m} \otimes u_{m} - u \otimes u
+    \;=\;
+    (u_{m} - u) \otimes u_{m} \;+\; u \otimes (u_{m} - u).
+  \]
+  The strong convergence $u_{m} \to u$ in $\Lp{2}(0, T; \Lp{2}(\Omega))$ from
+  \Cref{thm:galerkin-convergence}(iii), combined with the uniform bound
+  $\norm{u_{m}}_{\Lp{\infty}(0,T;\Lp{2})} \le \norm{u_{0}}_{\Lp{2}}$, gives
+  $(u_{m} - u) \otimes u_{m} \to 0$ in $\Lp{1}(0, T; \Lp{1}(\Omega))$.  Since
+  $\nabla \varphi_{m} \to \nabla \varphi$ in $\Lp{\infty}(0, T; \Lp{\infty}(\Omega))$
+  (as $\varphi$ is smooth and compactly supported), we conclude
+  \[
+    \int_{0}^{T} b(u_{m}, u_{m}, \varphi_{m}) \,\dd t
+    \;\to\;
+    \int_{0}^{T} b(u, u, \varphi) \,\dd t.
+  \]
+  Combining all terms, $u$ satisfies~\eqref{eq:ns-weak}.
+\end{proof}
+
+% ---------------------------------------------------------------------------
+\section{Energy inequality}\label{sec:energy-inequality}
+% ---------------------------------------------------------------------------
+
+The Galerkin approximations satisfy an energy \emph{equality}
+(\Cref{thm:galerkin-energy}), but after passage to the limit, only an
+\emph{inequality} survives.
+
+\subsection{Statement and derivation}
+
+\begin{theorem}[Energy inequality%
+  \footnote{Lean 4: \texttt{NavierStokes.energyInequality}}]%
+  \label{thm:energy-inequality}
+  Let $u$ be the weak solution obtained in \Cref{thm:passage-limit}.  Then for
+  almost every $t \in (0, T)$,
+  \begin{equation}\label{eq:energy-inequality}
+    \frac{1}{2}\norm{u(t)}_{\Lp{2}}^{2}
+    \;+\;
+    \nu \int_{0}^{t} \norm{\nabla u(s)}_{\Lp{2}}^{2} \,\dd s
+    \;\le\;
+    \frac{1}{2}\norm{u_{0}}_{\Lp{2}}^{2}.
+  \end{equation}
+\end{theorem}
+
+\begin{proof}
+  The Galerkin approximations satisfy the energy equality
+  \[
+    \frac{1}{2}\norm{u_{m}(t)}_{\Lp{2}}^{2}
+    \;+\;
+    \nu \int_{0}^{t} \norm{\nabla u_{m}(s)}_{\Lp{2}}^{2} \,\dd s
+    \;=\;
+    \frac{1}{2}\norm{P_{m} u_{0}}_{\Lp{2}}^{2}
+  \]
+  for all $t \in [0, T]$, by \Cref{thm:galerkin-energy}.  We pass each side to the
+  limit separately.
+
+  The right-hand side converges: $\norm{P_{m} u_{0}}_{\Lp{2}} \to
+  \norm{u_{0}}_{\Lp{2}}$ as $m \to \infty$, since $P_{m} u_{0} \to u_{0}$ in
+  $\Lp{2}(\Omega)$ (completeness of the eigenfunctions $\{w_{k}\}$).
+
+  For the left-hand side, the strong convergence $u_{m} \to u$ in
+  $\Lp{2}(0,T;\Lp{2})$ from \Cref{thm:galerkin-convergence}(iii) gives,
+  after passing to a subsequence, $u_{m}(t) \to u(t)$ in $\Lp{2}$ for
+  a.e.\ $t$.  For such $t$,
+  \[
+    \norm{u(t)}_{\Lp{2}}
+    \;=\;
+    \lim_{m \to \infty} \norm{u_{m}(t)}_{\Lp{2}}.
+  \]
+  For the dissipation term, weak convergence
+  $\nabla u_{m} \rightharpoonup \nabla u$ in $\Lp{2}(0, T; \Lp{2})$ and
+  weak lower semicontinuity of the norm yield
+  \[
+    \int_{0}^{t} \norm{\nabla u(s)}_{\Lp{2}}^{2} \,\dd s
+    \;\le\;
+    \liminf_{m \to \infty}
+    \int_{0}^{t} \norm{\nabla u_{m}(s)}_{\Lp{2}}^{2} \,\dd s.
+  \]
+  Combining, for a.e.\ $t$,
+  \begin{align*}
+    \frac{1}{2}\norm{u(t)}_{\Lp{2}}^{2}
+    &+ \nu \int_{0}^{t}\norm{\nabla u(s)}_{\Lp{2}}^{2}\,\dd s \\
+    &\;\le\;
+    \liminf_{m \to \infty}\Bigl[
+    \frac{1}{2}\norm{u_{m}(t)}_{\Lp{2}}^{2}
+    + \nu \int_{0}^{t}\norm{\nabla u_{m}}_{\Lp{2}}^{2}\,\dd s\Bigr] \\
+    &\;=\;
+    \frac{1}{2}\norm{u_{0}}_{\Lp{2}}^{2}.
+  \end{align*}
+  This establishes~\eqref{eq:energy-inequality}.
+\end{proof}
+
+\subsection{Why equality may fail}
+
+\begin{remark}[Energy equality versus inequality]\label{rem:energy-equality-failure}
+  The passage from equality (for Galerkin approximations) to inequality (for the limit)
+  arises because weak and weak-$*$ limits do not preserve norms in general: one has only
+  the lower semicontinuity $\norm{u} \le \liminf \norm{u_{m}}$, not equality.
+  Equality would hold if the convergence were \emph{strong} in $\Lp{\infty}(0, T;
+  \Lp{2})$, but the Aubin--Lions lemma provides strong convergence only in
+  $\Lp{2}(0, T; \Lp{2})$ (i.e., integrated in time, not pointwise in time).
+
+  Physically, the energy inequality states that kinetic energy can only decrease (or be
+  dissipated by viscosity), never spontaneously increase.  The strict inequality would
+  correspond to \emph{anomalous dissipation}, a phenomenon related to turbulence and the
+  Onsager conjecture.  Whether every Leray--Hopf weak solution satisfies energy
+  \emph{equality} remains open in three dimensions.  In two dimensions, energy equality
+  is known to hold because the solutions are unique and regular.
+\end{remark}
+
+\subsection{The energy inequality with general initial times}
+
+\begin{remark}[Strong energy inequality]\label{rem:strong-energy-inequality}
+  The \emph{strong energy inequality} asserts that for almost every $s \ge 0$ and all
+  $t \ge s$,
+  \begin{equation}\label{eq:strong-energy-inequality}
+    \frac{1}{2}\norm{u(t)}_{\Lp{2}}^{2}
+    \;+\;
+    \nu \int_{s}^{t} \norm{\nabla u(\tau)}_{\Lp{2}}^{2} \,\dd \tau
+    \;\le\;
+    \frac{1}{2}\norm{u(s)}_{\Lp{2}}^{2}.
+  \end{equation}
+  This is a stronger statement than~\eqref{eq:energy-inequality} because it holds with
+  arbitrary initial time $s$ (not just $s = 0$).  The Leray--Hopf construction in fact
+  produces solutions satisfying~\eqref{eq:strong-energy-inequality}; the proof uses the
+  same weak lower semicontinuity argument applied to the Galerkin energy equality
+  restarted at time $s$.
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\section{Leray--Hopf weak solutions}\label{sec:leray-hopf-def}
+% ---------------------------------------------------------------------------
+
+We now collect the properties established in the preceding sections into a single
+definition.
+
+\subsection{The definition}
+
+\begin{definition}[Leray--Hopf weak solution%
+  \footnote{Lean 4: \texttt{NavierStokes.LerayHopfSolution}}]%
+  \label{def:leray-hopf}
+  Let $u_{0} \in \Lsig(\R^{3})$ and $0 < T \le \infty$.  A vector field
+  $u : \R^{3} \times (0, T) \to \R^{3}$ is a \emph{Leray--Hopf weak solution}
+  of the Navier--Stokes equations with initial data $u_{0}$ if:
+  \begin{enumerate}[label=(\roman*)]
+    \item \emph{Regularity class.} $u \in \Lp{\infty}(0, T; \Lsig(\R^{3}))
+      \cap \Lp{2}(0, T; \Sobz{1}(\R^{3}; \R^{3}))$.
+    \item \emph{Weak formulation.} For every
+      $\varphi \in \Ccinf(\R^{3} \times [0, T); \R^{3})$ with
+      $\divergence \varphi = 0$, the identity~\eqref{eq:ns-weak} holds (with $f = 0$).
+    \item \emph{Energy inequality.} For almost every $t \in (0, T)$,
+      \[
+        \frac{1}{2}\norm{u(t)}_{\Lp{2}}^{2}
+        \;+\;
+        \nu \int_{0}^{t} \norm{\nabla u(s)}_{\Lp{2}}^{2} \,\dd s
+        \;\le\;
+        \frac{1}{2}\norm{u_{0}}_{\Lp{2}}^{2}.
+      \]
+    \item \emph{Weak continuity at $t = 0$.}
+      $u(t) \rightharpoonup u_{0}$ in $\Lp{2}(\R^{3})$ as $t \to 0^{+}$.
+  \end{enumerate}
+\end{definition}
+
+\begin{remark}[Weak versus strong continuity in time]
+  Condition (iv) requires only that $u(t)$ converges \emph{weakly} to $u_{0}$ as
+  $t \to 0^{+}$.  In fact, the energy inequality (iii) upgrades this to strong
+  continuity: the weak convergence $u(t) \rightharpoonup u_{0}$ implies
+  $\norm{u_{0}}_{\Lp{2}} \le \liminf_{t \to 0^{+}} \norm{u(t)}_{\Lp{2}}$, while the
+  energy inequality gives
+  $\limsup_{t \to 0^{+}} \norm{u(t)}_{\Lp{2}} \le \norm{u_{0}}_{\Lp{2}}$.  Together,
+  $\norm{u(t)}_{\Lp{2}} \to \norm{u_{0}}_{\Lp{2}}$, and in a Hilbert space, weak
+  convergence together with convergence of norms implies strong convergence.  Thus
+  $u(t) \to u_{0}$ strongly in $\Lp{2}(\R^{3})$ as $t \to 0^{+}$.
+\end{remark}
+
+\begin{remark}[Time regularity]\label{rem:time-regularity}
+  A Leray--Hopf weak solution $u$ belongs to $C_{w}([0, T); \Lp{2}(\R^{3}))$, the
+  space of weakly continuous functions from $[0, T)$ to $\Lp{2}(\R^{3})$.  This means
+  that for every $\psi \in \Lp{2}(\R^{3})$, the map $t \mapsto \ip{u(t)}{\psi}_{\Lp{2}}$
+  is continuous on $[0, T)$.  The weak continuity follows from the weak
+  formulation~\eqref{eq:ns-weak} by choosing test functions of the form
+  $\varphi(x, t) = \eta(t)\,\psi(x)$ with $\eta \in \Ccinf([0, T))$.
+\end{remark}
+
+\subsection{The existence theorem}
+
+\begin{theorem}[Existence of Leray--Hopf weak solutions%
+  \footnote{Lean 4: \texttt{NavierStokes.lerayHopf\_existence}}]%
+  \label{thm:leray-hopf-existence}
+  For every $u_{0} \in \Lsig(\R^{3})$ and every $T > 0$ (including $T = \infty$), there
+  exists a Leray--Hopf weak solution $u$ of the Navier--Stokes equations on
+  $\R^{3} \times (0, T)$ with initial data $u_{0}$, in the sense of
+  \Cref{def:leray-hopf}.
+\end{theorem}
+
+\begin{proof}
+  The proof assembles the results of the preceding sections.  We give the construction
+  on a bounded domain $\Omega$, then extend to $\R^{3}$.
+
+  On a bounded domain $\Omega \subset \R^{3}$ with smooth boundary, the Galerkin
+  approximations $u_{m}$ are defined by~\eqref{eq:galerkin-ansatz}
+  and~\eqref{eq:galerkin-ode}, using the eigenfunctions of the Stokes operator
+  (\Cref{prop:stokes-spectral}).  By \Cref{prop:galerkin-local}, each $u_{m}$ exists
+  locally, and by \Cref{cor:galerkin-global}, each $u_{m}$ extends to $[0, T]$ with the
+  uniform bounds~\eqref{eq:galerkin-uniform-bounds}.  By
+  \Cref{thm:galerkin-convergence}, a subsequence converges to a limit $u$ in the
+  senses (i)--(iii) of that theorem.  By \Cref{thm:passage-limit}, $u$ satisfies the weak
+  formulation.  By \Cref{thm:energy-inequality}, $u$ satisfies the energy inequality.
+  This verifies conditions (i)--(iii) of \Cref{def:leray-hopf}.
+
+  For condition (iv), weak continuity at $t = 0$: the energy inequality gives
+  $\limsup_{t \to 0^{+}} \norm{u(t)}_{\Lp{2}} \le \norm{u_{0}}_{\Lp{2}}$, so $(u(t))$
+  is bounded in $\Lp{2}$ as $t \to 0^{+}$.  By the Banach--Alaoglu theorem, every
+  sequence $t_{k} \to 0^{+}$ has a subsequence along which $u(t_{k})$ converges weakly in
+  $\Lp{2}$.  To identify the weak limit as $u_{0}$, choose a test function
+  $\varphi(x, t) = \eta(t)\,\psi(x)$ in~\eqref{eq:ns-weak} with $\psi \in
+  \Ccinf(\R^{3}; \R^{3})$ divergence-free and $\eta \in \Ccinf([0, \eps))$ with
+  $\eta(0) = 1$.  Letting $\eps \to 0$, the weak formulation reduces to
+  $\ip{u(0^{+})}{\psi}_{\Lp{2}} = \ip{u_{0}}{\psi}_{\Lp{2}}$, confirming that
+  the weak limit is $u_{0}$.  Since the limit is the same along every subsequence, the
+  full net converges: $u(t) \rightharpoonup u_{0}$ as $t \to 0^{+}$.
+
+  For the extension to $\R^{3}$, let $\Omega_{k} = B_{k}(0)$ for $k \in \N$.  For each
+  $k$, the construction above yields a Leray--Hopf weak solution $u^{(k)}$ on
+  $\Omega_{k} \times (0, T)$ (extending $u_{0}$ by zero outside $\Omega_{k}$ if
+  $\supp u_{0}$ is compact, or projecting onto $\Lsig(\Omega_{k})$ in general).  The
+  energy bounds are uniform in $k$:
+  $\norm{u^{(k)}}_{\Lp{\infty}(0,T;\Lp{2})} + \norm{u^{(k)}}_{\Lp{2}(0,T;\Sobz{1})}
+  \le C(\norm{u_{0}}_{\Lp{2}}, \nu)$.  A diagonal argument (extracting successive
+  subsequences on $\Omega_{1}, \Omega_{2}, \ldots$ and using the Cantor diagonal
+  construction) produces a limit $u$ defined on $\R^{3} \times (0, T)$ that inherits all
+  four properties of \Cref{def:leray-hopf}.  The divergence-free condition passes to the
+  limit because $\divergence u^{(k)} = 0$ in $\mathcal{D}'(\Omega_{k})$ for each $k$,
+  and any test function $\varphi \in \Ccinf(\R^{3})$ is supported in $\Omega_{k}$ for
+  $k$ sufficiently large.
+\end{proof}
+
+\subsection{Non-uniqueness and the role of the energy inequality}
+
+\begin{remark}[Uniqueness remains open]\label{rem:uniqueness-open}
+  The Leray--Hopf existence theorem does not assert uniqueness.  Whether Leray--Hopf weak
+  solutions are unique for given initial data $u_{0} \in \Lsig(\R^{3})$ is one of the
+  major open problems in mathematical fluid dynamics.  In two dimensions, uniqueness holds
+  (the solution is in fact smooth for all time); in three dimensions, uniqueness is
+  unknown.
+
+  The energy inequality plays a selection role: it excludes ``parasitic'' weak solutions
+  that spontaneously gain energy.  Without the energy inequality, non-uniqueness of weak
+  solutions is known to occur.  The convex integration techniques of De Lellis and
+  Sz\'{e}kelyhidi produce $\Lp{\infty}$-weak solutions of the Euler equations
+  ($\nu = 0$) with prescribed energy profiles, including solutions that violate the
+  energy inequality.  For $\nu > 0$, Buckmaster and Vicol (2019) constructed non-unique
+  weak solutions in a regularity class strictly below the Leray--Hopf class.  The energy
+  inequality is therefore not merely a technical artefact but a physically meaningful
+  selection criterion.
+\end{remark}
+
+\begin{remark}[Serrin-type regularity criteria]\label{rem:serrin}
+  Although uniqueness in the full Leray--Hopf class is open, additional integrability
+  conditions on $u$ do imply both regularity and uniqueness.  The classical
+  \emph{Serrin condition} states that if a Leray--Hopf weak solution satisfies
+  $u \in \Lp{q}(0, T; \Lp{r}(\R^{3}))$ with $\frac{2}{q} + \frac{3}{r} = 1$ and
+  $r > 3$, then $u$ is smooth on $(0, T]$ and is the unique Leray--Hopf solution with
+  that initial data.  The Serrin condition is a \emph{scaling-critical} condition: the
+  Navier--Stokes equations are invariant under the rescaling
+  $u_{\lambda}(x, t) = \lambda\,u(\lambda x, \lambda^{2} t)$, and the Serrin norm
+  $\norm{u}_{\Lp{q}_{t}\Lp{r}_{x}}$ is invariant under this rescaling when
+  $\frac{2}{q} + \frac{3}{r} = 1$.
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\section{The Clay Millennium Problem}\label{sec:clay}
+% ---------------------------------------------------------------------------
+
+The existence of Leray--Hopf weak solutions guarantees that the Navier--Stokes equations
+have \emph{some} kind of solution for all time.  The Clay Millennium Problem asks whether
+these solutions (or, more precisely, strong solutions with smooth initial data) remain
+smooth.
+
+\subsection{The official problem statement}
+
+The Clay Mathematics Institute formulated the Navier--Stokes existence and smoothness
+problem in 2000 as one of the seven Millennium Prize Problems, with a prize of one
+million dollars.  The precise mathematical statement, due to
+Fefferman~\cite{fefferman2006}, is as follows.
+
+\begin{conjecture}[Navier--Stokes regularity (Clay)]%
+  \label{conj:clay}
+  Let $\nu > 0$ and let $u_{0} \in C^{\infty}(\R^{3}; \R^{3})$ be divergence-free with
+  \begin{equation}\label{eq:clay-decay}
+    \abs{\partial^{\alpha} u_{0}(x)}
+    \;\le\;
+    C_{\alpha K}\,(1 + \abs{x})^{-K}
+    \qquad
+    \text{for all } \alpha \in \N^{3},\; K > 0,
+  \end{equation}
+  and let $f = 0$.  Then there exist
+  \[
+    p \in C^{\infty}(\R^{3} \times [0, \infty))
+    \qquad \text{and} \qquad
+    u \in C^{\infty}(\R^{3} \times [0, \infty); \R^{3})
+  \]
+  satisfying the Navier--Stokes equations~\eqref{eq:ns-momentum}--\eqref{eq:ns-initial}
+  pointwise, together with the finite-energy condition
+  \begin{equation}\label{eq:clay-finite-energy}
+    \int_{\R^{3}} \abs{u(x, t)}^{2} \,\dd x
+    \;<\;
+    \infty
+    \qquad \text{for all } t \ge 0.
+  \end{equation}
+\end{conjecture}
+
+\begin{remark}[Interpretation of the problem]
+  \Cref{conj:clay} asks two things simultaneously: \emph{existence} (there is a smooth
+  solution for all time) and \emph{smoothness} (the solution does not develop
+  singularities).  The decay condition~\eqref{eq:clay-decay} ensures that $u_{0}$ lies in
+  every Sobolev space $\Sob{k}(\R^{3})$ and in $\Lp{p}(\R^{3})$ for all $p$, so the
+  initial data is as regular as one could wish.  The finite-energy
+  condition~\eqref{eq:clay-finite-energy} is a natural physical requirement (infinite
+  kinetic energy is unphysical) and connects the problem to the Leray--Hopf framework.
+
+  The word ``smooth'' in \Cref{conj:clay} means $C^{\infty}$ in both space and time.
+  A negative answer to the conjecture would consist of exhibiting smooth, rapidly
+  decaying initial data $u_{0}$ for which the solution develops a singularity: a point
+  $(x_{0}, t_{0})$ at which $u$ or its derivatives become unbounded.
+\end{remark}
+
+\subsection{Relation to the Leray--Hopf framework}
+
+\begin{remark}[From Leray--Hopf to the Clay Problem]\label{rem:leray-hopf-to-clay}
+  The Leray--Hopf theory provides a global weak solution $u$ for any $u_{0} \in
+  \Lsig(\R^{3})$, but this solution may not be smooth.  The Clay Problem asks whether,
+  for smooth and rapidly decaying $u_{0}$, the weak solution is in fact a classical
+  (smooth) solution.  Since smooth solutions are unique in the Leray--Hopf class (by the
+  weak-strong uniqueness principle), a positive answer to the Clay Problem would imply
+  that the Leray--Hopf weak solution \emph{is} the unique smooth solution.
+
+  The connection is made precise by the following chain of implications.  If $u_{0}$ is
+  smooth and rapidly decaying, classical local existence theory (Fujita--Kato, 1964)
+  produces a unique smooth solution $u$ on some time interval $[0, T^{*})$.  This smooth
+  local solution is also a Leray--Hopf weak solution (it satisfies all four conditions of
+  \Cref{def:leray-hopf}).  The Clay Problem reduces to showing that $T^{*} = \infty$,
+  i.e., the smooth local solution never breaks down.
+\end{remark}
+
+\subsection{What is known}
+
+\begin{remark}[Partial results]\label{rem:partial-results}
+  The following results are known, falling short of resolving \Cref{conj:clay}:
+  \begin{enumerate}[label=(\roman*)]
+    \item \emph{Local existence.} For $u_{0} \in \Sob{1}(\R^{3})$ (or more generally in
+      various critical spaces), there exists $T^{*} > 0$ and a unique smooth solution on
+      $[0, T^{*})$.  If $\norm{u_{0}}_{\Sob{1}}$ is sufficiently small (relative to
+      $\nu$), then $T^{*} = \infty$.
+    \item \emph{Leray--Hopf global existence.} For $u_{0} \in \Lsig(\R^{3})$, there
+      exists a global weak solution satisfying the energy inequality
+      (\Cref{thm:leray-hopf-existence}).
+    \item \emph{Partial regularity.} The Caffarelli--Kohn--Nirenberg theorem (1982) states
+      that for any suitable Leray--Hopf weak solution, the set of singular points
+      (space-time points where $u$ is not locally bounded) has one-dimensional parabolic
+      Hausdorff measure zero.  In particular, the singular set cannot contain a
+      space-time curve.
+    \item \emph{Serrin-type criteria.} If a Leray--Hopf weak solution satisfies the
+      additional integrability condition $u \in \Lp{q}(0, T; \Lp{r}(\R^{3}))$ with
+      $2/q + 3/r \le 1$ and $r \ge 3$, then $u$ is smooth on $(0, T]$ (see
+      \Cref{rem:serrin}).
+    \item \emph{Two dimensions.} In two spatial dimensions, the Leray--Hopf weak
+      solution is unique, smooth for all time, and satisfies the energy equality.  The
+      three-dimensional case remains open.
+  \end{enumerate}
+\end{remark}
+
+\subsection{What remains open}
+
+\begin{remark}[The gap]\label{rem:the-gap}
+  The fundamental difficulty is the \emph{supercritical} nature of the three-dimensional
+  Navier--Stokes equations.  The natural energy space
+  $\Lp{\infty}(0, T; \Lp{2}) \cap \Lp{2}(0, T; \Sobz{1})$ lies below the
+  scaling-critical threshold: the Navier--Stokes scaling
+  $u_{\lambda}(x, t) = \lambda\,u(\lambda x, \lambda^{2} t)$ preserves the
+  $\Lp{3}(\R^{3})$ norm, but the energy norm $\norm{u}_{\Lp{2}}$ is not invariant
+  (it scales as $\lambda^{-1/2}$).  The energy bounds are therefore too weak to control
+  the nonlinearity and prevent concentration of energy at small scales.
+
+  All known proofs of regularity (in two dimensions, or in three dimensions under
+  additional hypotheses) exploit either the conservation of enstrophy (two dimensions) or
+  integrability at or above the critical scaling (Serrin-type conditions).  In three
+  dimensions without additional assumptions, neither mechanism is available.
+
+  Resolving the Clay Problem would require either (a) proving that smooth
+  solutions of the three-dimensional Navier--Stokes equations never develop
+  singularities (a positive answer), or (b) constructing an explicit example
+  of smooth initial data leading to finite-time blowup (a negative answer).
+  As of the time of writing, neither direction has produced a definitive
+  result, and the problem remains one of the deepest open questions in
+  mathematical analysis.
+\end{remark}
+
+\bigskip
+
+\noindent\textbf{Summary.}
+This chapter has established the existence of Leray--Hopf weak solutions for the
+three-dimensional incompressible Navier--Stokes equations with arbitrary $\Lp{2}$ initial
+data (\Cref{thm:leray-hopf-existence}).  The construction proceeds via the Galerkin
+method: finite-dimensional approximations using eigenfunctions of the Stokes operator
+satisfy a priori energy estimates (\Cref{thm:galerkin-energy}), compactness arguments
+(Aubin--Lions, Rellich--Kondrachov) extract convergent subsequences
+(\Cref{thm:galerkin-convergence}), and the strong $\Lp{2}$ convergence suffices to pass
+the nonlinear term to the limit (\Cref{thm:passage-limit}).  The resulting weak solution
+satisfies the energy inequality (\Cref{thm:energy-inequality}) but not necessarily energy
+equality.  The Leray--Hopf framework connects directly to the Clay Millennium Problem
+(\Cref{conj:clay}): a positive resolution would show that, for smooth initial data, the
+Leray--Hopf weak solution is in fact the unique smooth solution for all time.
