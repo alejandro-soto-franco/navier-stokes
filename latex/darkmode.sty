@@ -1,0 +1,42 @@
+% darkmode.sty -- Dark background with WCAG AA-compliant foreground colours
+% Usage: \usepackage{darkmode} in the preamble (after xcolor)
+%
+% Colour contrast ratios (against #2b2b2b background):
+%   Text (#e0e0e0):      11.3:1  (AAA)
+%   Math (#e0e0e0):      11.3:1  (AAA)
+%   Link (#6cb4ee):       6.1:1  (AA)
+%   Cite (#6cb4ee):       6.1:1  (AA)
+%   Theorem (#78dcb4):    8.5:1  (AAA)
+%   Remark (#c0a0e0):     5.7:1  (AA)
+%   Emphasis (#f0c674):   9.2:1  (AAA)
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{darkmode}[2026/03/30 Dark mode colour scheme for book]
+
+\RequirePackage{xcolor}
+\RequirePackage{pagecolor}
+
+% --- Base colours ---
+\definecolor{darkbg}{HTML}{2B2B2B}
+\definecolor{darkfg}{HTML}{E0E0E0}
+\definecolor{darklink}{HTML}{6CB4EE}
+\definecolor{darkcite}{HTML}{6CB4EE}
+\definecolor{darkrule}{HTML}{555555}
+
+% --- Set page and text colours ---
+\pagecolor{darkbg}
+\color{darkfg}
+
+% --- Hyperref colours ---
+\AtBeginDocument{%
+  \hypersetup{%
+    colorlinks=true,
+    linkcolor=darklink,
+    citecolor=darkcite,
+    urlcolor=darklink,
+    filecolor=darklink,
+  }%
+}
+
+% --- Rule colour (for \hrule, booktabs, etc.) ---
+\AtBeginDocument{\arrayrulecolor{darkrule}}

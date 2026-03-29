@@ -1,0 +1,53 @@
+\documentclass[11pt,a4paper,openany]{book}
+
+\input{preamble}
+\usepackage{darkmode}
+
+\begin{document}
+
+\frontmatter
+
+\begin{titlepage}
+  \centering
+  \vspace*{\stretch{2}}
+
+  \begin{tabular}{@{}c@{}}
+    {\LARGE On the Regularity of} \\[6pt]
+    {\LARGE Three-Dimensional Navier--Stokes Solutions:} \\[6pt]
+    {\LARGE A Geometric Approach via the Biot--Savart Connection}
+  \end{tabular}
+
+  \vspace{24pt}
+
+  {\large Alejandro Jos\'e Soto Franco}
+
+  \vspace{12pt}
+
+  {\large \today}
+
+  \vspace*{\stretch{3}}
+\end{titlepage}
+\tableofcontents
+\include{preface}
+
+\mainmatter
+
+\include{sections/ch01-foundations}
+\include{sections/ch02-leray-hopf}
+\include{sections/ch03-biot-savart}
+\include{sections/ch04-connection}
+\include{sections/ch05-curvature}
+\include{sections/ch06-topology}
+\include{sections/ch07-obstruction}
+\include{sections/ch08-singularity}
+
+\appendix
+\include{appendices/appA-lean}
+\include{appendices/appB-sympy}
+\include{appendices/appC-numerics}
+\include{appendices/appD-code}
+
+\backmatter
+\printbibliography
+
+\end{document}
