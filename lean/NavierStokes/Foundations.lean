@@ -1,0 +1,6 @@
+import NavierStokes.Foundations.WeakDerivative
+import NavierStokes.Foundations.SobolevSpace
+import NavierStokes.Foundations.SobolevEmbedding
+import NavierStokes.Foundations.RellichKondrachov
+import NavierStokes.Foundations.Poincare
+import NavierStokes.Foundations.DivFreeSpace
