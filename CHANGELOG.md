@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.1] - 2026-03-31 (`c98c871`)
+
+### Proved
+- `trilinearForm_antisymmetric` (TrilinearForm.lean): b(u,v,v) = 0 for
+  distributionally divergence-free u and smooth compactly-supported v.
+  Per-component test function strategy (phi_k = v_k^2) with fderiv_fun_pow
+  chain rule and integral_const_mul. Added ContDiff/HasCompactSupport
+  hypotheses. Sorry count: 11 -> 10, proved: 5 -> 6.
+
 ## [0.2.0] - 2026-03-30 (`46fa6e8`)
 
 ### Proved
