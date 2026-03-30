@@ -4,7 +4,7 @@
 [![Mathlib](https://img.shields.io/badge/Mathlib4-latest-blue)](https://github.com/leanprover-community/mathlib4)
 [![SymPy](https://img.shields.io/badge/SymPy-verified-brightgreen?logo=python&logoColor=white)](https://www.sympy.org/)
 [![LaTeX](https://img.shields.io/badge/LaTeX-book_class-orange?logo=latex&logoColor=white)](https://www.latex-project.org/)
-[![License](https://img.shields.io/badge/License-All_Rights_Reserved-red)](LICENSE)
+[![License](https://img.shields.io/badge/License-All_Rights_Reserved-red)](https://github.com/alejandro-soto-franco/navier-stokes/blob/master/LICENSE)
 [![Chapter 1](https://img.shields.io/badge/Ch_1-Foundations_%E2%9C%93-brightgreen)](#chapter-status)
 [![Chapter 2](https://img.shields.io/badge/Ch_2-Leray--Hopf_%E2%9C%93-brightgreen)](#chapter-status)
 [![Chapter 3](https://img.shields.io/badge/Ch_3-Biot--Savart-yellow)](#chapter-status)
