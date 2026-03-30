@@ -32,14 +32,21 @@ noncomputable def sobolevConjugate (p : ℝ) (hn : 0 < n) (hp : 1 ≤ p) (hpn : 
 /-- The Sobolev conjugate exponent satisfies p* > p when 1 ≤ p < n. -/
 theorem sobolevConjugate_gt (p : ℝ) (hn : 0 < n) (hp : 1 ≤ p) (hpn : p < (n : ℝ)) :
     p < sobolevConjugate p hn hp hpn := by
-  -- p < np/(n-p) because n*p - p*(n-p) = p^2 > 0 for p > 0.
-  sorry
+  -- p < np/(n-p) ⟺ p(n-p) < np ⟺ 0 < p² (true for p ≥ 1).
+  unfold sobolevConjugate
+  have hnp_pos : (0 : ℝ) < (n : ℝ) - p := by linarith
+  rw [lt_div_iff₀ hnp_pos]
+  nlinarith [sq_nonneg p, sq_abs p]
 
 /-- The Sobolev conjugate exponent satisfies 1/p* = 1/p - 1/n (the dimensional relation). -/
 theorem sobolevConjugate_inv (p : ℝ) (hn : 0 < n) (hp : 1 < p) (hpn : p < (n : ℝ)) :
     1 / sobolevConjugate p hn (le_of_lt hp) hpn = 1 / p - 1 / n := by
-  -- Algebraic identity: 1/(np/(n-p)) = (n-p)/(np) = 1/p - 1/n.
-  sorry
+  -- 1/(np/(n-p)) = (n-p)/(np) = 1/p - 1/n.
+  unfold sobolevConjugate
+  have hp0 : (0 : ℝ) < p := by linarith
+  have hn0 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
+  have hnp : (0 : ℝ) < (n : ℝ) * p := mul_pos hn0 hp0
+  field_simp
 
 /-- **Sobolev Embedding (Subcritical case)**: W^{1,p}(Omega) embeds continuously into
     L^{p*}(Omega) when 1 ≤ p < n.  Every u in W^{1,p} has its L^{p*} norm controlled
