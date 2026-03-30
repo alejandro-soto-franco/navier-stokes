@@ -10,8 +10,8 @@ import NavierStokes.Foundations.WeakDerivative
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import Mathlib.Analysis.InnerProductSpace.Basic
 
-open MeasureTheory Measure TopologicalSpace
-open scoped ENNReal NNReal
+open MeasureTheory Measure TopologicalSpace Function
+open scoped ENNReal NNReal ContDiff
 
 noncomputable section
 
@@ -58,13 +58,34 @@ def sobolevH1InnerProduct (u v : SobolevH1 Ω hΩ) : ℝ :=
   Finset.sum Finset.univ (fun i : Fin n =>
     ∫ x in Ω, u.weakDeriv i x * v.weakDeriv i x)
 
-/-- H^1_0(Omega) is the closure of C^inf_c(Omega) in the H^1 norm.
-    Equivalently, by the Meyers-Serrin theorem and trace theory, it is the subspace of
-    H^1(Omega) whose elements have zero trace on the boundary partial Omega.
-    Here we define it abstractly as a sorry-stub pending the construction of the
-    H^1 norm topology and the completion/closure machinery. -/
+/-- An element of H^1(Omega) belongs to H^1_0(Omega) if it can be approximated in the
+    H^1 norm by smooth compactly supported functions. Formally, for every epsilon > 0
+    there exists a smooth compactly supported phi with ||u - phi||_{H^1} < epsilon.
+
+    We encode the approximability condition using the H^1 inner product distance:
+    for each epsilon > 0, there exists phi in C^inf_c(Omega) such that both
+    ||u.f - phi||_{L^2(Omega)}^2 and each ||partial_i u.f - partial_i phi||_{L^2(Omega)}^2
+    are within epsilon.
+
+    This is the defining property of H^1_0 as the closure of C^inf_c in the H^1 norm.
+    Equivalently, by trace theory, these are exactly the H^1 functions with zero trace
+    on the boundary of Omega. -/
+def IsH1Zero (u : SobolevH1 Ω hΩ) : Prop :=
+  ∀ ε : ℝ, 0 < ε →
+    ∃ φ : EuclideanSpace ℝ (Fin n) → ℝ,
+      ContDiff ℝ ∞ φ ∧
+      HasCompactSupport φ ∧
+      tsupport φ ⊆ Ω ∧
+      (∫ x in Ω, (u.f x - φ x) ^ 2) < ε ∧
+      (∀ i : Fin n, ∫ x in Ω, (u.weakDeriv i x -
+        fderiv ℝ φ x (EuclideanSpace.single i 1)) ^ 2 < ε)
+
+/-- H^1_0(Omega) is the closure of C^inf_c(Omega) in the H^1 norm, defined as
+    the subtype of H^1 elements that are approximable by smooth compactly supported
+    functions. By the Meyers-Serrin theorem and trace theory, this is equivalently the
+    subspace of H^1(Omega) whose elements have zero trace on partial Omega. -/
 def SobolevH1Zero : Type :=
-  sorry
+  { u : SobolevH1 Ω hΩ // IsH1Zero Ω hΩ u }
 
 /-- The H^1(Omega) norm squared: ||u||^2_{H^1} = <u, u>_{H^1}. -/
 def sobolevH1NormSq (u : SobolevH1 Ω hΩ) : ℝ :=

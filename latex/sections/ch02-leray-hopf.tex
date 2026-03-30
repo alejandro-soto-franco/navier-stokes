@@ -173,7 +173,7 @@ Collecting terms yields the weak formulation.
 \subsection{Definition of weak solution}
 
 \begin{definition}[Weak solution of Navier--Stokes%
-  \footnote{Lean 4: \texttt{NavierStokes.WeakNSSolution}}]%
+  \footnote{Lean 4: \texttt{NavierStokes.IsWeakNSSolution}}]%
   \label{def:weak-ns}
   Let $u_{0} \in \Lsig(\R^{3})$, $f \in \Lp{2}(0, T; H^{-1}(\R^{3}))$, and
   $0 < T \le \infty$.  A vector field
@@ -684,7 +684,7 @@ The Galerkin approximations satisfy an energy \emph{equality}
 \subsection{Statement and derivation}
 
 \begin{theorem}[Energy inequality%
-  \footnote{Lean 4: \texttt{NavierStokes.energyInequality}}]%
+  \footnote{Lean 4: \texttt{NavierStokes.SatisfiesEnergyInequality}}]%
   \label{thm:energy-inequality}
   Let $u$ be the weak solution obtained in \Cref{thm:passage-limit}.  Then for
   almost every $t \in (0, T)$,
@@ -792,7 +792,7 @@ definition.
 \subsection{The definition}
 
 \begin{definition}[Leray--Hopf weak solution%
-  \footnote{Lean 4: \texttt{NavierStokes.LerayHopfSolution}}]%
+  \footnote{Lean 4: \texttt{NavierStokes.IsLerayHopfSolution}}]%
   \label{def:leray-hopf}
   Let $u_{0} \in \Lsig(\R^{3})$ and $0 < T \le \infty$.  A vector field
   $u : \R^{3} \times (0, T) \to \R^{3}$ is a \emph{Leray--Hopf weak solution}

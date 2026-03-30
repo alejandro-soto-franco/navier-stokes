@@ -20,7 +20,7 @@ All proofs are sorry-stubs; the mathematical content is stated precisely.
 import NavierStokes.Foundations.SobolevSpace
 
 open MeasureTheory Measure TopologicalSpace Metric
-open scoped ENNReal NNReal
+open scoped ENNReal NNReal ContDiff
 
 noncomputable section
 
@@ -53,18 +53,10 @@ def gradientL2NormSq (u : SobolevH1 Ω hΩ) : ℝ :=
     ||grad u_k||_{L^2} -> 0, which by Rellich-Kondrachov has an L^2-convergent subsequence;
     the limit is constant with gradient 0 in H^1_0, hence 0, contradicting ||u||_{L^2} = 1. -/
 theorem poincare_inequality
-    (hBdd : Bornology.IsBounded Ω)
-    (u_h : SobolevH1Zero) :
+    (hBdd : Bornology.IsBounded Ω) :
     ∃ C_P : ℝ, 0 < C_P ∧
-      -- We state this for the underlying function of any H^1_0 representative.
-      -- Full statement requires the map SobolevH1Zero -> SobolevH1.
-      -- Mathematical intent: ||u||_{L^2} <= C_P * ||grad u||_{L^2}.
-      ∀ (f : EuclideanSpace ℝ (Fin n) → ℝ)
-        (_ : MemLp f 2 (volume.restrict Ω))
-        (weakD : Fin n → EuclideanSpace ℝ (Fin n) → ℝ)
-        (_ : ∀ i, MemLp (weakD i) 2 (volume.restrict Ω)),
-        ∫ x in Ω, f x ^ 2 ≤
-          C_P ^ 2 * ∑ i : Fin n, ∫ x in Ω, weakD i x ^ 2 := by
+      ∀ (u : SobolevH1Zero Ω hΩ),
+        l2NormSq Ω u.val.f ≤ C_P ^ 2 * gradientL2NormSq Ω hΩ u.val := by
   sorry
 
 /-- **Poincare Constant Bound for Convex Domains**: When Omega is convex, the optimal
@@ -78,17 +70,10 @@ theorem poincare_inequality
 theorem poincare_constant_bound_convex
     (hBdd : Bornology.IsBounded Ω)
     (hConvex : Convex ℝ Ω) :
-    -- The optimal Poincare constant C_P satisfies C_P <= diam(Omega) / sqrt(n).
-    -- We state this as: any Poincare constant C_P for which poincare_inequality holds
-    -- can be chosen to satisfy this bound.
     ∃ C_P : ℝ, 0 < C_P ∧
       C_P ≤ diam Ω / Real.sqrt n ∧
-      ∀ (f : EuclideanSpace ℝ (Fin n) → ℝ)
-        (_ : MemLp f 2 (volume.restrict Ω))
-        (weakD : Fin n → EuclideanSpace ℝ (Fin n) → ℝ)
-        (_ : ∀ i, MemLp (weakD i) 2 (volume.restrict Ω)),
-        ∫ x in Ω, f x ^ 2 ≤
-          C_P ^ 2 * ∑ i : Fin n, ∫ x in Ω, weakD i x ^ 2 := by
+      ∀ (u : SobolevH1Zero Ω hΩ),
+        l2NormSq Ω u.val.f ≤ C_P ^ 2 * gradientL2NormSq Ω hΩ u.val := by
   sorry
 
 end NavierStokes

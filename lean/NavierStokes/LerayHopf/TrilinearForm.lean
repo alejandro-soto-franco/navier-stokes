@@ -15,8 +15,8 @@ All proofs are deferred (sorry).
 -/
 import NavierStokes.Foundations.DivFreeSpace
 
-open MeasureTheory Measure TopologicalSpace
-open scoped ENNReal
+open MeasureTheory Measure TopologicalSpace Function
+open scoped ENNReal ContDiff
 
 noncomputable section
 
@@ -25,15 +25,19 @@ namespace NavierStokes
 /-- The trilinear form b(u, v, w) arising from the nonlinear term in
     the Navier-Stokes weak formulation.
 
-    b(u, v, w) = sum_{i,j} int u_j (partial_j v_i) w_i dx.
+    b(u, v, w) = sum_{i,j} int_{R^3} u_j(x) * (partial_j v_i)(x) * w_i(x) dx.
 
-    This is defined abstractly as a real number depending on three
-    vector fields.  The precise integral definition requires Bochner
-    integration over R^3 with product derivatives; we leave the body
-    as sorry and state the key property below. -/
+    The partial derivative partial_j v_i is computed as the j-th directional
+    derivative of the i-th component of v, using `fderiv`. The integral is
+    Bochner integration over all of R^3.
+
+    When u, v, w are sufficiently regular (e.g. v in H^1, u and w in L^2 with
+    the product in L^1), this is well-defined. The integrability is not enforced
+    in the definition; non-integrable terms produce 0 by Mathlib convention. -/
 def trilinearForm
     (u v w : EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3)) : ℝ :=
-  sorry
+  ∑ i : Fin 3, ∑ j : Fin 3,
+    ∫ x, (u x) j * (fderiv ℝ (fun y => (v y) i) x (EuclideanSpace.single j 1)) * (w x) i
 
 /-- **Antisymmetry of the trilinear form** (Lemma 2.1).
 

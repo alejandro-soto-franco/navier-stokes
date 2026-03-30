@@ -526,7 +526,7 @@ distributional divergence-free condition.
 
 \begin{proposition}[Closedness of $\Lsig$]%
   \label{prop:L2sigma-closed}%
-  \footnote{Lean 4: \texttt{NavierStokes.l2sigma\_isClosed}.}
+  \footnote{Lean 4: \texttt{NavierStokes.l2sigma\_closed\_under\_l2\_convergence}.}
   The space $\Lsig(\Omega)$ is a closed subspace of $\Lp{2}(\Omega;\R^{n})$, hence
   itself a Hilbert space.
 \end{proposition}
@@ -589,9 +589,11 @@ distributional divergence-free condition.
   on $\partial\Omega$.
 
   Set $v = u - \nabla p$.  For any $\varphi \in \Ccinf(\Omega)$, the weak formulation
-  gives $\int_{\Omega} v \cdot \nabla \varphi\,\dd x = \int_{\Omega} u \cdot \nabla
+  gives 
+  $$\int_{\Omega} v \cdot \nabla \varphi\,\dd x = \int_{\Omega} u \cdot \nabla
   \varphi\,\dd x - \int_{\Omega} \nabla p \cdot \nabla \varphi\,\dd x = \ell(\varphi)
-  - a(p, \varphi) = 0$, so $\divergence v = 0$ in $\mathcal{D}'(\Omega)$.  To verify
+  - a(p, \varphi) = 0,$$
+  so $\divergence v = 0$ in $\mathcal{D}'(\Omega)$.  To verify
   that $v \in \Lsig(\Omega)$ (the $\Lp{2}$-closure of smooth divergence-free fields,
   not merely the distributional kernel), one approximates $v$ by mollification:
   $v_{\eps} = \rho_{\eps} * \tilde{v}$ satisfies $\divergence v_{\eps} = \rho_{\eps} *

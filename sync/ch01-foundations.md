@@ -5,7 +5,7 @@
 
 ## Track 1: Lean
 
-All 6 modules build (2689 jobs, no errors). 14 sorry items catalogued below.
+All 6 modules build (2685 jobs, no errors). 13 sorry items catalogued below.
 
 ### Formalized (definitions compile, types check)
 - [x] `IsWeakPartialDeriv` — weak partial derivative definition
@@ -16,13 +16,16 @@ All 6 modules build (2689 jobs, no errors). 14 sorry items catalogued below.
 - [x] `L2sigma` — L^2_sigma set definition
 - [x] `GradientFields` — gradient field set definition
 
-### Remaining `sorry` (14 total)
+### Proved
+- `l2sigma_closed_under_l2_convergence` (L²σ closed under L² convergence, via Hölder/Cauchy-Schwarz + `tendsto_nhds_unique`)
+
+### Remaining `sorry` (13 total)
 - WeakDerivative.lean: `weakPartialDeriv_unique` (needs fundamental lemma bridge)
 - SobolevSpace.lean: `SobolevH1Zero` (closure definition pending H^1 norm topology)
 - SobolevEmbedding.lean: `sobolevConjugate_gt`, `sobolevConjugate_inv`, `sobolev_embedding_subcritical`, `sobolev_embedding_supercritical`
 - RellichKondrachov.lean: `rellich_kondrachov` (Arzela-Ascoli + mollification argument)
 - Poincare.lean: `poincare_inequality`, `poincare_constant_bound_convex`
-- DivFreeSpace.lean: `l2sigma_isClosed`, `helmholtz_decomposition`, `lerayProjector`, `lerayProjector_idempotent`, `lerayProjector_selfAdjoint`
+- DivFreeSpace.lean: `helmholtz_decomposition`, `lerayProjector`, `lerayProjector_idempotent`, `lerayProjector_selfAdjoint`
 
 ### Assessment
 All definitions type-check. The sorry items are proof obligations for known theorems; the mathematical statements are correctly formalized. Filling these is ongoing work that does not block Chapter 2 (which will use these definitions with sorry proofs).
