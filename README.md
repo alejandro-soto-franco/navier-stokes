@@ -19,7 +19,7 @@
 
 A geometric approach to the Clay Millennium regularity problem for the 3D incompressible Navier-Stokes equations, via the Biot-Savart connection on the divergence-free bundle.
 
-**Author:** Alejandro Jose Soto Franco
+**Author:** Alejandro José Soto Franco
 
 ## Three-Track Architecture
 
