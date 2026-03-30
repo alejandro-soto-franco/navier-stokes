@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## [0.2.0] - 2026-03-30 (`46fa6e8`)
 
 ### Proved
 - `l2sigma_closed_under_l2_convergence` (DivFreeSpace.lean): L²σ is closed under
@@ -10,8 +10,6 @@ All notable changes to this project are documented here.
   `PiLp.norm_apply_le` for the component bound, and `tendsto_nhds_unique` for
   limit uniqueness. First machine-checked proof of this result in any proof
   assistant. Sorry count: 12 → 11.
-
-## [0.2.0] - 2026-03-30
 
 ### Added
 - **Chapter 2 (Leray-Hopf weak solutions)**: complete across all three tracks.
@@ -34,7 +32,7 @@ All notable changes to this project are documented here.
 - `l2sigma_isClosed` (wrong topology) replaced by
   `l2sigma_closed_under_l2_convergence` (correct L² sequential closedness).
 
-## [0.1.0] - 2026-03-29
+## [0.1.0] - 2026-03-29 (`159ad8e`)
 
 ### Added
 - **Chapter 1 (Functional Analytic Foundations)**: complete across all three tracks.
