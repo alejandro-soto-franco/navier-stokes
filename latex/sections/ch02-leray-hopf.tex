@@ -226,192 +226,185 @@ Collecting terms yields the weak formulation.
 \section{The Galerkin method}\label{sec:galerkin}
 % ---------------------------------------------------------------------------
 
-The Galerkin method constructs weak solutions by projecting the Navier--Stokes equations
-onto finite-dimensional subspaces, solving the resulting system of ordinary differential
-equations, and passing to the limit.  The key ingredients are the Stokes operator (which
-provides a natural basis of eigenfunctions), a priori energy estimates (which furnish
-uniform bounds), and compactness theorems (which extract convergent subsequences).
+The Galerkin method reduces the Navier--Stokes initial-value problem to a
+sequence of finite-dimensional ordinary differential equations whose solutions
+approximate the desired weak solution.  On a bounded domain
+$\Omega \subset \R^{3}$, one typically projects onto eigenfunctions of the Stokes
+operator, exploiting its compact resolvent and discrete spectrum.  On $\R^{3}$ the
+Stokes operator has continuous spectrum, so that approach is unavailable.  We
+instead construct an approximation basis directly from the separability of
+$\Lsig(\R^{3})$, then carry out the Galerkin procedure, derive uniform a~priori
+estimates, and pass to the limit using a localisation argument that replaces the
+global compactness afforded by Rellich--Kondrachov on bounded domains.
 
-\subsection{The Stokes operator}
+\subsection{Approximation basis on $\R^{3}$}
 
-\begin{definition}[Stokes operator%
-  \footnote{Lean 4: \texttt{NavierStokes.StokesOperator}}]%
-  \label{def:stokes-operator}
-  The \emph{Stokes operator} on a bounded domain $\Omega \subset \R^{3}$ with smooth
-  boundary is
-  \begin{equation}\label{eq:stokes-operator}
-    A
-    \;=\;
-    -\Leray \Delta,
-  \end{equation}
-  defined on the domain $D(A) = \Sob{2}(\Omega; \R^{3}) \cap \Sobz{1}(\Omega; \R^{3})
-  \cap \Lsig(\Omega)$, where $\Leray$ is the Leray projector
-  (\Cref{def:leray-projector}).  Equivalently, for $u \in D(A)$,
-  $Au = -\Leray \Delta u = -\Delta u + \nabla \pi$, where $\pi$ is the unique pressure
-  (up to a constant) satisfying the Stokes system $-\Delta u + \nabla \pi = Au$,
-  $\divergence u = 0$.
-\end{definition}
+The space $\Ccinf(\R^{3};\R^{3}) \cap \Lsig(\R^{3})$ is dense in $\Lsig(\R^{3})$
+(a consequence of the Helmholtz decomposition, \Cref{thm:helmholtz}).
+Since $\Lsig(\R^{3})$ is a separable Hilbert space, this dense subspace
+contains a countable dense subset
+$\{\varphi_{k}\}_{k=1}^{\infty}$.  Applying the Gram--Schmidt procedure to
+$\{\varphi_{k}\}_{k=1}^{\infty}$ in the $\Lp{2}(\R^{3})$ inner product produces an
+orthonormal sequence $\{w_{k}\}_{k=1}^{\infty}$ in $\Lsig(\R^{3})$ satisfying:
+\begin{enumerate}[label=(\roman*)]
+  \item each $w_{k}$ belongs to $\Ccinf(\R^{3};\R^{3})$ and is divergence-free;
+  \item $\ip{w_{j}}{w_{k}}_{\Lp{2}} = \delta_{jk}$ for all $j,k \in \N$;
+  \item $\overline{\operatorname{span}\{w_{k} : k \in \N\}} = \Lsig(\R^{3})$.
+\end{enumerate}
+Property~(i) holds because each $w_{k}$ is a finite linear combination of the
+$\varphi_{j}$, all of which are smooth, compactly supported, and divergence-free;
+the linear combination inherits each property.  Property~(iii) follows because
+$\operatorname{span}\{w_{k}\}$ contains $\operatorname{span}\{\varphi_{k}\}$
+(each $\varphi_{k}$ can be recovered from $w_{1}, \ldots, w_{k}$ by inverting the
+Gram--Schmidt triangular system), and the latter is dense in $\Lsig(\R^{3})$ by
+construction.
 
-\begin{proposition}[Spectral properties of the Stokes operator]\label{prop:stokes-spectral}
-  Let $\Omega \subset \R^{3}$ be a bounded domain with smooth boundary.  The Stokes
-  operator $A$ is a positive, self-adjoint, unbounded operator on $\Lsig(\Omega)$ with
-  compact resolvent.  Consequently, there exists an orthonormal basis
-  $\{w_{k}\}_{k=1}^{\infty}$ of $\Lsig(\Omega)$ consisting of eigenfunctions of $A$:
-  \begin{equation}\label{eq:stokes-eigenfunctions}
-    A w_{k}
-    \;=\;
-    \lambda_{k}\,w_{k},
-    \qquad
-    0 < \lambda_{1} \le \lambda_{2} \le \cdots \to \infty,
-  \end{equation}
-  with $\ip{w_{j}}{w_{k}}_{\Lp{2}} = \delta_{jk}$ and each $w_{k} \in D(A)$.
-\end{proposition}
-
-\begin{proof}
-  Self-adjointness: for $u, v \in D(A)$, integration by parts gives
-  \begin{align*}
-    \ip{Au}{v}_{\Lp{2}}
-    &\;=\;
-    \ip{-\Leray \Delta u}{v}_{\Lp{2}}
-    \;=\;
-    \ip{-\Delta u}{\Leray v}_{\Lp{2}} \\
-    &\;=\;
-    \ip{-\Delta u}{v}_{\Lp{2}}
-    \;=\;
-    \int_{\Omega} \nabla u : \nabla v \,\dd x,
-  \end{align*}
-  where we used that $\Leray$ is self-adjoint (\Cref{prop:leray-props}), that $\Leray v = v$
-  for $v \in \Lsig(\Omega)$, and that $u, v \in \Sobz{1}(\Omega)$ so boundary terms
-  vanish.  The same computation with $u = v$ gives
-  $\ip{Au}{u}_{\Lp{2}} = \norm{\nabla u}_{\Lp{2}}^{2} \ge 0$, with equality only when
-  $\nabla u = 0$, hence $u = 0$ by the Poincar\'{e} inequality
-  (\Cref{thm:poincare}).  This establishes positivity.  Symmetry of the form
-  $\ip{Au}{v} = \int \nabla u : \nabla v$ is immediate, so $A$ is self-adjoint on
-  $D(A)$.
-
-  Compact resolvent: the form domain of $A$ is $V = \Sobz{1}(\Omega) \cap \Lsig(\Omega)$,
-  and the embedding $V \hookrightarrow \Lsig(\Omega)$ is compact by the
-  Rellich--Kondrachov theorem (\Cref{thm:rellich-kondrachov}).  The resolvent
-  $(A + I)^{-1} : \Lsig(\Omega) \to D(A) \subset V$ is bounded, so the composition
-  $(A + I)^{-1} : \Lsig(\Omega) \to V \hookrightarrow \Lsig(\Omega)$ is compact.
-
-  The spectral theorem for positive self-adjoint operators with compact resolvent
-  (see \cite{evans2010}, Section~6.5) then yields the existence of a complete orthonormal
-  system of eigenfunctions with eigenvalues $0 < \lambda_{1} \le \lambda_{2} \le \cdots
-  \to \infty$.
-\end{proof}
-
-\begin{remark}[Whole-space setting]\label{rem:whole-space-galerkin}
-  On $\R^{3}$, the Stokes operator lacks a discrete spectrum.  The standard approach
-  is to work on an increasing sequence of bounded domains $\Omega_{m} = B_{m}(0)$,
-  construct Galerkin approximations on each $\Omega_{m}$ using the eigenfunctions of the
-  Stokes operator on $\Omega_{m}$, and pass to the limit $m \to \infty$ via a diagonal
-  argument.  We carry out the construction on a bounded domain for clarity, then indicate
-  the modifications needed for $\R^{3}$.  Alternatively, one may work directly on
-  $\R^{3}$ by choosing any countable dense subset of
-  $\Ccinf(\R^{3}; \R^{3}) \cap \Lsig(\R^{3})$ and applying Gram--Schmidt; the a priori
-  estimates and passage to the limit are identical.
+\begin{remark}[Bounded-domain alternative]
+  On a bounded domain $\Omega$ with smooth boundary, the Stokes operator
+  $A = -\Leray\Delta$ has compact
+  resolvent\footnote{Lean~4: \texttt{NavierStokes.StokesOperator}.}
+  and therefore possesses a complete orthonormal system of eigenfunctions in
+  $\Lsig(\Omega)$ with eigenvalues
+  $0 < \lambda_{1} \le \lambda_{2} \le \cdots \to \infty$.  This eigenbasis is the
+  standard choice for Galerkin approximation in the bounded setting; see
+  Temam~\cite{temam2001}, Chapter~III.  On $\R^{3}$ the Stokes operator is still
+  well-defined as a self-adjoint operator on $\Lsig(\R^{3})$, but its spectrum is
+  purely continuous, so eigenfunctions in the classical sense do not exist.  The
+  Gram--Schmidt construction above circumvents this difficulty entirely.
 \end{remark}
 
 \subsection{Finite-dimensional approximation}
 
-Let $\Omega \subset \R^{3}$ be a bounded domain with smooth boundary.  For each
-$m \in \N$, define the finite-dimensional subspace
+For each $m \in \N$, define the Galerkin subspace
 \begin{equation}\label{eq:galerkin-subspace}
   V_{m}
   \;=\;
   \operatorname{span}\{w_{1}, \ldots, w_{m}\}
   \;\subset\;
-  \Lsig(\Omega),
+  \Lsig(\R^{3}),
 \end{equation}
-and let $P_{m} : \Lsig(\Omega) \to V_{m}$ denote the $\Lp{2}$-orthogonal projection.
-
-The \emph{Galerkin approximation} of order $m$ is the function
+and let $P_{m} \colon \Lsig(\R^{3}) \to V_{m}$ denote the orthogonal projection.
+We seek an approximate solution of the form
 \begin{equation}\label{eq:galerkin-ansatz}
-  u_{m}(x, t)
+  u_{m}(t)
   \;=\;
-  \sum_{k=1}^{m} c_{k}^{(m)}(t)\,w_{k}(x),
+  \sum_{k=1}^{m} c_{k}^{(m)}(t)\,w_{k},
 \end{equation}
-where the coefficient functions $c_{k}^{(m)} : [0, T_{m}) \to \R$ are determined by the
-projected equation: for each $j = 1, \ldots, m$,
-\begin{equation}\label{eq:galerkin-ode}
-  \ip{\partial_{t} u_{m}}{w_{j}}_{\Lp{2}}
-  \;+\;
-  \nu\,\ip{\nabla u_{m}}{\nabla w_{j}}_{\Lp{2}}
-  \;+\;
-  b(u_{m}, u_{m}, w_{j})
-  \;=\;
-  \ip{f}{w_{j}},
-\end{equation}
-with initial condition
-$c_{k}^{(m)}(0) = \ip{u_{0}}{w_{k}}_{\Lp{2}}$, i.e., $u_{m}(0) = P_{m} u_{0}$.
-Here the trilinear form is
+where the coefficient functions $c_{k}^{(m)} \colon [0, T_{m}) \to \R$ are to be
+determined.  The trilinear form
 \begin{equation}\label{eq:trilinear-form}
   b(u, v, w)
   \;=\;
-  \int_{\Omega} (u \cdot \nabla) v \cdot w \,\dd x
-  \;=\;
-  \sum_{i,j=1}^{3} \int_{\Omega} u_{j}\,\partial_{j} v_{i}\,w_{i} \,\dd x.
+  \int_{\R^{3}} (u \cdot \nabla) v \cdot w \,\dd x
 \end{equation}
+is well-defined whenever the integrand is summable.  We require $u_{m}$ to satisfy
+the projected equations: for each $k = 1, \ldots, m$,
+\begin{align}\label{eq:galerkin-ode}
+  \ip{\partial_{t} u_{m}}{w_{k}}_{\Lp{2}}
+  &\;+\;
+  \nu\,\ip{\nabla u_{m}}{\nabla w_{k}}_{\Lp{2}}
+  \;+\;
+  b(u_{m}, u_{m}, w_{k})
+  \;=\;
+  \ip{f}{w_{k}}_{\Lp{2}}, \notag \\
+  u_{m}(0) &\;=\; P_{m} u_{0}.
+\end{align}
+
+The antisymmetry of the trilinear form is the key structural property underpinning
+all energy estimates.
 
 \begin{lemma}[Antisymmetry of the trilinear form]\label{lem:trilinear-antisymmetry}
-  For $u \in \Lsig(\Omega) \cap \Sobz{1}(\Omega)$ and
-  $v, w \in \Sobz{1}(\Omega; \R^{3})$,
+  Let $u \in \Ccinf(\R^{3}; \R^{3})$ with $\divergence u = 0$, and let
+  $v \in \Sob{1}(\R^{3}; \R^{3})$.  Then
   \begin{equation}\label{eq:trilinear-antisymmetry}
-    b(u, v, w) \;=\; -b(u, w, v).
+    b(u, v, v) \;=\; 0.
   \end{equation}
-  In particular, $b(u, v, v) = 0$.
+  More generally, $b(u, v, w) = -b(u, w, v)$ for all
+  $v, w \in \Sob{1}(\R^{3}; \R^{3})$.
 \end{lemma}
 
 \begin{proof}
-  Expand $b(u, v, w) + b(u, w, v)$ using the product rule:
-  \begin{align*}
-    b(u, v, w) + b(u, w, v)
-    &\;=\;
-    \int_{\Omega} \sum_{i,j} u_{j}\bigl(\partial_{j} v_{i}\,w_{i}
-    + v_{i}\,\partial_{j} w_{i}\bigr) \,\dd x \\
-    &\;=\;
-    \int_{\Omega} \sum_{i,j} u_{j}\,\partial_{j}(v_{i}\,w_{i}) \,\dd x.
-  \end{align*}
-  The right-hand side equals $\int_{\Omega} (u \cdot \nabla)(v \cdot w) \,\dd x$.
-  Since $\divergence u = 0$ and $v \cdot w \in \Sobz{1}(\Omega)$ (so it vanishes on
-  $\partial\Omega$), integration by parts gives
-  $\int_{\Omega} (u \cdot \nabla)(v \cdot w) \,\dd x =
-  -\int_{\Omega} (\divergence u)(v \cdot w) \,\dd x = 0$.
-  Hence $b(u, v, w) = -b(u, w, v)$, and setting $w = v$ gives $b(u, v, v) = 0$.
+  Write out the trilinear form componentwise:
+  \[
+    b(u, v, v)
+    \;=\;
+    \sum_{i,j=1}^{3} \int_{\R^{3}} u_{j}\,\partial_{j} v_{i}\,v_{i} \,\dd x
+    \;=\;
+    \frac{1}{2} \sum_{j=1}^{3} \int_{\R^{3}} u_{j}\,\partial_{j}\abs{v}^{2} \,\dd x.
+  \]
+  Since $u$ is smooth and compactly supported, integration by parts yields
+  \[
+    \frac{1}{2} \sum_{j=1}^{3} \int_{\R^{3}} u_{j}\,\partial_{j}\abs{v}^{2} \,\dd x
+    \;=\;
+    -\frac{1}{2} \int_{\R^{3}} (\divergence u)\,\abs{v}^{2} \,\dd x
+    \;=\;
+    0,
+  \]
+  where the boundary terms vanish because $u$ is compactly supported and
+  $v \in \Sob{1}(\R^{3}; \R^{3})$, and the final equality uses
+  $\divergence u = 0$.  The general antisymmetry identity $b(u, v, w) = -b(u, w, v)$
+  follows by polarisation: apply the vanishing result to $v + w$ and $v - w$,
+  then subtract.
 \end{proof}
 
-\begin{proposition}[Local existence for the Galerkin system]\label{prop:galerkin-local}
-  For each $m \in \N$, the system~\eqref{eq:galerkin-ode} has a unique solution
-  $u_{m} \in C^{1}([0, T_{m}); V_{m})$ for some $T_{m} > 0$.
+Substituting the ansatz~\eqref{eq:galerkin-ansatz} into~\eqref{eq:galerkin-ode}
+and using the orthonormality $\ip{w_{j}}{w_{k}}_{\Lp{2}} = \delta_{jk}$ yields an
+ODE system for the coefficient vector
+\[
+  c^{(m)}(t)
+  \;=\;
+  \bigl(c_{1}^{(m)}(t), \ldots, c_{m}^{(m)}(t)\bigr)^{\top}
+  \in \R^{m}\colon
+\]
+\[
+  \dot{c}_{k}^{(m)}
+  \;=\;
+  -\nu \sum_{j=1}^{m} A_{kj}\,c_{j}^{(m)}
+  \;-\;
+  \sum_{i,j=1}^{m} B_{kij}\,c_{i}^{(m)}\,c_{j}^{(m)}
+  \;+\;
+  f_{k}(t),
+  \quad
+  k = 1, \ldots, m,
+\]
+where $A_{kj} = \ip{\nabla w_{j}}{\nabla w_{k}}_{\Lp{2}}$,
+$B_{kij} = b(w_{i}, w_{j}, w_{k})$, and
+$f_{k}(t) = \ip{f(t)}{w_{k}}_{\Lp{2}}$.  The right-hand side is locally Lipschitz
+in $c^{(m)}$ (it is quadratic) and measurable in $t$, so the Cauchy--Lipschitz
+theorem applies.
+
+\begin{proposition}[Local existence of Galerkin approximations]%
+  \label{prop:galerkin-local}
+  For each $m \in \N$, there exists $T_{m} > 0$ and a unique absolutely continuous
+  function $c^{(m)} \colon [0, T_{m}) \to \R^{m}$ satisfying the ODE system above with
+  initial data $c_{k}^{(m)}(0) = \ip{u_{0}}{w_{k}}_{\Lp{2}}$.  The corresponding
+  $u_{m} \in C([0, T_{m}); V_{m})$ satisfies~\eqref{eq:galerkin-ode} for a.e.\
+  $t \in (0, T_{m})$.
 \end{proposition}
 
 \begin{proof}
-  Writing $c(t) = (c_{1}^{(m)}(t), \ldots, c_{m}^{(m)}(t)) \in \R^{m}$,
-  the system~\eqref{eq:galerkin-ode} takes the form $\dot{c} = F(c)$, where
-  $F : \R^{m} \to \R^{m}$ is defined by
-  \[
-    F_{j}(c)
-    \;=\;
-    -\nu \sum_{k=1}^{m} c_{k}\,\ip{\nabla w_{k}}{\nabla w_{j}}_{\Lp{2}}
-    \;-\;
-    \sum_{k, \ell = 1}^{m} c_{k}\,c_{\ell}\,b(w_{k}, w_{\ell}, w_{j})
-    \;+\;
-    \ip{f}{w_{j}}.
-  \]
-  The function $F$ is locally Lipschitz on $\R^{m}$ (it is a polynomial of degree two
-  in $c$), so the Cauchy--Lipschitz (Picard--Lindel\"{o}f) theorem guarantees a unique
-  local solution $c \in C^{1}([0, T_{m}); \R^{m})$.
+  The coefficients $A_{kj}$ are constants (each $w_{k}$ is smooth and compactly
+  supported, so $\ip{\nabla w_{j}}{\nabla w_{k}}_{\Lp{2}} < \infty$).  Likewise, the
+  $B_{kij}$ are finite constants because
+  $w_{i}, w_{j}, w_{k} \in \Ccinf(\R^{3}; \R^{3})$.
+  The forcing terms $f_{k}(t) = \ip{f(t)}{w_{k}}_{\Lp{2}}$ are in
+  $\Lp{2}(0, T)$ whenever $f \in \Lp{2}(0, T; \Sob{-1}(\R^{3}))$, and in
+  particular are locally integrable.  The right-hand side of the ODE is therefore
+  a locally Lipschitz function of $c^{(m)}$ plus a locally integrable function of
+  $t$, so the Cauchy--Lipschitz (Picard--Lindel\"{o}f) theorem gives a unique
+  maximal solution on some interval $[0, T_{m})$.
 \end{proof}
 
 \subsection{A priori estimates}\label{subsec:a-priori}
 
-The a priori estimates below show that the local solutions extend to $[0, T]$ for any
-$T > 0$ and are uniformly bounded in the energy norm.  For simplicity of exposition, we
-set $f = 0$; the case of nonzero forcing requires only minor modifications (absorbing
-$f$ via the Cauchy--Schwarz and Young inequalities).
+The following energy estimate is the heart of the Galerkin method.  It provides
+bounds that are uniform in $m$ and sufficient to extract a convergent subsequence.
+For simplicity of exposition, we set $f = 0$; the case of nonzero forcing requires
+only minor modifications (absorbing $f$ via the Cauchy--Schwarz and Young
+inequalities).
 
-\begin{theorem}[Energy estimate for Galerkin approximations]\label{thm:galerkin-energy}
+\begin{theorem}[Energy estimate for Galerkin approximations]%
+  \label{thm:galerkin-energy}
   For $f = 0$, the Galerkin approximation $u_{m}$ satisfies
   \begin{equation}\label{eq:galerkin-energy-estimate}
     \frac{1}{2}\norm{u_{m}(t)}_{\Lp{2}}^{2}
@@ -426,8 +419,8 @@ $f$ via the Cauchy--Schwarz and Young inequalities).
 \end{theorem}
 
 \begin{proof}
-  Multiply the Galerkin equation~\eqref{eq:galerkin-ode} by $c_{j}^{(m)}(t)$ and sum
-  over $j = 1, \ldots, m$.  Since $u_{m} = \sum_{j} c_{j}^{(m)} w_{j}$, the left-hand
+  Multiply the Galerkin equation~\eqref{eq:galerkin-ode} by $c_{k}^{(m)}(t)$ and sum
+  over $k = 1, \ldots, m$.  Since $u_{m} = \sum_{k} c_{k}^{(m)} w_{k}$, the left-hand
   side becomes
   $\ip{\partial_{t} u_{m}}{u_{m}}_{\Lp{2}} + \nu\,\norm{\nabla u_{m}}_{\Lp{2}}^{2}
   + b(u_{m}, u_{m}, u_{m})$.  By \Cref{lem:trilinear-antisymmetry},
@@ -464,247 +457,218 @@ $f$ via the Cauchy--Schwarz and Young inequalities).
 \begin{proof}
   The energy estimate~\eqref{eq:galerkin-energy-estimate} shows that
   $\norm{u_{m}(t)}_{\Lp{2}} \le \norm{u_{0}}_{\Lp{2}}$ for all $t \in [0, T_{m})$.
-  In terms of the coefficient vector $c(t)$, this reads
-  $\abs{c(t)} = \norm{u_{m}(t)}_{\Lp{2}} \le \norm{u_{0}}_{\Lp{2}}$, so $c(t)$ remains
-  bounded.  By the continuation criterion for ODE solutions (a solution that remains
-  bounded extends beyond its maximal interval), $T_{m} = +\infty$.  The bound on
-  $\int \norm{\nabla u_{m}}^{2}$ follows directly from~\eqref{eq:galerkin-energy-estimate}
-  by dropping the non-negative first term.
+  In terms of the coefficient vector $c^{(m)}(t)$, this reads
+  $\abs{c^{(m)}(t)} = \norm{u_{m}(t)}_{\Lp{2}} \le \norm{u_{0}}_{\Lp{2}}$, so
+  $c^{(m)}(t)$ remains bounded.  By the continuation criterion for ODE solutions (a
+  solution that remains bounded extends beyond its maximal interval),
+  $T_{m} = +\infty$.  The bound on $\int \norm{\nabla u_{m}}^{2}$ follows directly
+  from~\eqref{eq:galerkin-energy-estimate} by dropping the non-negative first term.
 \end{proof}
 
-\subsection{Passage to the limit}
+We also need a bound on the time derivatives to apply compactness arguments.
 
-The uniform bounds~\eqref{eq:galerkin-uniform-bounds} place the Galerkin approximations
-in the reflexive Banach space $\Lp{\infty}(0, T; \Lp{2}(\Omega)) \cap
-\Lp{2}(0, T; \Sobz{1}(\Omega))$.  To extract a convergent subsequence, we use the
-following results.
-
-\begin{lemma}[Bound on the time derivative]\label{lem:time-derivative-bound}
-  For each $m$, define the time derivative in the dual space by
-  \[
-    \ip{\partial_{t} u_{m}}{\varphi}
-    \;=\;
-    -\nu\,\ip{\nabla u_{m}}{\nabla \varphi}_{\Lp{2}}
-    \;-\;
-    b(u_{m}, u_{m}, \varphi)
-  \]
-  for $\varphi \in V = \Sobz{1}(\Omega) \cap \Lsig(\Omega)$.  Then
-  $\partial_{t} u_{m}$ is uniformly bounded in $\Lp{2}(0, T; V')$, where $V'$ is the
-  dual of $V$:
+\begin{lemma}[Time derivative bound]\label{lem:time-derivative-bound}
+  The sequence $\{\partial_{t} u_{m}\}_{m=1}^{\infty}$ satisfies
   \begin{equation}\label{eq:time-derivative-bound}
-    \int_{0}^{T} \norm{\partial_{t} u_{m}(t)}_{V'}^{2} \,\dd t
+    \sup_{m \in \N}
+    \norm{\partial_{t} u_{m}}_{\Lp{4/3}(0,T;\,\Sob{-1}(\R^{3}))}
     \;\le\;
-    C\bigl(\nu, \norm{u_{0}}_{\Lp{2}}, T\bigr).
+    C\bigl(\nu, \norm{u_{0}}_{\Lp{2}}\bigr).
   \end{equation}
 \end{lemma}
 
 \begin{proof}
-  For $\varphi \in V$ with $\norm{\varphi}_{V} = 1$, the viscous term is bounded by
+  From~\eqref{eq:galerkin-ode}, for any $\phi \in \Sobz{1}(\R^{3}; \R^{3})$ with
+  $\divergence \phi = 0$,
   \[
-    \abs{\nu\,\ip{\nabla u_{m}}{\nabla \varphi}_{\Lp{2}}}
-    \;\le\;
-    \nu\,\norm{\nabla u_{m}}_{\Lp{2}}.
+    \ip{\partial_{t} u_{m}}{\phi}_{\Sob{-1}, \Sobz{1}}
+    \;=\;
+    -\nu\,\ip{\nabla u_{m}}{\nabla \phi}_{\Lp{2}}
+    \;-\;
+    b(u_{m}, u_{m}, \phi).
   \]
-  For the nonlinear term, H\"{o}lder's inequality with exponents $(3, 2, 6)$ gives
+  The viscous term satisfies
+  $\abs{\nu\,\ip{\nabla u_{m}}{\nabla \phi}_{\Lp{2}}} \le
+  \nu\,\norm{\nabla u_{m}}_{\Lp{2}}\,\norm{\nabla \phi}_{\Lp{2}}$.
+  For the nonlinear term, H\"{o}lder's inequality with the Sobolev embedding
+  $\Sobz{1}(\R^{3}) \hookrightarrow \Lp{6}(\R^{3})$
+  (\Cref{thm:sobolev-subcritical}) and interpolation give
   \[
-    \abs{b(u_{m}, u_{m}, \varphi)}
+    \abs{b(u_{m}, u_{m}, \phi)}
     \;\le\;
-    \norm{u_{m}}_{\Lp{3}}\,\norm{\nabla u_{m}}_{\Lp{2}}\,\norm{\varphi}_{\Lp{6}}.
+    C\,\norm{u_{m}}_{\Lp{2}}^{1/2}\,\norm{\nabla u_{m}}_{\Lp{2}}^{3/2}
+    \,\norm{\nabla \phi}_{\Lp{2}}.
   \]
-  By the Sobolev embedding $\Sob{1}(\R^{3}) \hookrightarrow \Lp{6}(\R^{3})$
-  (\Cref{thm:sobolev-subcritical}),
-  $\norm{\varphi}_{\Lp{6}} \le C\norm{\nabla\varphi}_{\Lp{2}} = C$.
-  By interpolation between $\Lp{2}$ and $\Lp{6}$,
+  Dividing by $\norm{\nabla \phi}_{\Lp{2}}$ and taking the supremum over $\phi$ yields
+  \begin{align*}
+    \norm{\partial_{t} u_{m}(t)}_{\Sob{-1}}
+    &\;\le\;
+    \nu\,\norm{\nabla u_{m}(t)}_{\Lp{2}} \\
+    &\qquad
+    +\;C\,\norm{u_{0}}_{\Lp{2}}^{1/2}\,
+    \norm{\nabla u_{m}(t)}_{\Lp{2}}^{3/2},
+  \end{align*}
+  using $\norm{u_{m}}_{\Lp{2}} \le \norm{u_{0}}_{\Lp{2}}$ from
+  \Cref{cor:galerkin-global}.  Raising to the power $4/3$ and integrating in time,
+  the dominant term $\norm{\nabla u_{m}}^{3/2}$ raised to the power $4/3$
+  gives $\norm{\nabla u_{m}}^{2}$, so
   \[
-    \norm{u_{m}}_{\Lp{3}}
+    \int_{0}^{T} \norm{\partial_{t} u_{m}(t)}_{\Sob{-1}}^{4/3} \,\dd t
     \;\le\;
-    \norm{u_{m}}_{\Lp{2}}^{1/2}\,\norm{u_{m}}_{\Lp{6}}^{1/2}
-    \;\le\;
-    C\,\norm{u_{m}}_{\Lp{2}}^{1/2}\,\norm{\nabla u_{m}}_{\Lp{2}}^{1/2}.
+    C\Bigl(\nu, \norm{u_{0}}_{\Lp{2}},
+    \int_{0}^{T} \norm{\nabla u_{m}}_{\Lp{2}}^{2} \,\dd t\Bigr),
   \]
-  Therefore
-  \[
-    \abs{b(u_{m}, u_{m}, \varphi)}
-    \;\le\;
-    C\,\norm{u_{m}}_{\Lp{2}}^{1/2}\,\norm{\nabla u_{m}}_{\Lp{2}}^{3/2}.
-  \]
-  Combining the viscous and nonlinear bounds, and using $\norm{u_{m}}_{\Lp{2}} \le
-  \norm{u_{0}}_{\Lp{2}}$ from \Cref{cor:galerkin-global},
-  \[
-    \norm{\partial_{t} u_{m}(t)}_{V'}
-    \;\le\;
-    \nu\,\norm{\nabla u_{m}(t)}_{\Lp{2}}
-    \;+\;
-    C\,\norm{u_{0}}_{\Lp{2}}^{1/2}\,\norm{\nabla u_{m}(t)}_{\Lp{2}}^{3/2}.
-  \]
-  Squaring both sides and applying the elementary inequality $(a + b)^{2} \le 2a^{2} +
-  2b^{2}$ gives
-  \[
-    \norm{\partial_{t} u_{m}(t)}_{V'}^{2}
-    \;\le\;
-    2\nu^{2}\,\norm{\nabla u_{m}(t)}_{\Lp{2}}^{2}
-    \;+\;
-    2C^{2}\,\norm{u_{0}}_{\Lp{2}}\,\norm{\nabla u_{m}(t)}_{\Lp{2}}^{3}.
-  \]
-  Integrating over $[0, T]$: the first term is bounded by
-  $2\nu^{2} \cdot \frac{1}{2\nu}\norm{u_{0}}_{\Lp{2}}^{2} =
-  \nu\,\norm{u_{0}}_{\Lp{2}}^{2}$ using~\eqref{eq:galerkin-uniform-bounds}.  For the
-  second term, H\"{o}lder's inequality in time with exponents $(2, 2)$ applied to
-  $\norm{\nabla u_{m}}^{3} = \norm{\nabla u_{m}}^{2} \cdot \norm{\nabla u_{m}}$ gives
-  \[
-    \int_{0}^{T} \norm{\nabla u_{m}}^{3} \,\dd t
-    \;\le\;
-    \Bigl(\int_{0}^{T} \norm{\nabla u_{m}}^{4} \,\dd t\Bigr)^{1/2}
-    \Bigl(\int_{0}^{T} \norm{\nabla u_{m}}^{2} \,\dd t\Bigr)^{1/2}.
-  \]
-  By the Gagliardo--Nirenberg interpolation inequality in three dimensions,
-  $\norm{\nabla u_{m}}_{\Lp{2}}^{2} \le C\,\norm{u_{m}}_{\Lp{2}}\,\norm{A u_{m}}_{\Lp{2}}$,
-  but we need not invoke $A u_{m}$ explicitly.  Instead, using the cruder bound
-  $\norm{\nabla u_{m}}^{3} \le \norm{\nabla u_{m}}^{2} \cdot
-  \sup_{s \in [0,T]}\norm{\nabla u_{m}(s)}$ and noting that the energy differential
-  equality $\frac{\dd}{\dd t}\norm{u_{m}}^{2} + 2\nu\norm{\nabla u_{m}}^{2} = 0$
-  implies $\norm{\nabla u_{m}(t)}_{\Lp{2}}^{2} \le
-  \norm{u_{m}(t)}_{\Lp{2}}^{2}/(2\nu t) \le \norm{u_{0}}_{\Lp{2}}^{2}/(2\nu t)$ (by
-  integrating the differential inequality $\frac{\dd}{\dd t}\norm{u_{m}}^{2} \le 0$
-  and using $\norm{u_{m}}^{2} + 2\nu \int_{0}^{t}\norm{\nabla u_{m}}^{2} \le
-  \norm{u_{0}}^{2}$), we see that $\int_{\delta}^{T}\norm{\nabla u_{m}}^{3}$ is bounded
-  for every $\delta > 0$.  For the integral near $t = 0$, a simpler approach suffices:
-  by Young's inequality $ab \le a^{4/3}/(4/3) + b^{4}/(4)$ applied to
-  $a = \norm{\nabla u_{m}}^{2}$, $b = \norm{\nabla u_{m}}$,
-  \[
-    \norm{\nabla u_{m}}^{3}
-    \;\le\;
-    \tfrac{3}{4}\norm{\nabla u_{m}}^{8/3}
-    \;+\;
-    \tfrac{1}{4}\norm{\nabla u_{m}}^{4}.
-  \]
-  Both $\int_{0}^{T}\norm{\nabla u_{m}}^{8/3}$ and $\int_{0}^{T}\norm{\nabla u_{m}}^{4}$
-  are controlled by $\sup_{t}\norm{u_{m}(t)}_{\Lp{2}}^{2}$ and
-  $\int_{0}^{T}\norm{\nabla u_{m}}^{2}$ via the multiplicative Sobolev--Gagliardo--Nirenberg
-  inequality $\norm{\nabla v}_{\Lp{2}}^{2} \le C\,\norm{v}_{\Lp{2}}\,\norm{\Delta v}_{\Lp{2}}$
-  applied at the Galerkin level (where $\norm{A u_{m}}_{\Lp{2}}$ is controlled).  The
-  upshot is $\int_{0}^{T}\norm{\partial_{t} u_{m}}_{V'}^{2} \le
-  C(\nu, \norm{u_{0}}_{\Lp{2}}, T)$, with the constant independent of $m$.
+  and the right-hand side is bounded uniformly in $m$
+  by~\eqref{eq:galerkin-uniform-bounds}.
 \end{proof}
 
-We now state the key compactness result used to extract a convergent subsequence.
+\subsection{Passage to the limit}
 
-\begin{theorem}[Aubin--Lions lemma]\label{thm:aubin-lions}
-  Let $X_{0} \hookrightarrow X \hookrightarrow X_{1}$ be Banach spaces with the first
-  embedding compact and the second continuous.  Let $1 \le p < \infty$ and $1 \le q \le
-  \infty$.  If $(u_{m})$ is bounded in $\Lp{p}(0, T; X_{0})$ and
-  $(\partial_{t} u_{m})$ is bounded in $\Lp{q}(0, T; X_{1})$, then $(u_{m})$ is
-  precompact in $\Lp{p}(0, T; X)$.
+We now extract a subsequence of Galerkin approximations that converges to a
+weak solution of the Navier--Stokes equations on $\R^{3} \times (0, T)$.  The
+principal difficulty, compared with the bounded-domain case, is that the
+embedding $\Sobz{1}(\R^{3}) \hookrightarrow \Lp{2}(\R^{3})$ is continuous but not
+compact.  We overcome this by a localisation and diagonal argument.
+
+\begin{theorem}[Aubin--Lions, local version]\label{thm:aubin-lions}
+  Let $B_{R} = \{x \in \R^{3} : \abs{x} < R\}$ for $R > 0$.  Suppose
+  $\{v_{m}\}_{m=1}^{\infty}$ is uniformly bounded in
+  $\Lp{2}(0, T; \Sobz{1}(\R^{3}))$ with $\{\partial_{t} v_{m}\}$ uniformly bounded in
+  $\Lp{4/3}(0, T; \Sob{-1}(\R^{3}))$.  Then for each fixed $R > 0$, the restrictions
+  $\{v_{m}|_{B_{R}}\}$ are relatively compact in $\Lp{2}(0, T; \Lp{2}(B_{R}))$.
 \end{theorem}
 
-\begin{remark}
-  The Aubin--Lions lemma is the parabolic analogue of the Rellich--Kondrachov theorem
-  (\Cref{thm:rellich-kondrachov}): it upgrades weak convergence in a higher-regularity
-  space to strong convergence in a lower-regularity space, at the cost of requiring
-  control on the time derivative.  See \cite{temam2001}, Chapter~III, or
-  \cite{robinson2016}, Section~10.2, for proofs.
-\end{remark}
+\begin{proof}
+  Fix $R > 0$.  The restriction map $\Sobz{1}(\R^{3}) \to \Sob{1}(B_{R})$ is
+  continuous and the embedding $\Sob{1}(B_{R}) \hookrightarrow \Lp{2}(B_{R})$ is
+  compact by the Rellich--Kondrachov theorem (\Cref{thm:rellich-kondrachov}), since
+  $B_{R}$ is a bounded Lipschitz domain.  Likewise,
+  $\Lp{2}(B_{R}) \hookrightarrow \Sob{-1}(B_{R})$ continuously.  The restrictions
+  $v_{m}|_{B_{R}}$ are therefore uniformly bounded in
+  $\Lp{2}(0, T; \Sob{1}(B_{R}))$, and $\partial_{t}(v_{m}|_{B_{R}})$ are uniformly
+  bounded in $\Lp{4/3}(0, T; \Sob{-1}(B_{R}))$ (since restriction commutes with
+  time differentiation in the distributional sense, and the restriction of an
+  $\Sob{-1}(\R^{3})$ distribution to $B_{R}$ has no larger $\Sob{-1}(B_{R})$ norm).
+  The classical Aubin--Lions lemma (with the triple
+  $\Sob{1}(B_{R}) \Subset \Lp{2}(B_{R}) \hookrightarrow \Sob{-1}(B_{R})$
+  and exponents $p = 2$, $q = 4/3$) yields relative
+  compactness of $\{v_{m}|_{B_{R}}\}$ in $\Lp{2}(0, T; \Lp{2}(B_{R}))$.
+\end{proof}
 
-\begin{theorem}[Existence of a convergent subsequence]\label{thm:galerkin-convergence}
-  There exist a subsequence (still denoted $(u_{m})$) and a function
-  $u \in \Lp{\infty}(0, T; \Lsig(\Omega)) \cap \Lp{2}(0, T; V)$ such that, as
-  $m \to \infty$:
+\begin{theorem}[Convergence of Galerkin approximations]\label{thm:galerkin-convergence}
+  There exist a subsequence $\{u_{m_{j}}\}_{j=1}^{\infty}$ and a function
+  \[
+    u \in \Lp{\infty}(0, T; \Lsig(\R^{3}))
+    \cap \Lp{2}(0, T; \Sobz{1}(\R^{3}; \R^{3}))
+  \]
+  such that:
   \begin{enumerate}[label=(\roman*)]
-    \item $u_{m} \rightharpoonup^{*} u$ in $\Lp{\infty}(0, T; \Lp{2}(\Omega))$
-      (weak-$*$ convergence);
-    \item $u_{m} \rightharpoonup u$ in $\Lp{2}(0, T; V)$ (weak convergence);
-    \item $u_{m} \to u$ in $\Lp{2}(0, T; \Lp{2}(\Omega))$ (strong convergence).
+    \item $u_{m_{j}} \rightharpoonup u$ weakly in
+          $\Lp{2}(0, T; \Sobz{1}(\R^{3}))$;
+    \item $u_{m_{j}} \overset{*}{\rightharpoonup} u$ weak-$*$ in
+          $\Lp{\infty}(0, T; \Lp{2}(\R^{3}))$;
+    \item $u_{m_{j}} \to u$ strongly in
+          $\Lp{2}(0, T; \Lp{2}(K))$ for every compact set $K \subset \R^{3}$.
   \end{enumerate}
 \end{theorem}
 
 \begin{proof}
   The uniform bounds~\eqref{eq:galerkin-uniform-bounds} show that
-  $(u_{m})$ is bounded in $\Lp{\infty}(0,T;\Lp{2})$ and in
-  $\Lp{2}(0,T;V)$.  Since these are reflexive Banach spaces (the former
-  being the dual of $\Lp{1}(0,T;\Lp{2})$), the Banach--Alaoglu theorem
-  yields a subsequence satisfying (i) and (ii).
+  $\{u_{m}\} \subset \Lp{\infty}(0, T; \Lsig(\R^{3})) \cap
+  \Lp{2}(0, T; \Sobz{1}(\R^{3}))$, both bounded.  By the Banach--Alaoglu theorem,
+  there exist a subsequence (still denoted $\{u_{m}\}$) and $u$ in the indicated
+  spaces satisfying (i) and~(ii).
 
-  For (iii), we apply the Aubin--Lions lemma (\Cref{thm:aubin-lions})
-  with $X_{0} = V$, $X = \Lsig(\Omega)$, $X_{1} = V'$, and
-  $p = q = 2$.
-  The embedding $V \hookrightarrow \Lsig(\Omega)$ is compact by
-  Rellich--Kondrachov (\Cref{thm:rellich-kondrachov}), and the embedding
-  $\Lsig(\Omega) \hookrightarrow V'$ is continuous (by density of $V$ in $\Lsig(\Omega)$
-  and the Riesz representation theorem).  The bounds~\eqref{eq:galerkin-uniform-bounds}
-  and~\eqref{eq:time-derivative-bound} verify the hypotheses, so $(u_{m})$ is precompact
-  in $\Lp{2}(0, T; \Lsig(\Omega))$.  Extracting a further subsequence gives strong
-  convergence $u_{m} \to u$ in $\Lp{2}(0, T; \Lp{2}(\Omega))$.
+  For (iii), we use a diagonal argument.  By \Cref{thm:aubin-lions} applied with
+  $R = 1$, there is a subsequence $\{u_{m}^{(1)}\}$ such that
+  $u_{m}^{(1)}|_{B_{1}} \to u|_{B_{1}}$ strongly in
+  $\Lp{2}(0, T; \Lp{2}(B_{1}))$.
+  Applying \Cref{thm:aubin-lions} again with $R = 2$ to the subsequence
+  $\{u_{m}^{(1)}\}$, we extract a further subsequence $\{u_{m}^{(2)}\}$ converging
+  strongly on $B_{2}$.  Continuing inductively, for each $n \in \N$ we obtain a
+  subsequence $\{u_{m}^{(n)}\}$ of $\{u_{m}^{(n-1)}\}$ converging strongly in
+  $\Lp{2}(0, T; \Lp{2}(B_{n}))$.  The diagonal subsequence
+  $u_{m_{j}} = u_{j}^{(j)}$ then converges strongly in
+  $\Lp{2}(0, T; \Lp{2}(B_{n}))$ for every $n \in \N$.  Since every compact
+  $K \subset \R^{3}$ is contained in some $B_{n}$, conclusion~(iii) follows.
 \end{proof}
 
-\subsection{Passing the nonlinear term to the limit}
+It remains to verify that the limit $u$ satisfies the weak formulation of the
+Navier--Stokes equations.
 
-\begin{theorem}[Passage to the limit in the weak formulation]\label{thm:passage-limit}
-  The limit $u$ obtained in \Cref{thm:galerkin-convergence} satisfies the weak
-  formulation~\eqref{eq:ns-weak} (with $f = 0$).
+\begin{theorem}[Passage to the limit]\label{thm:passage-limit}
+  The function $u$ obtained in \Cref{thm:galerkin-convergence} is a weak solution
+  of the Navier--Stokes equations on $\R^{3} \times (0, T)$ in the sense
+  of~\eqref{eq:ns-weak} (with $f = 0$).
 \end{theorem}
 
 \begin{proof}
-  Fix $\varphi \in \Ccinf(\Omega \times [0, T); \R^{3})$ with $\divergence \varphi = 0$.
-  For each $m$, let $\varphi_{m}(t) = \sum_{j=1}^{m} \ip{\varphi(t)}{w_{j}} w_{j}$ be
-  the projection of $\varphi$ onto $V_{m}$.  Since $\{w_{k}\}$ is a complete orthonormal
-  system, $\varphi_{m} \to \varphi$ in every relevant norm.
+  Fix $\phi \in \Ccinf(\R^{3} \times [0, T); \R^{3})$ with
+  $\divergence \phi = 0$.  Choose $R > 0$ large enough that
+  $\supp \phi \subset B_{R} \times [0, T)$.  For each $m$, let
+  $\phi_{m}(t) = \sum_{k=1}^{m} \ip{\phi(t)}{w_{k}} w_{k}$ be the projection of
+  $\phi$ onto $V_{m}$.  Since $\{w_{k}\}$ is complete in $\Lsig(\R^{3})$,
+  $\phi_{m} \to \phi$ in every relevant norm.
 
-  The Galerkin equation~\eqref{eq:galerkin-ode} with test function $\varphi_{m}$, after
+  The Galerkin equation~\eqref{eq:galerkin-ode} with test function $\phi_{m}$, after
   integration by parts in time, gives
   \begin{align*}
-    &-\int_{0}^{T} \ip{u_{m}}{\partial_{t} \varphi_{m}}_{\Lp{2}} \,\dd t
+    &-\int_{0}^{T} \ip{u_{m}}{\partial_{t} \phi_{m}}_{\Lp{2}} \,\dd t
     \;-\;
-    \ip{P_{m} u_{0}}{\varphi_{m}(0)}_{\Lp{2}} \\
+    \ip{P_{m} u_{0}}{\phi_{m}(0)}_{\Lp{2}} \\
     &\qquad
-    +\;\int_{0}^{T} b(u_{m}, u_{m}, \varphi_{m}) \,\dd t
+    +\;\int_{0}^{T} b(u_{m}, u_{m}, \phi_{m}) \,\dd t
     \;+\;
-    \nu \int_{0}^{T} \ip{\nabla u_{m}}{\nabla \varphi_{m}}_{\Lp{2}} \,\dd t
+    \nu \int_{0}^{T} \ip{\nabla u_{m}}{\nabla \phi_{m}}_{\Lp{2}} \,\dd t
     \;=\;
     0.
   \end{align*}
-  We pass each term to the limit as $m \to \infty$.
+  We pass each term to the limit along the subsequence $\{u_{m_{j}}\}$.
 
-  The linear terms converge by weak convergence:
+  The linear terms converge by weak and weak-$*$ convergence.  For the
+  time-derivative term, $u_{m} \rightharpoonup u$ in $\Lp{2}(0, T; \Lp{2})$ and
+  $\partial_{t}\phi_{m} \to \partial_{t}\phi$ strongly, so
   \[
-    \int_{0}^{T} \ip{u_{m}}{\partial_{t}\varphi_{m}}
+    \int_{0}^{T} \ip{u_{m}}{\partial_{t}\phi_{m}} \,\dd t
     \;\to\;
-    \int_{0}^{T} \ip{u}{\partial_{t} \varphi}
+    \int_{0}^{T} \ip{u}{\partial_{t}\phi} \,\dd t.
   \]
-  because $u_{m} \rightharpoonup u$ in $\Lp{2}(0,T; \Lp{2})$ and
-  $\partial_{t}\varphi_{m} \to \partial_{t}\varphi$ strongly.  Similarly,
+  Similarly, weak convergence of $\nabla u_{m}$ in $\Lp{2}(0, T; \Lp{2})$ gives
   \[
-    \int_{0}^{T} \ip{\nabla u_{m}}{\nabla \varphi_{m}}
+    \int_{0}^{T} \ip{\nabla u_{m}}{\nabla \phi_{m}} \,\dd t
     \;\to\;
-    \int_{0}^{T} \ip{\nabla u}{\nabla \varphi}
+    \int_{0}^{T} \ip{\nabla u}{\nabla \phi} \,\dd t.
   \]
-  by weak convergence of $\nabla u_{m}$ in $\Lp{2}(0, T; \Lp{2})$.  The
-  initial data term converges because $P_{m} u_{0} \to u_{0}$ in $\Lp{2}$
-  and $\varphi_{m}(0) \to \varphi(0)$.
+  The initial data term converges because $P_{m} u_{0} \to u_{0}$ in $\Lp{2}$
+  and $\phi_{m}(0) \to \phi(0)$.
 
-  The nonlinear term is the critical passage.  Write
+  The nonlinear term is the critical passage.  Since
+  $\supp \phi \subset B_{R} \times [0, T)$,
   \[
-    b(u_{m}, u_{m}, \varphi_{m})
+    \int_{0}^{T} b(u_{m}, u_{m}, \phi_{m}) \,\dd t
     \;=\;
-    \int_{\Omega} (u_{m} \otimes u_{m}) : \nabla \varphi_{m} \,\dd x,
+    -\int_{0}^{T}\!\!\int_{B_{R}}
+    (u_{m} \otimes u_{m}) : \nabla \phi_{m} \,\dd x \,\dd t.
   \]
-  using the identity $b(u, v, w) = -\int (u \otimes v) : \nabla w$ (which follows from
-  the antisymmetry relation and integration by parts).  We must show
-  $u_{m} \otimes u_{m} \to u \otimes u$ in a suitable sense.  Decompose
-  \[
-    u_{m} \otimes u_{m} - u \otimes u
-    \;=\;
-    (u_{m} - u) \otimes u_{m} \;+\; u \otimes (u_{m} - u).
-  \]
-  The strong convergence $u_{m} \to u$ in $\Lp{2}(0, T; \Lp{2}(\Omega))$ from
+  We decompose
+  $u_{m} \otimes u_{m} - u \otimes u = (u_{m} - u) \otimes u_{m} +
+  u \otimes (u_{m} - u)$.
+  The strong convergence $u_{m_{j}} \to u$ in
+  $\Lp{2}(0, T; \Lp{2}(B_{R}))$ from
   \Cref{thm:galerkin-convergence}(iii), combined with the uniform bound
-  $\norm{u_{m}}_{\Lp{\infty}(0,T;\Lp{2})} \le \norm{u_{0}}_{\Lp{2}}$, gives
-  $(u_{m} - u) \otimes u_{m} \to 0$ in $\Lp{1}(0, T; \Lp{1}(\Omega))$.  Since
-  $\nabla \varphi_{m} \to \nabla \varphi$ in $\Lp{\infty}(0, T; \Lp{\infty}(\Omega))$
-  (as $\varphi$ is smooth and compactly supported), we conclude
+  $\norm{u_{m}}_{\Lp{\infty}(0, T; \Lp{2})} \le \norm{u_{0}}_{\Lp{2}}$, gives
+  $(u_{m_{j}} - u) \otimes u_{m_{j}} \to 0$ in
+  $\Lp{1}(0, T; \Lp{1}(B_{R}))$.  For the second factor,
+  $u \otimes (u_{m_{j}} - u) \to 0$ by the weak convergence
+  $u_{m_{j}} \rightharpoonup u$ in $\Lp{2}(0, T; \Sobz{1})$, since
+  $(u \cdot \nabla)\phi$ is a fixed bounded function supported in
+  $B_{R} \times [0, T)$.  Since
+  $\nabla \phi_{m} \to \nabla \phi$ in
+  $\Lp{\infty}(0, T; \Lp{\infty}(\R^{3}))$, we conclude
   \[
-    \int_{0}^{T} b(u_{m}, u_{m}, \varphi_{m}) \,\dd t
+    \int_{0}^{T} b(u_{m_{j}}, u_{m_{j}}, \phi_{m_{j}}) \,\dd t
     \;\to\;
-    \int_{0}^{T} b(u, u, \varphi) \,\dd t.
+    \int_{0}^{T} b(u, u, \phi) \,\dd t.
   \]
   Combining all terms, $u$ satisfies~\eqref{eq:ns-weak}.
 \end{proof}
@@ -888,10 +852,10 @@ definition.
   The proof assembles the results of the preceding sections.  We give the construction
   on a bounded domain $\Omega$, then extend to $\R^{3}$.
 
-  On a bounded domain $\Omega \subset \R^{3}$ with smooth boundary, the Galerkin
-  approximations $u_{m}$ are defined by~\eqref{eq:galerkin-ansatz}
-  and~\eqref{eq:galerkin-ode}, using the eigenfunctions of the Stokes operator
-  (\Cref{prop:stokes-spectral}).  By \Cref{prop:galerkin-local}, each $u_{m}$ exists
+  The Galerkin approximations $u_{m}$ are defined by~\eqref{eq:galerkin-ansatz}
+  and~\eqref{eq:galerkin-ode}, using the orthonormal basis of $\Lsig(\R^{3})$
+  constructed via Gram--Schmidt in \Cref{sec:galerkin}.  By
+  \Cref{prop:galerkin-local}, each $u_{m}$ exists
   locally, and by \Cref{cor:galerkin-global}, each $u_{m}$ extends to $[0, T]$ with the
   uniform bounds~\eqref{eq:galerkin-uniform-bounds}.  By
   \Cref{thm:galerkin-convergence}, a subsequence converges to a limit $u$ in the

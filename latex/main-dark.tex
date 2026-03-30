@@ -21,9 +21,12 @@
   \vfill\vfill\null
 \end{titlepage}
 \tableofcontents
-\include{preface}
+\input{preface}
 
+\let\origcleardoublepage\cleardoublepage
+\let\cleardoublepage\clearpage
 \mainmatter
+\let\cleardoublepage\origcleardoublepage
 
 \include{sections/ch01-foundations}
 \include{sections/ch02-leray-hopf}

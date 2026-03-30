@@ -45,11 +45,16 @@
   \kern-3pt{\color{darkrule}\hrule width 0.4\columnwidth height 0.4pt}\kern2.6pt}
 
 % --- TOC: force ALL elements (numbers, titles, dots, page numbers) to darkfg ---
-% The nuclear option: wrap \@starttoc so the entire TOC block is in darkfg.
-% This catches \l@chapter, \l@section, \l@subsection, \@dottedtocline,
-% \numberline, dot leaders, and page numbers in one shot.
+% \@dottedtocline uses \normalcolor to reset page numbers to the "default"
+% colour, which is black.  We patch \@starttoc to locally redefine
+% \normalcolor so it produces darkfg instead.
 \let\darkmode@oldstarttoc\@starttoc
-\renewcommand{\@starttoc}[1]{{\color{darkfg}\darkmode@oldstarttoc{#1}}}
+\renewcommand{\@starttoc}[1]{%
+  \begingroup
+    \renewcommand{\normalcolor}{\color{darkfg}}%
+    \color{darkfg}%
+    \darkmode@oldstarttoc{#1}%
+  \endgroup}
 
 % --- Apply all colour changes after \begin{document} ---
 \AtBeginDocument{%
