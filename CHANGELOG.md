@@ -12,14 +12,15 @@ All notable changes to this project are documented here.
   assistant. Sorry count: 12 → 11.
 
 ### Added
-- **Chapter 2 (Leray-Hopf weak solutions)**: complete across all three tracks.
-  - Lean: weak formulation, trilinear form (sorry-free definition), energy
-    inequality, Leray-Hopf existence (sorry stub), Serrin regularity criterion.
-  - LaTeX: full narrative with proofs (Galerkin approximation on R³,
+- **Chapter 2 (Leray-Hopf weak solutions)**:
+  - Lean: definitions and theorem statements for weak formulation, trilinear
+    form (sorry-free definition), energy inequality, Leray-Hopf existence
+    (sorry stub), Serrin regularity criterion. 3 sorry remain.
+  - LaTeX: complete. Full narrative with proofs (Galerkin approximation on R³,
     Gram-Schmidt on C∞\_c ∩ L²σ, energy inequality, connection to Fefferman's
     Clay formulation Problems A-D).
-  - SymPy: 13/13 symbolic checks pass (trilinear antisymmetry, energy balance,
-    Serrin exponents, interpolation, Gronwall, Prodi-Serrin pairs).
+  - SymPy: complete. 13/13 symbolic checks pass (trilinear antisymmetry, energy
+    balance, Serrin exponents, interpolation, Gronwall, Prodi-Serrin pairs).
 - `sobolevConjugate_gt` proved: p* > p for 1 ≤ p < n.
 - `sobolevConjugate_inv` proved: 1/p* = 1/p - 1/n.
 - Dark mode PDF target (WCAG AA compliant, `make dark`).
@@ -35,14 +36,14 @@ All notable changes to this project are documented here.
 ## [0.1.0] - 2026-03-29 (`159ad8e`)
 
 ### Added
-- **Chapter 1 (Functional Analytic Foundations)**: complete across all three tracks.
-  - Lean: 9 definitions (`IsWeakPartialDeriv`, `SobolevW1p`, `SobolevH1`,
-    `SobolevH1Zero`, `sobolevConjugate`, `IsDistribDivFree`, `L2sigma`,
-    `GradientFields`, `lerayProjector`), all type-checking. `weakPartialDeriv_unique`
-    and `sobolevH1InnerProduct_comm` proved.
-  - LaTeX: 6 sections (distributions, Sobolev spaces, embeddings,
+- **Chapter 1 (Functional Analytic Foundations)**:
+  - Lean: 9 definitions, all type-checking. `weakPartialDeriv_unique` and
+    `sobolevH1InnerProduct_comm` proved. 8 sorry remain (embeddings, Poincare,
+    Helmholtz, Leray projector).
+  - LaTeX: complete. 6 sections (distributions, Sobolev spaces, embeddings,
     Rellich-Kondrachov, Poincare, Helmholtz/Leray projector).
-  - SymPy: 8/8 symbolic checks pass (Sobolev exponents, Helmholtz orthogonality).
+  - SymPy: complete. 8/8 symbolic checks pass (Sobolev exponents, Helmholtz
+    orthogonality).
 - Lean 4 project initialized against pinned Mathlib4 fork (commit `698d2b68`,
   based on v4.29.0-rc8). Builds with 2685 jobs, 0 errors.
 - Sync document framework (`sync/ch01-foundations.md`).
