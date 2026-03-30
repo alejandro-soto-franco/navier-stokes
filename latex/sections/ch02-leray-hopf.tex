@@ -347,6 +347,20 @@ all energy estimates.
   then subtract.
 \end{proof}
 
+\begin{remark}[Lean formalisation]\label{rem:trilinear-lean}
+  The machine-checked proof establishes a dual formulation: for
+  \emph{distributionally} divergence-free $u$ (no pointwise regularity required)
+  and $v \in \Ccinf(\R^{3}; \R^{3})$, one has $b(u, v, v) = 0$.  The proof
+  applies the distributional divergence-free condition
+  $\sum_{j} \int u_{j}\,\partial_{j}\varphi = 0$ separately to each test function
+  $\varphi_{k} = v_{k}^{2}$, bypassing integration by parts entirely.
+  Since the Galerkin basis functions $\{w_{k}\}$ lie in
+  $\Ccinf(\R^{3}) \cap \Lsig(\R^{3})$, both formulations apply to the energy
+  estimate $b(u_{m}, u_{m}, u_{m}) = 0$.  The extension of
+  Lemma~\ref{lem:trilinear-antisymmetry} from $\Ccinf$ to $\Sob{1}$ is by
+  density and continuity of $b$ in the $\Sob{1}$ topology (not yet formalised).
+\end{remark}
+
 Substituting the ansatz~\eqref{eq:galerkin-ansatz} into~\eqref{eq:galerkin-ode}
 and using the orthonormality $\ip{w_{j}}{w_{k}}_{\Lp{2}} = \delta_{jk}$ yields an
 ODE system for the coefficient vector
