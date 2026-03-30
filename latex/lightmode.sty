@@ -1,0 +1,26 @@
+% lightmode.sty -- Clean fancyhdr layout for the light mode build.
+% Mirrors the header/footer structure of darkmode.sty with standard colours.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{lightmode}[2026/03/30 Light mode page style for book]
+
+\RequirePackage{fancyhdr}
+
+% --- Headers and footers ---
+\fancypagestyle{lightheadings}{%
+  \fancyhf{}%
+  \fancyhead[LE]{\thepage\hspace{1.5em}\leftmark}%
+  \fancyhead[RO]{\rightmark\hspace{1.5em}\thepage}%
+  \renewcommand{\headrulewidth}{0.4pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
+\AtBeginDocument{%
+  \pagestyle{lightheadings}%
+}
