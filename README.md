@@ -136,7 +136,7 @@ and the connection to Fefferman's Clay formulation (Problems A through D).
 
 ## Citation
 
-This is an ongoing research programme. We do not claim to have resolved the
+This is an ongoing research programme. I do not claim to have resolved the
 Millennium Problem. If you wish to reference this work:
 
 ```bibtex
