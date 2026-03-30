@@ -16,7 +16,9 @@ latex/*.fls
 latex/*.fdb_latexmk
 latex/*.synctex.gz
 latex/*.pdf
+latex/**/*.pdf
 *.log
+texput.log
 
 # Lean build
 lean/.lake/

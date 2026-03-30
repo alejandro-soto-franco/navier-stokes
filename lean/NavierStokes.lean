@@ -1,1 +1,2 @@
 import NavierStokes.Foundations
+import NavierStokes.LerayHopf
