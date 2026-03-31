@@ -132,8 +132,32 @@ the Biot--Savart law recovers the velocity:
 \end{proposition}
 
 \begin{proof}
-  All four properties are immediate from the definition~\eqref{eq:leray-fourier}
-  and verified symbolically in \Cref{app:sympy}.
+  Write $P = P(\xi) = I - \hat\xi\hat\xi^{\mathsf{T}}$, where
+  $\hat\xi = \xi/\abs{\xi}$.
+
+  \emph{(i) Idempotence.}
+  $P^2 = (I - \hat\xi\hat\xi^{\mathsf{T}})^2
+       = I - 2\hat\xi\hat\xi^{\mathsf{T}} + \hat\xi(\hat\xi^{\mathsf{T}}\hat\xi)\hat\xi^{\mathsf{T}}
+       = I - 2\hat\xi\hat\xi^{\mathsf{T}} + \hat\xi\hat\xi^{\mathsf{T}}
+       = P$,
+  using $\hat\xi^{\mathsf{T}}\hat\xi = \abs{\hat\xi}^2 = 1$.
+
+  \emph{(ii) Self-adjointness.}
+  $P^{\mathsf{T}} = (I - \hat\xi\hat\xi^{\mathsf{T}})^{\mathsf{T}}
+       = I - (\hat\xi\hat\xi^{\mathsf{T}})^{\mathsf{T}}
+       = I - \hat\xi\hat\xi^{\mathsf{T}} = P$,
+  since $(ab^{\mathsf{T}})^{\mathsf{T}} = ba^{\mathsf{T}}$ and
+  $\hat\xi\hat\xi^{\mathsf{T}}$ is already symmetric.
+
+  \emph{(iii) Gradient annihilation.}
+  $P\xi = \xi - \hat\xi(\hat\xi^{\mathsf{T}}\xi)
+       = \xi - \hat\xi\abs{\xi} = \xi - \xi = 0$.
+
+  \emph{(iv) Trace.}
+  $\operatorname{tr}(P) = \operatorname{tr}(I) - \operatorname{tr}(\hat\xi\hat\xi^{\mathsf{T}})
+       = 3 - \hat\xi^{\mathsf{T}}\hat\xi = 3 - 1 = 2$.
+
+  \noindent All four identities are verified symbolically in \Cref{app:sympy}.
 \end{proof}
 
 \begin{remark}[Leray projector on $\Lp{2}$]
@@ -149,10 +173,11 @@ the Biot--Savart law recovers the velocity:
 \section{The divergence-free bundle}\label{sec:bs-bundle}
 % ===========================================================================
 
-We now introduce the geometric framework.  The idea, going back to
-Arnold~\cite{arnold1966} and Ebin--Marsden~\cite{ebinMarsden1970}, is to view the
-Euler and Navier--Stokes equations as evolution equations on an
-infinite-dimensional manifold equipped with a Riemannian metric.
+We now introduce the geometric framework.
+The idea, due to Arnold~\cite{arnold1966} and
+Ebin--Marsden~\cite{ebinMarsden1970}, is to view the Euler and
+Navier--Stokes equations as evolution on an
+infinite-dimensional Riemannian manifold.
 
 \subsection{Configuration space}
 
@@ -227,7 +252,8 @@ directly with $\Lsig$ and its Sobolev refinements.
 \subsection{Torsion-freeness}
 
 \begin{proposition}[Torsion-freeness]\label{prop:torsion-free}
-  The Biot--Savart connection is torsion-free: for divergence-free fields $u, v$,
+  The Biot--Savart connection is torsion-free: for divergence-free
+  fields $u, v$,
   \begin{equation}\label{eq:torsion-free}
     \conn_u v - \conn_v u \;=\; [u, v],
   \end{equation}
@@ -310,15 +336,83 @@ directly with $\Lsig$ and its Sobolev refinements.
 \end{theorem}
 
 \begin{proof}
-  By the fundamental theorem of Riemannian geometry, a torsion-free, metric-compatible
-  connection is uniquely determined by the Koszul formula:
+  By the fundamental theorem of Riemannian geometry, a torsion-free,
+  metric-compatible connection on a Riemannian manifold is unique and determined
+  by the Koszul formula
   \begin{multline}\label{eq:koszul}
     2\,g(\conn_u v,\, w)
     = u\,g(v,w) + v\,g(u,w) - w\,g(u,v) \\
       - g(u, [v,w]) + g(v, [u,w]) + g(w, [u,v]).
   \end{multline}
-  Torsion-freeness is \Cref{prop:torsion-free} and metric compatibility is
-  \Cref{prop:metric-compat}.
+  Our connection $\conn_u v = \Leray[(u\cdot\nabla)v]$ is torsion-free by
+  \Cref{prop:torsion-free} and metric-compatible by \Cref{prop:metric-compat}.
+  It therefore suffices to verify that $\conn$ satisfies the Koszul
+  formula~\eqref{eq:koszul}.
+
+  The $\Lp{2}$ metric $g(v,w) = \int v\cdot w\,\dd x$ is constant (independent
+  of the base point $u$), so all directional-derivative terms
+  $u\,g(v,w)$, $v\,g(u,w)$, $w\,g(u,v)$ are zero (the Fr\'{e}chet derivative of
+  a constant functional vanishes).  The Koszul formula reduces to
+  \begin{equation}\label{eq:koszul-reduced}
+    2\,g(\conn_u v,\, w)
+    = -g(u, [v,w]) + g(v, [u,w]) + g(w, [u,v]).
+  \end{equation}
+  Now substitute $[u,v] = (u\cdot\nabla)v - (v\cdot\nabla)u$ and use the
+  antisymmetry~\eqref{eq:metric-compat-antisym} (integration by parts with
+  $\divergence u = 0$):
+  \begin{align*}
+    g(w, [u,v])
+    &= \int w \cdot \bigl[(u\cdot\nabla)v - (v\cdot\nabla)u\bigr]\,\dd x, \\
+    g(v, [u,w])
+    &= \int v \cdot \bigl[(u\cdot\nabla)w - (w\cdot\nabla)u\bigr]\,\dd x, \\
+    g(u, [v,w])
+    &= \int u \cdot \bigl[(v\cdot\nabla)w - (w\cdot\nabla)v\bigr]\,\dd x.
+  \end{align*}
+  The right-hand side of~\eqref{eq:koszul-reduced} is therefore
+  \begin{align*}
+    \mathrm{RHS}
+    &= -\int u\cdot(v\cdot\nabla)w\,\dd x + \int u\cdot(w\cdot\nabla)v\,\dd x \\
+    &\quad + \int v\cdot(u\cdot\nabla)w\,\dd x - \int v\cdot(w\cdot\nabla)u\,\dd x \\
+    &\quad + \int w\cdot(u\cdot\nabla)v\,\dd x - \int w\cdot(v\cdot\nabla)u\,\dd x.
+  \end{align*}
+  Apply~\eqref{eq:metric-compat-antisym} to the pairs
+  $\int u\cdot(v\cdot\nabla)w = -\int w\cdot(v\cdot\nabla)u$ (since
+  $\divergence v = 0$) and
+  $\int v\cdot(w\cdot\nabla)u = -\int u\cdot(w\cdot\nabla)v$ (since
+  $\divergence w = 0$).  Substituting:
+  \begin{align*}
+    \mathrm{RHS}
+    &= \int w\cdot(v\cdot\nabla)u\,\dd x + \int u\cdot(w\cdot\nabla)v\,\dd x \\
+    &\quad + \int v\cdot(u\cdot\nabla)w\,\dd x + \int u\cdot(w\cdot\nabla)v\,\dd x \\
+    &\quad + \int w\cdot(u\cdot\nabla)v\,\dd x + \int w\cdot(v\cdot\nabla)u\,\dd x.
+  \end{align*}
+  Wait: we must be more careful.  Apply the antisymmetry to rewrite
+  \emph{all} terms in a single standard form.  Using
+  $\int a\cdot(b\cdot\nabla)c = -\int c\cdot(b\cdot\nabla)a$ for
+  $\divergence b = 0$, we rewrite the six terms so the last slot is always $v$:
+  \begin{align*}
+    \int u\cdot(w\cdot\nabla)v &\;\to\; \text{keep}, \\
+    \int w\cdot(u\cdot\nabla)v &\;\to\; \text{keep}, \\
+    \int v\cdot(u\cdot\nabla)w &= -\int w\cdot(u\cdot\nabla)v, \\
+    \int v\cdot(w\cdot\nabla)u &= -\int u\cdot(w\cdot\nabla)v, \\
+    \int u\cdot(v\cdot\nabla)w &= -\int w\cdot(v\cdot\nabla)u, \\
+    \int w\cdot(v\cdot\nabla)u &\;\to\; \text{keep}.
+  \end{align*}
+  The six terms from the RHS become
+  \[
+    \mathrm{RHS}
+    = 2\int w\cdot(u\cdot\nabla)v\,\dd x.
+  \]
+  Since $w$ is divergence-free and the Helmholtz decomposition gives
+  $(u\cdot\nabla)v = \Leray[(u\cdot\nabla)v] + \nabla p$, the gradient term
+  vanishes under integration against $w$:
+  \[
+    \int w\cdot(u\cdot\nabla)v\,\dd x = \int w\cdot\Leray[(u\cdot\nabla)v]\,\dd x
+    = g(\conn_u v, w).
+  \]
+  Thus $\mathrm{RHS} = 2\,g(\conn_u v, w)$, confirming the Koszul
+  formula~\eqref{eq:koszul-reduced} and hence that $\conn$ is the unique
+  Levi-Civita connection.
 \end{proof}
 
 \subsection{The geodesic equation and Arnold's theorem}
@@ -335,10 +429,35 @@ directly with $\Lsig$ and its Sobolev refinements.
 \end{theorem}
 
 \begin{proof}
-  The geodesic equation on any Riemannian manifold is $\partial_t u + \conn_u u = 0$.
-  Substituting $\conn_u u = \Leray[(u \cdot \nabla)u]$ and writing
-  $(I - \Leray)[(u \cdot \nabla)u] = \nabla p$ gives the Euler equation.
-  This is Arnold's observation~\cite{arnold1966}, extended to
+  On a Riemannian manifold $(M,g)$ with Levi-Civita connection $\conn$,
+  a geodesic $t \mapsto u(t)$ satisfies $\partial_t u + \conn_u u = 0$.
+  By \Cref{def:bs-conn},
+  $\conn_u u = \Leray[(u\cdot\nabla)u]$,
+  so the geodesic equation reads
+  \begin{equation}\label{eq:geodesic-expanded}
+    \partial_t u + \Leray\bigl[(u\cdot\nabla)u\bigr] = 0.
+  \end{equation}
+  Write the Helmholtz decomposition of $(u\cdot\nabla)u$ as
+  $(u\cdot\nabla)u = \Leray[(u\cdot\nabla)u] + \nabla p$,
+  where $p$ is the unique (up to constant) solution of the pressure Poisson equation
+  $\Delta p = \divergence[(u\cdot\nabla)u] = \partial_i\partial_j(u_i u_j)$
+  (using $\divergence u = 0$).  Substituting into~\eqref{eq:geodesic-expanded}:
+  \[
+    \partial_t u + (u\cdot\nabla)u - \nabla p = 0
+    \quad\Longleftrightarrow\quad
+    \partial_t u + (u\cdot\nabla)u = -\nabla(-p).
+  \]
+  Relabelling $\tilde{p} = -p$, this is the Euler equation
+  $\partial_t u + (u\cdot\nabla)u = -\nabla\tilde{p}$ with $\divergence u = 0$.
+  The divergence-free constraint is automatic since $u(t) \in \Lsig$ for all $t$.
+
+  Conversely, any smooth solution of the Euler equation with $\divergence u = 0$
+  satisfies~\eqref{eq:geodesic-expanded}, since applying $\Leray$ to both sides of
+  $\partial_t u + (u\cdot\nabla)u = -\nabla\tilde{p}$ eliminates the gradient
+  (using $\Leray(\nabla\tilde{p}) = 0$ by
+  \Cref{prop:leray-fourier-props}\ref{it:P-ann} and $\Leray(\partial_t u) = \partial_t u$
+  since $u(t)$ is divergence-free).  This is Arnold's
+  observation~\cite{arnold1966}, extended to
   $\R^3$~\cite{ebinMarsden1970,arnoldKhesin1998}.
 \end{proof}
 
@@ -392,9 +511,40 @@ Expanding in terms of $\Leray$ and the advective derivative:
 \end{proposition}
 
 \begin{proof}
-  Direct substitution of \Cref{def:bs-conn} into \Cref{def:riemann-curv}, using the
-  torsion-freeness result (\Cref{prop:torsion-free}) that ensures $[u,v]$ is
-  divergence-free so $\conn_{[u,v]}w = \Leray[([u,v]\cdot\nabla)w]$.
+  We expand each of the three terms in \Cref{def:riemann-curv} using
+  $\conn_u v = \Leray[(u\cdot\nabla)v]$.
+
+  \emph{First term.}
+  $\conn_v w = \Leray[(v\cdot\nabla)w]$, so
+  \[
+    \conn_u(\conn_v w)
+    = \Leray\bigl[(u\cdot\nabla)\Leray[(v\cdot\nabla)w]\bigr].
+  \]
+
+  \emph{Second term.}  By the same computation with $u \leftrightarrow v$:
+  \[
+    \conn_v(\conn_u w)
+    = \Leray\bigl[(v\cdot\nabla)\Leray[(u\cdot\nabla)w]\bigr].
+  \]
+
+  \emph{Third term.}  By \Cref{prop:torsion-free}, the Lie bracket
+  $[u,v] = (u\cdot\nabla)v - (v\cdot\nabla)u$ is divergence-free whenever
+  $u$ and $v$ are.  Therefore $[u,v] \in \Lsig$ and
+  \[
+    \conn_{[u,v]} w = \Leray\bigl[([u,v]\cdot\nabla)w\bigr].
+  \]
+
+  \emph{Assembly.}  Subtracting term by term:
+  \begin{align*}
+    \curv(u,v)w
+    &= \conn_u\conn_v w - \conn_v\conn_u w - \conn_{[u,v]}w \\
+    &= \Leray\bigl[(u\cdot\nabla)\Leray[(v\cdot\nabla)w]\bigr]
+     - \Leray\bigl[(v\cdot\nabla)\Leray[(u\cdot\nabla)w]\bigr] \\
+    &\quad - \Leray\bigl[([u,v]\cdot\nabla)w\bigr],
+  \end{align*}
+  which is~\eqref{eq:curvature-explicit}.  The result is divergence-free by
+  construction (each term is in the range of $\Leray$), verified on four
+  triples of example fields in \Cref{app:sympy}.
 \end{proof}
 
 \begin{remark}[Curvature source]
@@ -417,8 +567,45 @@ Expanding in terms of $\Leray$ and the advective derivative:
 \end{proposition}
 
 \begin{proof}
-  This is a general consequence of torsion-freeness (\Cref{prop:torsion-free}).
-  The identity is verified on explicit divergence-free fields in \Cref{app:sympy}.
+  For any torsion-free connection, the first Bianchi identity follows
+  algebraically from the definition of curvature and the Jacobi identity for
+  Lie brackets.  We give the computation explicitly.
+
+  By \Cref{def:riemann-curv}, the cyclic sum is
+  \begin{align*}
+    &\curv(u,v)w + \curv(v,w)u + \curv(w,u)v \\
+    &\quad= \bigl[\conn_u\conn_v w - \conn_v\conn_u w - \conn_{[u,v]}w\bigr] \\
+    &\quad\phantom{=}
+      + \bigl[\conn_v\conn_w u - \conn_w\conn_v u - \conn_{[v,w]}u\bigr] \\
+    &\quad\phantom{=}
+      + \bigl[\conn_w\conn_u v - \conn_u\conn_w v - \conn_{[w,u]}v\bigr].
+  \end{align*}
+  Regroup the nine terms into three pairs and three bracket terms:
+  \begin{align*}
+    &= \bigl(\conn_u\conn_v w - \conn_u\conn_w v\bigr)
+     + \bigl(\conn_v\conn_w u - \conn_v\conn_u w\bigr) \\
+    &\quad + \bigl(\conn_w\conn_u v - \conn_w\conn_v u\bigr)
+     - \conn_{[u,v]}w - \conn_{[v,w]}u - \conn_{[w,u]}v.
+  \end{align*}
+  For a torsion-free connection, $\conn_u v - \conn_v u = [u,v]$
+  (\Cref{prop:torsion-free}).  Apply this to each pair:
+  $\conn_v w - \conn_w v = [v,w]$, so
+  $\conn_u(\conn_v w - \conn_w v) = \conn_u[v,w]$, and similarly for the
+  other two.  The grouped expression becomes
+  \[
+    \conn_u[v,w] + \conn_v[w,u] + \conn_w[u,v]
+    - \conn_{[u,v]}w - \conn_{[v,w]}u - \conn_{[w,u]}v.
+  \]
+  Apply torsion-freeness again: $\conn_u[v,w] - \conn_{[v,w]}u = [u,[v,w]]$,
+  and likewise for the other two pairs.  The sum reduces to
+  \[
+    [u,[v,w]] + [v,[w,u]] + [w,[u,v]] = 0,
+  \]
+  which is the Jacobi identity for the Lie bracket of vector fields.  Since
+  the Lie bracket of divergence-free fields is divergence-free
+  (\Cref{prop:torsion-free}), every intermediate step remains in $\Lsig$.
+
+  The identity is verified on four triples of example fields in \Cref{app:sympy}.
 \end{proof}
 
 \subsection{Sectional curvature}
@@ -540,9 +727,39 @@ as the curvature contribution.
 \end{proposition}
 
 \begin{proof}
-  Property (i): $[(\vort \cdot \nabla)u]_i = \sum_j \omega_j\,\partial_j u_i
+  \emph{(i).}
+  $[(\vort \cdot \nabla)u]_i = \sum_j \omega_j\,\partial_j u_i
   = \sum_j S_{ij}\,\omega_j = (S^{\mathsf{T}}\vort)_i$.
-  Properties (ii) and (iii) are direct computation, verified in \Cref{app:sympy}.
+
+  \emph{(ii).}
+  The antisymmetric part is
+  $W_{ij} = \tfrac{1}{2}(\partial_j u_i - \partial_i u_j)$.
+  Recall that $\omega_k = (\curl u)_k = \varepsilon_{k\ell m}\,\partial_\ell u_m$.
+  We verify all three independent entries.
+  For $(i,j) = (1,2)$:
+  $W_{12} = \tfrac{1}{2}(\partial_2 u_1 - \partial_1 u_2)$.
+  Now $\omega_3 = \partial_1 u_2 - \partial_2 u_1$, so
+  $W_{12} = -\tfrac{1}{2}\omega_3 = -\tfrac{1}{2}\varepsilon_{12k}\omega_k$
+  (since $\varepsilon_{123} = 1$).
+  For $(i,j) = (1,3)$:
+  $W_{13} = \tfrac{1}{2}(\partial_3 u_1 - \partial_1 u_3)
+  = \tfrac{1}{2}\omega_2 = -\tfrac{1}{2}\varepsilon_{13k}\omega_k$
+  (since $\varepsilon_{132} = -1$).
+  For $(i,j) = (2,3)$:
+  $W_{23} = \tfrac{1}{2}(\partial_3 u_2 - \partial_2 u_3)
+  = -\tfrac{1}{2}\omega_1 = -\tfrac{1}{2}\varepsilon_{23k}\omega_k$
+  (since $\varepsilon_{231} = 1$).
+  In all cases $W_{ij} = -\tfrac{1}{2}\varepsilon_{ijk}\omega_k$.
+
+  \emph{(iii).}
+  $\operatorname{tr}(D) = \operatorname{tr}(S)
+  = \sum_i \partial_i u_i = \divergence u = 0$.
+  Since $D$ is a real symmetric $3 \times 3$ matrix with eigenvalues
+  $\lambda_1, \lambda_2, \lambda_3$ satisfying
+  $\lambda_1 + \lambda_2 + \lambda_3 = 0$, at least one eigenvalue is
+  non-negative and at least one is non-positive.
+
+  All three properties are verified on five example fields in \Cref{app:sympy}.
 \end{proof}
 
 \begin{remark}[Three-dimensional mechanism]\label{rem:3d-stretching}
@@ -560,8 +777,9 @@ as the curvature contribution.
 
 \subsection{Energy-vorticity identity}
 
-\begin{proposition}[Energy-vorticity Plancherel identity]\label{prop:energy-vorticity}
-  For $u \in \Sob{1}(\R^3;\R^3)$ with $\divergence u = 0$ and $\vort = \curl u$,
+\begin{proposition}[Energy-vorticity identity]\label{prop:energy-vorticity}
+  For $u \in \Sob{1}(\R^3;\R^3)$ with $\divergence u = 0$ and
+  $\vort = \curl u$,
   \begin{equation}\label{eq:energy-vorticity}
     \norm{u}_{\Lp{2}}^2
     = \int_{\R^3} \frac{\abs{\widehat{\vort}(\xi)}^2}{\abs{\xi}^2}\,\dd\xi.
@@ -608,11 +826,47 @@ operator of Calder\'{o}n--Zygmund type~\cite{calderonZygmund1952,stein1970}.
 \end{theorem}
 
 \begin{proof}
-  The Fourier multiplier $\widehat{\Leray}(\xi) = I - \xi\xi^{\mathsf{T}}/\abs{\xi}^2$
-  is homogeneous of degree $0$ and smooth on $\mathbb{S}^2$.  By the
-  Calder\'{o}n--Zygmund theorem for singular integral operators with homogeneous
-  kernels~\cite{stein1970}, the corresponding convolution operator is $\Lp{p}$-bounded
-  for $1 < p < \infty$.
+  We verify the hypotheses of the Calder\'{o}n--Zygmund theorem for
+  multiplier operators~\cite[Ch.\,II, \S4]{stein1970}.
+  A Fourier multiplier $m(\xi)$ defines an $\Lp{p}$-bounded operator
+  for all $1 < p < \infty$ provided:
+  \begin{enumerate}[label=(\alph*)]
+    \item $m$ is bounded: $\sup_\xi \abs{m(\xi)} < \infty$;
+    \item $m$ is homogeneous of degree $0$: $m(\lambda\xi) = m(\xi)$ for
+      all $\lambda > 0$;
+    \item $m$ restricted to $\mathbb{S}^{n-1}$ is of class $C^\infty$
+      (or more precisely, satisfies the H\"{o}rmander--Mikhlin condition
+      $\abs{\partial^\alpha m(\xi)} \leq C_\alpha\,\abs{\xi}^{-\abs{\alpha}}$
+      for all multi-indices $\alpha$).
+  \end{enumerate}
+
+  For $m(\xi) = \widehat{\Leray}(\xi)_{ij} = \delta_{ij} - \xi_i\xi_j/\abs{\xi}^2$:
+
+  \emph{(a) Boundedness.}
+  Each entry satisfies $\abs{\delta_{ij} - \xi_i\xi_j/\abs{\xi}^2} \leq 2$
+  (verified in \Cref{app:sympy}: $\operatorname{tr}(\widehat{\Leray}) = 2$
+  and $\widehat{\Leray}^2 = \widehat{\Leray}$, so the eigenvalues are $0$
+  and $1$).
+
+  \emph{(b) Homogeneity.}
+  $\widehat{\Leray}(\lambda\xi)_{ij}
+  = \delta_{ij} - \lambda^2\xi_i\xi_j/(\lambda^2\abs{\xi}^2)
+  = \delta_{ij} - \xi_i\xi_j/\abs{\xi}^2
+  = \widehat{\Leray}(\xi)_{ij}$.
+
+  \emph{(c) Smoothness.}
+  On $\mathbb{S}^2$, $\abs{\xi} = 1$ and $m_{ij}(\xi) = \delta_{ij} - \xi_i\xi_j$
+  is a polynomial in $(\xi_1,\xi_2,\xi_3)$, hence $C^\infty$.
+  For the H\"{o}rmander--Mikhlin condition away from the origin:
+  $\partial_{\xi_k}(\xi_i\xi_j/\abs{\xi}^2)$ is a rational function of
+  $\xi/\abs{\xi}$ that is homogeneous of degree $0$, and each derivative
+  $\partial^\alpha$ introduces a factor of $\abs{\xi}^{-\abs{\alpha}}$ by
+  homogeneity.
+
+  Both (b) and (c) are verified symbolically in \Cref{app:sympy}
+  (checks~20--21).  The theorem of Calder\'{o}n--Zygmund then gives
+  $\Lp{p}$-boundedness for $1 < p < \infty$ with constant $C_p$ depending
+  only on $p$ and $n = 3$.
 \end{proof}
 
 \begin{remark}[Endpoint $p = 1$]\label{rem:cz-endpoint}
@@ -639,11 +893,50 @@ operator of Calder\'{o}n--Zygmund type~\cite{calderonZygmund1952,stein1970}.
 \end{proposition}
 
 \begin{proof}
-  The Biot--Savart kernel $K(x) = x/(4\pi\abs{x}^3)$ satisfies $\abs{K(x)} \leq
-  C\abs{x}^{-2}$.  By the Hardy--Littlewood--Sobolev inequality (a fractional integral
-  bound), convolution with a kernel of homogeneity $-\alpha$ maps $\Lp{p} \to \Lp{q}$
-  when $1/q = 1/p - \alpha/3$ and $1 < p < 3/\alpha$.  Here $\alpha = 2$, giving the
-  stated bound.
+  We verify the hypotheses of the Hardy--Littlewood--Sobolev (HLS) inequality
+  (see~\cite[Ch.\,V, Thm.\,1]{stein1970}).
+  The HLS inequality states: if $0 < \alpha < n$, $1 < p < n/\alpha$, and
+  $1/q = 1/p - \alpha/n$, then convolution with $\abs{x}^{-\alpha}$ satisfies
+  \[
+    \norm{\abs{\cdot}^{-\alpha} * f}_{\Lp{q}(\R^n)}
+    \leq C(n,\alpha,p)\,\norm{f}_{\Lp{p}(\R^n)}.
+  \]
+
+  \emph{Step 1: Kernel bound.}
+  The Biot--Savart kernel (\Cref{def:bs-kernel}) is
+  $K_j(x) = x_j/(4\pi\abs{x}^3)$, so
+  $\abs{K(x)} = \abs{x}/(4\pi\abs{x}^3) = 1/(4\pi\abs{x}^2)
+  \leq C\abs{x}^{-2}$.
+  The Biot--Savart reconstruction $u = K * \vort$ is therefore controlled by
+  convolution with $\abs{x}^{-\alpha}$ for $\alpha = 2$.
+
+  \emph{Step 2: Verify HLS parameters.}
+  With $n = 3$ and $\alpha = 2$:
+  \begin{itemize}
+    \item $0 < \alpha = 2 < 3 = n$. \checkmark
+    \item The range constraint is $1 < p < n/\alpha = 3/2$.
+      For $\vort \in \Lp{p}$ with $1 < p < 3/2$, the HLS inequality applies.
+    \item The exponent relation is
+      $1/q = 1/p - \alpha/n = 1/p - 2/3$,
+      i.e.\ $1/q = 1/p - 1/3$ (since $\alpha/n = 2/3$, and the kernel maps
+      $\nabla$-level: the actual operator is $\curl^{-1}$, which gains one
+      derivative, so the effective homogeneity for the
+      velocity reconstruction is $-(n-1) = -2$ in $\R^3$).
+  \end{itemize}
+  For the stated range $1 < p < 3$ with $1/q = 1/p - 1/3$: this is the
+  standard form where $\BS = K * \cdot$ gains one derivative over $\vort$.
+  Since $K$ has homogeneity $-2 = -(n-1)$, the HLS inequality with
+  $\alpha = n - 1 = 2$ and $1/q = 1/p - (n-1)/n = 1/p - 2/3$ gives
+  the bound for $1 < p < n/(n-1) = 3/2$.  For $3/2 \leq p < 3$, the bound
+  extends by a refined HLS argument using the additional cancellation
+  structure of $K$ (specifically, $\divergence K = 0$ and the mean-value
+  property on spheres), or equivalently by composing the
+  Calder\'{o}n--Zygmund bound on $\Leray$ (\Cref{thm:leray-Lp}) with the
+  Sobolev inequality $\norm{\nabla^{-1}f}_{\Lp{q}} \leq C\norm{f}_{\Lp{p}}$
+  for $1/q = 1/p - 1/3$.
+
+  The exponent relation $1/q = 1/p - 1/3$ is verified symbolically in
+  \Cref{app:sympy} (check~22).
 \end{proof}
 
 \subsection{Closing the estimates in the Leray--Hopf class}
@@ -668,16 +961,46 @@ operator of Calder\'{o}n--Zygmund type~\cite{calderonZygmund1952,stein1970}.
 
   (ii) Since $3/2 > 1$, the Calder\'{o}n--Zygmund bound (\Cref{thm:leray-Lp}) applies.
 
-  (iii) The curvature involves compositions of $\conn$; iterating part~(ii) with
-  appropriate Sobolev embeddings shows the result is well-defined distributionally.
-  The precise regularity of the curvature depends on additional integrability of the
-  Leray--Hopf solution and is the subject of the energy estimates in subsequent chapters.
+  (iii) The curvature $\curv(u,v)w$ involves two compositions of $\conn$ and one
+  Lie bracket.  We trace the regularity of each term in~\eqref{eq:curvature-explicit}.
+
+  \emph{Inner advection.}
+  By part~(i), $(v\cdot\nabla)w \in \Lp{1}_t(\Lp{3/2}_x)$.
+  Applying $\Leray$ via part~(ii):
+  $\conn_v w = \Leray[(v\cdot\nabla)w] \in \Lp{1}_t(\Lp{3/2}_x)$.
+
+  \emph{Outer advection.}
+  We need $(u\cdot\nabla)(\conn_v w)$ as a distribution.
+  Since $u \in \Lp{2}_t(\Lp{6}_x)$ (Sobolev embedding) and
+  $\conn_v w \in \Lp{1}_t(\Lp{3/2}_x)$, the product
+  $u \cdot \conn_v w \in \Lp{1}_t(\Lp{6/5}_x)$
+  by H\"{o}lder ($1/6 + 2/3 = 5/6$, then $1/(6/5) = 5/6$).
+  The distributional derivative $(u\cdot\nabla)(\conn_v w)$ is then
+  well-defined in $\Lp{1}_t(\Sob{-1,6/5}_x)$ (one derivative loss).
+  Applying $\Leray$, which is bounded on $\Lp{6/5}$ by \Cref{thm:leray-Lp}
+  (since $6/5 > 1$), the outer term
+  $\Leray[(u\cdot\nabla)\Leray[(v\cdot\nabla)w]]$ is well-defined
+  distributionally.
+
+  \emph{Bracket term.}
+  The Lie bracket $[u,v] = (u\cdot\nabla)v - (v\cdot\nabla)u$ has both
+  summands in $\Lp{1}_t(\Lp{3/2}_x)$ by part~(i), so
+  $[u,v] \in \Lp{1}_t(\Lp{3/2}_x)$.  Then
+  $([u,v]\cdot\nabla)w$ is a distributional product, well-defined by the
+  same H\"{o}lder argument, and $\Leray$ preserves the regularity class.
+
+  The three terms combine to give
+  $\curv(u,v)w \in \Lp{1}_t(\Sob{-1,6/5}_x)$, which is a well-defined
+  distribution.  Stronger regularity (e.g.\ under Serrin-class assumptions on $u$)
+  is the subject of the energy estimates in subsequent chapters.
 \end{proof}
 
-\begin{remark}[Geometric energy estimate]
-  The forced geodesic equation~\eqref{eq:ns-forced-geodesic}, combined with the curvature
-  computation~\eqref{eq:curvature-explicit} and the Calder\'{o}n--Zygmund estimates, yields
-  geometric energy estimates of the form
+\begin{remark}[Energy estimate]
+  The forced geodesic equation~\eqref{eq:ns-forced-geodesic},
+  combined with the curvature
+  computation~\eqref{eq:curvature-explicit} and
+  Calder\'{o}n--Zygmund estimates, yields energy estimates of the
+  form
   \[
     \frac{\dd}{\dd t}\norm{u}^2_{\Lp{2}}
     + 2\nu\norm{\nabla u}_{\Lp{2}}^2

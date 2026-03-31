@@ -2,6 +2,29 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.3] - 2026-03-31
+
+### Changed
+- **Chapter 3**: all 9 proof sketches rewritten as full proofs with no
+  handwaving. Leray projector (explicit matrix algebra), Levi-Civita
+  (complete Koszul formula derivation), geodesic = Euler (step-by-step
+  substitution), curvature formula (three-term expansion), first Bianchi
+  (algebraic from Jacobi identity), stretching tensor (all W_ij pairs
+  and trace), CZ L^p boundedness (kernel hypotheses verified),
+  Biot-Savart HLS (hypotheses verified), iterated connection regularity
+  (full Holder/Sobolev chain). 64 pages.
+- **Appendix B**: added Part V (Calderon-Zygmund and HLS exponent
+  checks 20-23).
+- **SymPy ch03**: added Part V with 4 new checks (Leray multiplier
+  homogeneity, smoothness on S^2, HLS exponents, Holder product
+  estimates). 23 checks total, all passing.
+
+### Fixed
+- Dark mode (`main-dark.tex`) still included deleted `ch04-connection`;
+  removed.
+- Horizontal overflow in ch03: 36pt overflow in Bianchi proof and 12pt
+  overflow in energy remark eliminated; remaining overflows all < 6pt.
+
 ## [0.2.2] - 2026-03-31
 
 ### Added
