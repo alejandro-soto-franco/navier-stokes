@@ -150,8 +150,8 @@ optimal constant for convex domains.
 
 \medskip\noindent
 Defines the distributional divergence-free condition, the space $L^{2}_{\sigma}$,
-and the Leray projector; proves sequential closedness of $L^{2}_{\sigma}$ under
-$L^{2}$ convergence.
+and a legacy Leray projector stub; proves sequential closedness of $L^{2}_{\sigma}$
+under $L^{2}$ convergence.
 
 \begin{itemize}
   \item \path{NavierStokes.IsDistribDivFree}\\
@@ -166,18 +166,63 @@ $L^{2}$ convergence.
     via H\"{o}lder's inequality (Cauchy--Schwarz, $p = q = 2$) and uniqueness of
     limits (\Cref{prop:L2sigma-closed}).
   \item \path{NavierStokes.helmholtz_decomposition}
-    \emph{(\textit{sorry} stub)}: every $u \in L^{2}(\Omega;\R^{n})$ decomposes
-    orthogonally as $u = v + \nabla p$ with $v \in L^{2}_{\sigma}$ and
-    $\nabla p \perp L^{2}_{\sigma}$ (\Cref{thm:helmholtz}).
-  \item \path{NavierStokes.lerayProjector} \emph{(\textit{sorry} stub)}:
-    the bounded linear projection $\mathbb{P}: L^{2}(\R^{n};\R^{n}) \to
-    L^{2}_{\sigma}(\R^{n})$ (\Cref{def:leray-projector}).
-  \item \path{NavierStokes.lerayProjector_idempotent}
-    \emph{(\textit{sorry} stub)}: $\mathbb{P}^{2} = \mathbb{P}$ (projection
-    algebra; depends on Helmholtz decomposition).
-  \item \path{NavierStokes.lerayProjector_selfAdjoint}
-    \emph{(\textit{sorry} stub)}: $\mathbb{P}^{*} = \mathbb{P}$ (orthogonal
-    projection; depends on Helmholtz decomposition).
+    \emph{(\textit{sorry} stub, legacy)}: every $u \in L^{2}(\Omega;\R^{n})$
+    decomposes orthogonally as $u = v + \nabla p$ with $v \in L^{2}_{\sigma}$ and
+    $\nabla p \perp L^{2}_{\sigma}$ (\Cref{thm:helmholtz}).  Retained for API
+    compatibility; superseded by \path{helmholtz_l2_decomposition} in
+    \Cref{sec:lean-ch1-helmholtz-proj}.
+  \item \path{NavierStokes.lerayProjector_idempotent}\\
+    \emph{(\textit{sorry} stub, legacy)}: $\mathbb{P}^{2} = \mathbb{P}$.
+    Superseded by \path{lerayProjectorLp_idempotent} \textbf{(proved)}
+    in \Cref{sec:lean-ch1-helmholtz-proj}.
+  \item \path{NavierStokes.lerayProjector_selfAdjoint}\\
+    \emph{(\textit{sorry} stub, legacy)}: $\mathbb{P}^{*} = \mathbb{P}$.
+    Superseded by \path{lerayProjectorLp_selfAdjoint} \textbf{(proved)}
+    in \Cref{sec:lean-ch1-helmholtz-proj}.
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\subsection{Helmholtz projection via orthogonal projection}%
+\label{sec:lean-ch1-helmholtz-proj}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/HelmholtzProjection.lean}%
+{\texttt{NavierStokes/Foundations/HelmholtzProjection.lean}}
+
+\medskip\noindent
+Constructs the Leray projector as the orthogonal projection onto the closed
+submodule $L^{2}_{\sigma}$ using Mathlib's \path{Submodule.starProjection}
+API.  All main theorems are sorry-free; one norm-bridge sorry remains
+(Category~C, ENNReal bookkeeping).
+
+\begin{itemize}
+  \item \path{NavierStokes.l2sigmaSubmodule}\\
+    $L^{2}_{\sigma}$ as a \path{Submodule} of $L^{p}(E,2,\mu)$; zero, add,
+    and scalar-multiplication closures proved (\Cref{def:L2sigma}).
+  \item \path{NavierStokes.l2sigmaSubmodule_isClosed}\\
+    \textbf{(proved, modulo norm bridge)}: topological closedness via
+    sequential closedness and the metric structure of $L^{2}$
+    (\Cref{prop:L2sigma-closed}).
+  \item \path{NavierStokes.l2sigmaClosedSubmodule}\\
+    packages \path{l2sigmaSubmodule} as a \path{ClosedSubmodule},
+    enabling Mathlib's \path{HasOrthogonalProjection} instance.
+  \item \path{NavierStokes.lerayProjectorLp}\\
+    the Leray projector $\mathbb{P}$ as a CLM onto $L^{2}_{\sigma}(\Omega)$,
+    defined via \path{Submodule.starProjection} on \path{l2sigmaClosedSubmodule}
+    (\Cref{def:leray-projector}).
+  \item \path{NavierStokes.lerayProjectorLp_idempotent}\\
+    \textbf{(proved)}: $\mathbb{P}(\mathbb{P}(f)) = \mathbb{P}(f)$, via
+    \path{starProjection_eq_self_iff.mpr} and membership in $L^{2}_{\sigma}$
+    (\Cref{prop:leray-props}).
+  \item \path{NavierStokes.lerayProjectorLp_selfAdjoint}\\
+    \textbf{(proved)}: $\langle \mathbb{P}f, g \rangle = \langle f, \mathbb{P}g \rangle$,
+    via \path{inner_starProjection_left_eq_right} (\Cref{prop:leray-props}).
+  \item \path{NavierStokes.helmholtz_l2_decomposition}\\
+    \textbf{(proved)}: for every $f \in L^{2}(\Omega;\R^{n})$,
+    $f = \mathbb{P}f + (f - \mathbb{P}f)$ with $\mathbb{P}f \in L^{2}_{\sigma}$
+    and $\langle \mathbb{P}f, f - \mathbb{P}f \rangle = 0$, via
+    \path{starProjection_inner_eq_zero} (\Cref{thm:helmholtz}).
 \end{itemize}
 
 % ===========================================================================

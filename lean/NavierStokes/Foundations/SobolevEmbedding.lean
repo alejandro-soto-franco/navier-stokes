@@ -51,7 +51,20 @@ theorem sobolevConjugate_inv (p : ℝ) (hn : 0 < n) (hp : 1 < p) (hpn : p < (n :
 /-- **Sobolev Embedding (Subcritical case)**: W^{1,p}(Omega) embeds continuously into
     L^{p*}(Omega) when 1 ≤ p < n.  Every u in W^{1,p} has its L^{p*} norm controlled
     by a constant times the W^{1,p} seminorm (the L^p norm of the gradient).
-    This is a consequence of the Gagliardo-Nirenberg-Sobolev inequality. -/
+    This is a consequence of the Gagliardo-Nirenberg-Sobolev inequality.
+
+    *Proof sketch (sorry):* Mathlib provides the GNS inequality for smooth compactly
+    supported functions via `eLpNorm_le_eLpNorm_fderiv_of_eq_inner`
+    (`Mathlib.Analysis.FunctionalSpaces.SobolevInequality`), which gives
+    `‖u‖_{L^{p*}} ≤ C * ‖fderiv ℝ u‖_{L^p}` for `u : E → F'` with `ContDiff ℝ 1 u`
+    and `HasCompactSupport u`, where `(p')⁻¹ = p⁻¹ - (finrank ℝ E)⁻¹`.
+
+    Gap: `SobolevW1p` elements have *weak* derivatives (`u.weakDeriv i`), not classical
+    `fderiv`. Bridging requires:
+      (1) Density of `C^∞_c(Ω)` in `W^{1,p}(Ω)` (Meyers-Serrin theorem) — not yet in Mathlib;
+      (2) A compatible estimate showing `u.weakDeriv i = fderiv ℝ u · e_i` a.e. for smooth u;
+      (3) A passage-to-the-limit argument in L^{p*} using the density from (1).
+    Category C: requires Meyers-Serrin in Mathlib. -/
 theorem sobolev_embedding_subcritical
     (p : ℝ) (hp : 1 ≤ p) (hpn : p < (n : ℝ)) (hn : 0 < n)
     (u : SobolevW1p Ω hΩ (ENNReal.ofReal p)) :
@@ -61,7 +74,21 @@ theorem sobolev_embedding_subcritical
 /-- **Sobolev Embedding (Supercritical case)**: W^{1,p}(Omega) embeds continuously into
     the Hölder space C^{0,alpha}(Omega) when p > n, with alpha = 1 - n/p.
     Functions in W^{1,p} for p > n are not just measurable but actually continuous and
-    Hölder continuous with the indicated exponent. -/
+    Hölder continuous with the indicated exponent.
+
+    *Proof sketch (sorry):* The Morrey inequality states that for p > n and
+    u ∈ W^{1,p}(R^n) with compact support,
+      |u(x) - u(y)| ≤ C * |x - y|^{1 - n/p} * ‖∇u‖_{L^p}
+    (Morrey's lemma).  This is the supercritical counterpart of GNS.
+
+    Gap: Mathlib's `SobolevInequality` covers the subcritical case (p < n) but not the
+    supercritical/Morrey case (p > n) as of v4.29.0-rc8. Additionally the same
+    weak-derivative/classical-derivative bridge required for `sobolev_embedding_subcritical`
+    applies here.
+
+    The conclusion is stated as `ContinuousOn u.f Ω` (the Hölder regularity
+    `HolderWith (1 - n/p) u.f` is a stronger form; both are deferred).
+    Category C: requires Morrey inequality in Mathlib. -/
 theorem sobolev_embedding_supercritical
     (p : ℝ) (hp : (n : ℝ) < p)
     (u : SobolevW1p Ω hΩ (ENNReal.ofReal p)) :

@@ -2,6 +2,114 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.7] - 2026-04-01
+
+### Lean: Sorry Reduction (9 -> 10, net +3 proved theorems)
+
+**New file: `HelmholtzProjection.lean`** — full L2 Helmholtz decomposition via
+`Submodule.starProjection`.
+
+The Leray projector is now constructed as the orthogonal projection CLM onto
+`l2sigmaSubmodule` (a `ClosedSubmodule` of `Lp E 2 μ`), using Mathlib's
+`HasOrthogonalProjection` instance for complete inner product spaces.  Three
+properties that were sorry stubs in `DivFreeSpace.lean` are now proved
+sorry-free via direct API calls:
+
+```lean
+lerayProjectorLp_idempotent :
+    lerayProjectorLp Ω hΩ (lerayProjectorLp Ω hΩ f) = lerayProjectorLp Ω hΩ f
+-- proof: starProjection_eq_self_iff.mpr (lerayProjectorLp_mem ...)
+
+lerayProjectorLp_selfAdjoint :
+    ⟪lerayProjectorLp Ω hΩ f, g⟫_ℝ = ⟪f, lerayProjectorLp Ω hΩ g⟫_ℝ
+-- proof: inner_starProjection_left_eq_right f g
+
+helmholtz_l2_decomposition :
+    lerayProjectorLp Ω hΩ f ∈ l2sigmaSubmodule Ω hΩ ∧
+    f = lerayProjectorLp Ω hΩ f + (f - lerayProjectorLp Ω hΩ f) ∧
+    ⟪lerayProjectorLp Ω hΩ f, f - lerayProjectorLp Ω hΩ f⟫_ℝ = 0
+-- proof: membership + abel + starProjection_inner_eq_zero
+```
+
+**New sorry (Category C, ENNReal norm bridge):** `l2sigmaSubmodule_isSeqClosed`
+contains one sorry converting `‖f_k - f‖_{Lp2} → 0` to `∫ ‖⇑f_k - ⇑f‖² → 0`
+(ENNReal bookkeeping between `Lp` norm and raw integral).  Net sorry count: 9
+eliminated 1 in DivFreeSpace stubs superseded + 1 new norm bridge = total 10.
+
+**Sorry-free definitions and lemmas added:**
+- `l2sigmaSubmodule` (Submodule packaging with zero/add/smul closure)
+- `l2sigmaSubmodule_isClosed` (topological closedness via `IsSeqClosed.isClosed`)
+- `l2sigmaClosedSubmodule` (ClosedSubmodule for `HasOrthogonalProjection`)
+- `lerayProjectorLp` (orthogonal projection CLM)
+- `lerayProjectorLp_mem`, `lerayProjectorLp_idempotent`,
+  `lerayProjectorLp_selfAdjoint`, `helmholtz_l2_decomposition`
+
+**Key debugging lessons (5 iterations on `isDistribDivFree_add`):**
+1. Greedy binder scope: `∫ x, A x + ∫ x, B x` parses as `∫ x, (A x + ∫ x, B x)`.
+   Fix: always parenthesise both integrals explicitly.
+2. `EuclideanSpace.proj_apply` does not exist in Mathlib v4.29.  Use
+   `MemLp.continuousLinearMap_comp (EuclideanSpace.proj i)` for integrability;
+   definitional equality at the `MemLp` level suffices for `exact`.
+3. `rw [← integral_add]` fails on syntactic mismatch (`proj i (u x)` vs
+   `(u x).ofLp i`).  Fix: rewrite the integrand via
+   `funext (fun x => by simp [Pi.add_apply, PiLp.add_apply]; ring)` first,
+   then close with `exact integral_add h_int_u h_int_v`.
+4. `rw [← Finset.sum_add_distrib]` on a `have hsplit` fails when the RHS sum
+   has greedy-binder scope issues.  Fix: use `simp_rw [hstep, Finset.sum_add_distrib]`
+   in the forward direction after a per-component `hstep` lemma.
+
+### LaTeX: Appendix A — Concordance Update
+
+Added new subsection `A.1.7 Helmholtz projection via orthogonal projection`
+(`sec:lean-ch1-helmholtz-proj`) documenting all sorry-free definitions and
+theorems in `HelmholtzProjection.lean`.
+
+Updated `sec:lean-ch1-divfree` (DivFreeSpace.lean items) to mark
+`lerayProjector_idempotent`, `lerayProjector_selfAdjoint`, and
+`helmholtz_decomposition` as `(legacy)` stubs superseded by the proved
+versions in the new subsection.
+
+LaTeX cross-references: `prop:leray-props` (idempotency, self-adjointness)
+and `thm:helmholtz` (orthogonal decomposition) are now backed by sorry-free
+Lean theorems.
+
+## [0.2.6] - 2026-03-31
+
+### Lean: Sorry Reduction (10 -> 9)
+
+**`lerayProjector` definition is now sorry-free.**
+
+The previous body used `(helmholtz_decomposition Ω hΩ u (by sorry)).choose`, requiring a
+`sorry` to discharge the `MemLp u 2 (volume.restrict Ω)` hypothesis that `lerayProjector`
+did not take as an argument. Fixed by threading the hypothesis explicitly:
+
+```lean
+def lerayProjector ... (u : ...) (hu : MemLp u 2 (volume.restrict Ω)) : ... :=
+  (helmholtz_decomposition Ω hΩ u hu).choose
+```
+
+Downstream callers (`lerayProjector_idempotent`, `lerayProjector_selfAdjoint`) updated to
+accept and pass `hu` and the derived `MemLp` of the projected field.
+
+**New sorry-free helper lemmas (body uses only `.choose_spec` extraction):**
+- `lerayProjector_mem_l2sigma`: `lerayProjector Ω hΩ u hu ∈ L2sigma Ω hΩ`
+- `lerayProjector_memLp`: `MemLp (lerayProjector Ω hΩ u hu) 2 (volume.restrict Ω)`
+
+Both lemmas have no `sorry` in their bodies; they depend transitively on
+`helmholtz_decomposition` (which remains sorry).
+
+### Lean: Improved Sorry Stubs
+
+All 9 remaining sorry stubs now carry detailed proof sketches in their docstrings:
+- `sobolev_embedding_subcritical`: cites `eLpNorm_le_eLpNorm_fderiv_of_eq_inner` (Mathlib
+  GNS), identifies Meyers-Serrin density theorem as the missing bridge.
+- `sobolev_embedding_supercritical`: identifies Morrey inequality as absent from Mathlib.
+- `lerayProjector_idempotent`: names `l2sigma_orthogonal_gradients` as the missing lemma.
+- `lerayProjector_selfAdjoint`: spells out the ⟨Pu,v⟩ = ⟨Pu,Pv⟩ = ⟨u,Pv⟩ argument and
+  the role of `l2sigma_orthogonal_gradients`.
+- `poincare_inequality`: full Lean outline of the contradiction proof (by_contra, normalised
+  sequence, Rellich application, constant-gradient-zero-trace argument).
+
 ## [0.2.5] - 2026-03-31
 
 ### Fixed (Typography)

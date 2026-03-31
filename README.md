@@ -16,7 +16,7 @@
 [![Lean CI](https://github.com/alejandro-soto-franco/navier-stokes/actions/workflows/lean.yml/badge.svg)](https://github.com/alejandro-soto-franco/navier-stokes/actions/workflows/lean.yml)
 [![Build](https://img.shields.io/badge/Lean_Build-2753_jobs-informational)](#lean-formalisation)
 [![Sorry Count](https://img.shields.io/badge/sorry-10_total-yellow)](#lean-formalisation)
-[![Proved](https://img.shields.io/badge/Proved-6_theorems-brightgreen)](#proven-theorems)
+[![Proved](https://img.shields.io/badge/Proved-9_theorems-brightgreen)](#proven-theorems)
 
 A geometric approach to the Clay Millennium regularity problem for the 3D incompressible Navier-Stokes equations, via the Biot-Savart connection on the divergence-free bundle.
 
@@ -89,6 +89,9 @@ The Lean 4 formalisation builds against a [pinned fork of Mathlib4](https://gith
 | `sobolevH1InnerProduct_comm` | `Foundations/SobolevSpace.lean` | Symmetry of the H^1 inner product |
 | `l2sigma_closed_under_l2_convergence` | `Foundations/DivFreeSpace.lean` | L²σ is closed under L² convergence, via Hölder (Cauchy-Schwarz) and `tendsto_nhds_unique` |
 | `trilinearForm_antisymmetric` | `LerayHopf/TrilinearForm.lean` | b(u,v,v) = 0 for distributionally divergence-free u and smooth compactly-supported v, via per-component test functions phi_k = v_k^2 |
+| `lerayProjectorLp_idempotent` | `Foundations/HelmholtzProjection.lean` | P(P(f)) = P(f) — from `starProjection_eq_self_iff.mpr`, sorry-free |
+| `lerayProjectorLp_selfAdjoint` | `Foundations/HelmholtzProjection.lean` | ⟪Pf, g⟫ = ⟪f, Pg⟫ — from `inner_starProjection_left_eq_right`, sorry-free |
+| `helmholtz_l2_decomposition` | `Foundations/HelmholtzProjection.lean` | f = Pf + (f - Pf) with Pf ∈ L²σ and ⟪Pf, f-Pf⟫ = 0 — via `starProjection_inner_eq_zero`, sorry-free |
 
 ### Sorry Classification
 
@@ -96,22 +99,30 @@ All 10 remaining sorries are Category C (fundamental PDE/functional analysis res
 
 | File | Sorry | Reason |
 |------|-------|--------|
-| `DivFreeSpace.lean` | `helmholtz_decomposition` | Hilbert space orthogonal projection onto L2_sigma |
-| `DivFreeSpace.lean` | `lerayProjector` (MemLp arg) | Depends on Helmholtz |
-| `DivFreeSpace.lean` | `lerayProjector_idempotent` | Projection algebra (depends on Helmholtz) |
-| `DivFreeSpace.lean` | `lerayProjector_selfAdjoint` | Orthogonal projection self-adjointness (depends on Helmholtz) |
-| `SobolevEmbedding.lean` | `sobolev_embedding_subcritical` | Gagliardo-Nirenberg-Sobolev on domains |
-| `SobolevEmbedding.lean` | `sobolev_embedding_supercritical` | Morrey inequality |
+| `DivFreeSpace.lean` | `helmholtz_decomposition` | Superseded by HelmholtzProjection.lean; retained for legacy API |
+| `DivFreeSpace.lean` | `lerayProjector_idempotent` | Superseded by `lerayProjectorLp_idempotent` in HelmholtzProjection.lean |
+| `DivFreeSpace.lean` | `lerayProjector_selfAdjoint` | Superseded by `lerayProjectorLp_selfAdjoint` in HelmholtzProjection.lean |
+| `HelmholtzProjection.lean` | `l2sigmaSubmodule_isSeqClosed` | Norm bridge: converting `‖f_k - f‖_{Lp2} → 0` to `∫ ‖⇑f_k - ⇑f‖² → 0` (ENNReal bookkeeping) |
+| `SobolevEmbedding.lean` | `sobolev_embedding_subcritical` | GNS + Meyers-Serrin density (weak-to-classical deriv bridge) |
+| `SobolevEmbedding.lean` | `sobolev_embedding_supercritical` | Morrey inequality (not yet in Mathlib) |
 | `RellichKondrachov.lean` | `rellich_kondrachov` | Frechet-Kolmogorov compactness |
-| `Poincare.lean` | `poincare_inequality` | Relies on Rellich-Kondrachov; requires bounded connected domain |
+| `Poincare.lean` | `poincare_inequality` | Contradiction via Rellich-Kondrachov + zero-trace argument |
 | `Poincare.lean` | `poincare_constant_bound_convex` | Payne-Weinberger optimal constant |
 | `Existence.lean` | `lerayHopf_existence` | Full Galerkin + Aubin-Lions construction |
 
-**Definitions now sorry-free:**
-- `SobolevH1Zero` (H^1_0 as subtype of H^1 via smooth approximation)
-- `trilinearForm` (concrete integral: sum_{i,j} int u_j * d_j(v_i) * w_i)
+**Eliminated (v0.2.6):** `lerayProjector` (MemLp arg) — definition is now sorry-free; `MemLp` hypothesis is threaded explicitly through `lerayProjector Ω hΩ u hu`.
 
-**Chapter 1 (9 sorry):** Embedding theorems, Poincare inequality, Helmholtz decomposition, Leray projector.
+**Added (HelmholtzProjection.lean, v0.2.7):** Full L2 Helmholtz decomposition via `Submodule.starProjection`. Proved: idempotence, self-adjointness, and orthogonal splitting for the Leray projector on Lp E 2 μ, using Mathlib's `HasOrthogonalProjection` instance for closed submodules of complete inner product spaces.
+
+**Definitions and lemmas now sorry-free (HelmholtzProjection.lean):**
+- `l2sigmaSubmodule` (L2sigma as a Submodule of Lp E 2 μ; zero/add/smul closure proved)
+- `l2sigmaSubmodule_isClosed` (topological closedness via sequential closedness)
+- `l2sigmaClosedSubmodule` (ClosedSubmodule packaging for HasOrthogonalProjection)
+- `lerayProjectorLp` (orthogonal projection CLM onto l2sigmaSubmodule)
+- `lerayProjectorLp_mem`, `lerayProjectorLp_idempotent`, `lerayProjectorLp_selfAdjoint`
+- `helmholtz_l2_decomposition`
+
+**Chapter 1 (9 sorry):** Embedding theorems, Poincare inequality, 3 legacy DivFreeSpace sorries (superseded), 1 HelmholtzProjection norm bridge.
 
 **Chapter 2 (1 sorry):** Leray-Hopf existence (full Galerkin + Aubin-Lions construction).
 

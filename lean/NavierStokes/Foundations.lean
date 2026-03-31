@@ -4,3 +4,4 @@ import NavierStokes.Foundations.SobolevEmbedding
 import NavierStokes.Foundations.RellichKondrachov
 import NavierStokes.Foundations.Poincare
 import NavierStokes.Foundations.DivFreeSpace
+import NavierStokes.Foundations.HelmholtzProjection

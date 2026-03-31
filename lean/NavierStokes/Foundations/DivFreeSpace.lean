@@ -270,45 +270,94 @@ theorem helmholtz_decomposition
     of its Helmholtz decomposition.
 
     Given `u ∈ L^2(Ω; ℝⁿ)`, write `u = w + ∇p` (Helmholtz); then
-      `lerayProjector Ω hΩ u := w`.
+      `lerayProjector Ω hΩ u hu := w`.
 
-    The body is a sorry-stub extracting the first witness from
-    `helmholtz_decomposition`. Subsequent lemmas depend only on the stated types
-    and properties, not the computational content of this definition. -/
+    The `hu : MemLp u 2 (volume.restrict Ω)` hypothesis is threaded explicitly so
+    the definition body is sorry-free: it delegates entirely to `helmholtz_decomposition`
+    (which remains a sorry) and extracts the first existential witness via `.choose`. -/
 def lerayProjector
     {n : ℕ}
     (Ω : Set (EuclideanSpace ℝ (Fin n)))
     (hΩ : IsOpen Ω)
-    (u : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n)) :
+    (u : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n))
+    (hu : MemLp u 2 (volume.restrict Ω)) :
     EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n) :=
-  (helmholtz_decomposition Ω hΩ u (by sorry)).choose
+  (helmholtz_decomposition Ω hΩ u hu).choose
 
 /-! ### Properties of the Leray projector -/
 
+/-- The Leray projector takes values in L^2_sigma.
+    Extracted directly from the first conjunct of `helmholtz_decomposition`: no additional
+    sorry is needed in this lemma's body (it reduces to the choose_spec of Helmholtz). -/
+lemma lerayProjector_mem_l2sigma
+    {n : ℕ}
+    (Ω : Set (EuclideanSpace ℝ (Fin n)))
+    (hΩ : IsOpen Ω)
+    (u : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n))
+    (hu : MemLp u 2 (volume.restrict Ω)) :
+    lerayProjector Ω hΩ u hu ∈ L2sigma Ω hΩ :=
+  (helmholtz_decomposition Ω hΩ u hu).choose_spec.choose_spec.1
+
+/-- The Leray projector maps into L^2 (MemLp 2), as a corollary of
+    `lerayProjector_mem_l2sigma`. -/
+lemma lerayProjector_memLp
+    {n : ℕ}
+    (Ω : Set (EuclideanSpace ℝ (Fin n)))
+    (hΩ : IsOpen Ω)
+    (u : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n))
+    (hu : MemLp u 2 (volume.restrict Ω)) :
+    MemLp (lerayProjector Ω hΩ u hu) 2 (volume.restrict Ω) :=
+  (lerayProjector_mem_l2sigma Ω hΩ u hu).1
+
 /-- The Leray projector is **idempotent**: `P(Pu) = Pu`.
-    Projecting an element of `L^2_sigma` onto `L^2_sigma` returns it unchanged. -/
+    Projecting an element of `L^2_sigma` onto `L^2_sigma` returns it unchanged.
+
+    *Proof sketch (sorry):* The Helmholtz decomposition of `w := lerayProjector u` has
+    zero gradient component, since `w ∈ L^2_sigma` and L^2_sigma is orthogonal to
+    GradientFields.  The uniqueness of the decomposition (which depends on the
+    orthogonality `⟨L^2_sigma, GradientFields⟩ = 0`, itself derivable from
+    `IsDistribDivFree` via integration by parts) then gives `lerayProjector w = w`. -/
 theorem lerayProjector_idempotent
     {n : ℕ}
     (Ω : Set (EuclideanSpace ℝ (Fin n)))
     (hΩ : IsOpen Ω)
     (u : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n))
-    (_hu : MemLp u 2 (volume.restrict Ω)) :
-    lerayProjector Ω hΩ (lerayProjector Ω hΩ u) = lerayProjector Ω hΩ u := by
+    (hu : MemLp u 2 (volume.restrict Ω)) :
+    lerayProjector Ω hΩ (lerayProjector Ω hΩ u hu) (lerayProjector_memLp Ω hΩ u hu) =
+    lerayProjector Ω hΩ u hu := by
+  -- Missing ingredient: Helmholtz uniqueness / orthogonality of L^2_sigma and GradientFields.
+  -- Once helmholtz_decomposition is proved, uniqueness of the splitting follows from:
+  --   ∀ w ∈ L^2_sigma, ∀ g ∈ GradientFields, ∫_Ω ⟨w, g⟩ = 0   (l2sigma_orthogonal_gradients)
+  -- Then: lerayProjector w = w for any w ∈ L^2_sigma, since the gradient component is 0.
+  -- The necessary fact lerayProjector (lerayProjector u hu) _ ∈ L^2_sigma is supplied by
+  -- lerayProjector_mem_l2sigma (no sorry in that lemma's body).
   sorry
 
 /-- The Leray projector is **self-adjoint** w.r.t. the L^2 inner product:
       ∫_Ω ⟨Pu, v⟩ dx = ∫_Ω ⟨u, Pv⟩ dx
     for all `u, v ∈ L^2(Ω; ℝⁿ)`.
-    Orthogonal projections on a Hilbert space are always self-adjoint. -/
+    Orthogonal projections on a Hilbert space are always self-adjoint.
+
+    *Proof sketch (sorry):*
+      Write u = Pu + (I-P)u and v = Pv + (I-P)v (Helmholtz).
+      ⟨Pu, v⟩ = ⟨Pu, Pv⟩ + ⟨Pu, (I-P)v⟩ = ⟨Pu, Pv⟩ + 0,
+      because Pu ∈ L^2_sigma is orthogonal to (I-P)v ∈ GradientFields.
+      Symmetrically ⟨u, Pv⟩ = ⟨Pu, Pv⟩.
+    The key missing lemma is `l2sigma_orthogonal_gradients`:
+      ∀ w ∈ L^2_sigma, ∀ g ∈ GradientFields, ∫_Ω ⟨w, g⟩ dx = 0,
+    which follows from integration by parts + `IsDistribDivFree` when g = ∇p and
+    p is approximable by compactly supported functions. -/
 theorem lerayProjector_selfAdjoint
     {n : ℕ}
     (Ω : Set (EuclideanSpace ℝ (Fin n)))
     (hΩ : IsOpen Ω)
     (u v : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n))
-    (_hu : MemLp u 2 (volume.restrict Ω))
-    (_hv : MemLp v 2 (volume.restrict Ω)) :
-    ∫ x in Ω, @inner ℝ _ _ (lerayProjector Ω hΩ u x) (v x) =
-    ∫ x in Ω, @inner ℝ _ _ (u x) (lerayProjector Ω hΩ v x) := by
+    (hu : MemLp u 2 (volume.restrict Ω))
+    (hv : MemLp v 2 (volume.restrict Ω)) :
+    ∫ x in Ω, @inner ℝ _ _ (lerayProjector Ω hΩ u hu x) (v x) =
+    ∫ x in Ω, @inner ℝ _ _ (u x) (lerayProjector Ω hΩ v hv x) := by
+  -- The proof reduces to `l2sigma_orthogonal_gradients` (see comment in lerayProjector_selfAdjoint
+  -- docstring). Both sides equal ∫⟨Pu, Pv⟩ by the orthogonality lemma, once it is available.
   sorry
 
 end NavierStokes
