@@ -259,9 +259,10 @@ directly with $\Lsig$ and its Sobolev refinements.
 
 \subsection{Torsion-freeness}
 
-\begin{proposition}[Torsion-freeness]\label{prop:torsion-free}
-  The Biot--Savart connection is torsion-free: for $u, v \in H^1_{0,\sigma}(\R^3)$
-  (and by density, for smooth divergence-free fields),
+\begin{proposition}[Torsion-free]\label{prop:torsion-free}
+  The Biot--Savart connection is torsion-free: for
+  $u, v \in H^1_{0,\sigma}(\R^3)$ (and by density, for smooth divergence-free
+  fields),
   \begin{equation}\label{eq:torsion-free}
     \conn_u v - \conn_v u \;=\; [u, v],
   \end{equation}
@@ -389,14 +390,14 @@ directly with $\Lsig$ and its Sobolev refinements.
     &= \int w\cdot(u\cdot\nabla)v\,\dd x - \int w\cdot(v\cdot\nabla)u\,\dd x.
   \end{align*}
   Label the six integrals $A$ through $F$:
-  \[
-    A = -\!\int u\cdot(v\cdot\nabla)w, \quad
-    B = \int u\cdot(w\cdot\nabla)v, \quad
-    C = \int v\cdot(w\cdot\nabla)u, \quad
-    D = -\!\int v\cdot(u\cdot\nabla)w, \quad
-    E = \int w\cdot(u\cdot\nabla)v, \quad
-    F = -\!\int w\cdot(v\cdot\nabla)u.
-  \]
+  \begin{align*}
+    A &= -\!\int u\cdot(v\cdot\nabla)w, &
+    B &= \int u\cdot(w\cdot\nabla)v, &
+    C &= \int v\cdot(w\cdot\nabla)u, \\
+    D &= -\!\int v\cdot(u\cdot\nabla)w, &
+    E &= \int w\cdot(u\cdot\nabla)v, &
+    F &= -\!\int w\cdot(v\cdot\nabla)u.
+  \end{align*}
   Apply $\int a\cdot(b\cdot\nabla)c\,\dd x = -\int c\cdot(b\cdot\nabla)a\,\dd x$
   (valid for $\divergence b = 0$, by~\eqref{eq:metric-compat-antisym}):
   \begin{align*}
@@ -963,8 +964,8 @@ operator of Calder\'{o}n--Zygmund type~\cite{calderonZygmund1952,stein1970}.
   This yields $\norm{\BS\vort}_{\Lp{q}} \leq C\norm{\vort}_{\Lp{p}}$ for $1 < p < 3$,
   matching the stated range.  (For $1 < p < 3/2$, the pure $|x|^{-2}$-kernel HLS
   estimate with singularity order $\sigma = 2$ applies directly.  For $3/2 \leq p < 3$,
-  one uses the additional cancellation of $K$ --- namely $\divergence K = 0$ and the
-  mean-value property on spheres --- or equivalently composes the Calder\'{o}n--Zygmund
+  one uses the additional cancellation of $K$ (namely $\divergence K = 0$ and the
+  mean-value property on spheres), or equivalently composes the Calder\'{o}n--Zygmund
   bound on $\Leray$ (\Cref{thm:leray-Lp}) with the Sobolev inequality
   $\norm{\nabla^{-1}f}_{\Lp{q}} \leq C\norm{f}_{\Lp{p}}$ for $1/q = 1/p - 1/3$.)
 

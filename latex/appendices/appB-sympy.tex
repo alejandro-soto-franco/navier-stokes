@@ -71,9 +71,8 @@ $u = (x^2 y,\, {-}xy^2,\, z)$:
 \medskip\noindent
 Verifies the identities and exponent relations from \Cref{ch:leray-hopf}:
 \begin{enumerate}[label=(\roman*)]
-  \item \textbf{Trilinear antisymmetry.}  For the divergence-free field
-    $u = (\sin y, \sin z, \sin x)$, confirms $b(u,u,u) = \tfrac{1}{2}(u \cdot \nabla)\abs{u}^2$
-    pointwise, which integrates to zero by the divergence theorem
+  \item \textbf{Trilinear antisymmetry.}  Confirms $b(u,u,u) = 0$ for the
+    test field $u = (\sin y, \sin z, \sin x)$, by the divergence theorem
     (\Cref{lem:trilinear-antisymmetry}).
   \item \textbf{Energy equality structure.}  Verifies that the ODE
     $\dd E/\dd t = -D(t)$ implies
@@ -86,8 +85,8 @@ Verifies the identities and exponent relations from \Cref{ch:leray-hopf}:
     $u_{\lambda}(x,t) = \lambda\,u(\lambda x, \lambda^2 t)$ gives
     $\norm{u_\lambda}_{\Lp{r}} = \lambda^{1 - 3/r}\norm{u}_{\Lp{r}}$;
     the critical exponent $r = 3$ is the zero of $1 - 3/r$.
-  \item \textbf{Serrin condition.}  Verifies that the pairs
-    $(q,r) \in \{(\infty,3),\,(4,6),\,(8,4)\}$ satisfy $2/q + 3/r = 1$.
+  \item \textbf{Serrin condition.}  Verifies $2/q + 3/r = 1$ for the pairs
+    $(q,r) \in \{(\infty,3),\,(4,6),\,(8,4)\}$.
   \item \textbf{Reynolds number.}  $\mathrm{Re} = UL/\nu$; at $U = L = 1$,
     $\mathrm{Re} = 1/\nu$.
   \item \textbf{Time derivative exponent.}  Confirms $\tfrac{3}{2} \cdot \tfrac{4}{3} = 2$,
@@ -127,7 +126,7 @@ and functional forms guards against symmetry-specific cancellations.
     (\Cref{def:bs-kernel}).
 
   \item \textbf{Divergence-free.}  $\divergence K = 0$ away from the origin
-    (\Cref{prop:kernel-props}\ref{it:K-divfree}).
+    (\Cref{prop:kernel-props}, item \ref{it:K-divfree}).
 
   \item \textbf{Homogeneity.}  $K(\lambda x) = \lambda^{-2} K(x)$
     (\Cref{prop:kernel-props}\ref{it:K-homog}).
@@ -173,9 +172,9 @@ and functional forms guards against symmetry-specific cancellations.
     The integral form (metric compatibility) follows by integration by parts
     with $\divergence u = 0$ (\Cref{prop:metric-compat}).
 
-  \item \textbf{Levi-Civita uniqueness.}  Torsion-free (check xi) and metric-compatible
-    (check xii) together imply the Biot--Savart connection is the unique Levi-Civita
-    connection (\Cref{thm:levi-civita}).
+  \item \textbf{Levi-Civita uniqueness.}  Checks (xi) and (xii) together
+    imply the Biot--Savart connection is the unique Levi-Civita connection
+    (\Cref{thm:levi-civita}).
 
   \item \textbf{Geodesic = Euler.}  In Fourier space, $\xi\cdot(\widehat{\Leray}f) = 0$
     for arbitrary $f$, confirming $\Leray$ removes the gradient component and the
