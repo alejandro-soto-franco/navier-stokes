@@ -2,6 +2,41 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.5] - 2026-03-31
+
+### Fixed (Typography)
+- **Em dashes removed**: all prose `---` replaced with commas, colons, or
+  parentheses throughout the document (ch03, appA-lean.tex). Zero em dashes
+  remain.
+- **`\textit{sorry} stub` formatting**: `sorry-stub` and plain `sorry stub`
+  normalised to `\textit{sorry} stub` everywhere in Appendix A.
+- **Horizontal overflow: ch03 metric-compat proof** (227pt): the six-term display
+  `A = …, B = …, …, F = …` was a single `\[…\]` line; replaced with
+  `align*` in three columns.
+- **Horizontal overflow: ch01 Leray projector definition title** (16pt): the
+  `(\Cref{sec:lean-ch1-divfree})` parenthetical in the definition title caused
+  cross-references to render as "Definition 1.22 (Leray projector (Appendix
+  A.1.6))", overflowing the column. The parenthetical is removed from the title.
+- **Horizontal overflow: appA long Lean identifiers** (14–45pt): five items had
+  identifiers that, combined with the following `(proved):` or `(sorry stub):`
+  text, overflowed the column. Fixed by switching all `\texttt{NavierStokes.*}`
+  to `\path{NavierStokes.*}` (breakable monospace via the url package) and adding
+  `\\` after the longest identifiers: `sobolev_embedding_subcritical`,
+  `sobolev_embedding_supercritical`, `l2sigma_closed_under_l2_convergence`,
+  `trilinearForm_antisymmetric`, `IsDistribDivFree`, `lerayHopf_existence`.
+- **Horizontal overflow: appB** (5–38pt): trilinear antisymmetry item rephrased
+  (long inline formula removed); Serrin condition and Levi-Civita items shortened.
+- **Horizontal overflow: ch03 prop:torsion-free** (5.45pt): proposition title
+  `Torsion-freeness` shortened to `Torsion-free`.
+- **`\headheight` fancyhdr warning**: set `\headheight = 14.04pt` in preamble.tex,
+  silencing the recurring warning throughout the build log.
+
+### Preflight Rule Established
+Before every push: (1) `grep -r ' --- ' latex/` must return empty (no em dashes);
+(2) `grep "Overfull" main.log` must show no prose overflows exceeding 5pt.
+Accepted exemptions: bibliography entries and the `esint` font-loading artifact
+at ch01 lines 13–20 (shows as `[]` `[]` in the log, invisible in the PDF).
+
 ## [0.2.4] - 2026-03-31
 
 ### Fixed (Critical)

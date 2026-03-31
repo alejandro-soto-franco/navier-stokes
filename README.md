@@ -82,7 +82,7 @@ The Lean 4 formalisation builds against a [pinned fork of Mathlib4](https://gith
 
 | Theorem | File | Description |
 |---------|------|-------------|
-| `weakPartialDeriv_unique` | `Foundations/WeakDerivative.lean` | Weak partial derivatives are unique a.e., via the fundamental lemma of the calculus of variations (`IsOpen.ae_eq_zero_of_integral_contDiff_smul_eq_zero`) |
+| `weakPartialDeriv_unique` | `Foundations/WeakDerivative.lean` | Weak partial derivatives are unique a.e., via the fundamental lemma of the calculus of variations |
 | `sobolevConjugate_gt` | `Foundations/SobolevEmbedding.lean` | The Sobolev conjugate exponent p* > p for 1 <= p < n |
 | `sobolevConjugate_inv` | `Foundations/SobolevEmbedding.lean` | The dimensional relation 1/p* = 1/p - 1/n |
 | `sobolevH1InnerProduct_comm` | `Foundations/SobolevSpace.lean` | Symmetry of the H^1 inner product |
