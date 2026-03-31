@@ -13,6 +13,7 @@
 [![Chapter 6](https://img.shields.io/badge/Ch_6-Obstruction-yellow)](#chapter-status)
 [![Chapter 7](https://img.shields.io/badge/Ch_7-Singularity-yellow)](#chapter-status)
 [![Dark Mode](https://img.shields.io/badge/Dark_Mode-WCAG_AA-blueviolet)](#compilation)
+[![Lean CI](https://github.com/alejandro-soto-franco/navier-stokes/actions/workflows/lean.yml/badge.svg)](https://github.com/alejandro-soto-franco/navier-stokes/actions/workflows/lean.yml)
 [![Build](https://img.shields.io/badge/Lean_Build-2753_jobs-informational)](#lean-formalisation)
 [![Sorry Count](https://img.shields.io/badge/sorry-10_total-yellow)](#lean-formalisation)
 [![Proved](https://img.shields.io/badge/Proved-6_theorems-brightgreen)](#proven-theorems)
