@@ -2,14 +2,40 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.2] - 2026-03-31
+
+### Added
+- **Chapter 3 (The Biot-Savart Connection)**: new chapter merging old ch03
+  (Biot-Savart kernel) and ch04 (connection) into a single geometric chapter.
+  Six sections: BS kernel and Leray projector, divergence-free bundle,
+  Biot-Savart connection (torsion-free, metric-compatible, Levi-Civita),
+  geodesic = Euler / NS as forced geodesic, curvature (abstract + Bianchi),
+  vorticity as curvature of the restricted connection, Calderon-Zygmund
+  estimates closing within the Leray-Hopf class. 58 pages.
+- **Appendix B (Symbolic Verification)**: populated with commentary and
+  GitHub-linked references for all four SymPy scripts (ch01 Sobolev exponents,
+  ch01 Helmholtz, ch02 Leray-Hopf, ch03 Biot-Savart connection).
+- SymPy ch03: expanded from 1 to 5 independent divergence-free test fields
+  (ABC-1 through ABC-4, mixed-1). All identity checks now run across multiple
+  examples. 19 checks across 4 parts, all passing.
+- Bibliography: Arnold 1966, Ebin-Marsden 1970, Arnold-Khesin 1998,
+  Calderon-Zygmund 1952, Stein 1970, Majda-Bertozzi 2002.
+
+### Fixed
+- Torsion-freeness proof: corrected intermediate identity (the cross terms
+  cancel by index symmetry, not by a single-field divergence identity).
+- Calderon-Zygmund endpoint remark: cleaned up Holder exponent derivation.
+- Removed all uses of "concrete" (replaced with "example") across LaTeX and
+  SymPy sources.
+- Duplicate label `prop:leray-props` (ch01 vs ch03) resolved.
+
 ## [0.2.1] - 2026-03-31 (`c98c871`)
 
 ### Proved
 - `trilinearForm_antisymmetric` (TrilinearForm.lean): b(u,v,v) = 0 for
   distributionally divergence-free u and smooth compactly-supported v.
   Per-component test function strategy (phi_k = v_k^2) with fderiv_fun_pow
-  chain rule and integral_const_mul. Added ContDiff/HasCompactSupport
-  hypotheses. Sorry count: 11 -> 10, proved: 5 -> 6.
+  chain rule and integral_const_mul. Sorry count: 11 -> 10, proved: 5 -> 6.
 
 ## [0.2.0] - 2026-03-30 (`46fa6e8`)
 

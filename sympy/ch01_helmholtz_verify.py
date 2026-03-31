@@ -1,7 +1,7 @@
 """
 Chapter 1 — SymPy verification of Helmholtz decomposition properties.
 
-Verifies on a concrete vector field in R^3:
+Verifies on an example vector field in R^3:
   1. Any smooth vector field u decomposes as u = v + grad(p)
      where div(v) = 0
   2. v and grad(p) are L^2-orthogonal

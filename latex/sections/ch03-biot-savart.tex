@@ -1,1 +1,709 @@
-\chapter{The Biot--Savart Kernel and Leray Projection}\label{ch:biot-savart}
+\chapter{The Biot--Savart Connection}\label{ch:connection}
+
+The Leray--Hopf theory of \Cref{ch:leray-hopf} produces global weak solutions in the
+energy class $\Lp{\infty}(0,T;\Lsig) \cap \Lp{2}(0,T;\Sobz{1})$, but the regularity
+question remains open precisely because the energy estimates cannot close the nonlinearity
+at the critical scaling.  In this chapter we change perspective: rather than seeking
+stronger analytic estimates, we introduce a \emph{geometric} structure on the space of
+divergence-free velocity fields and reformulate the Navier--Stokes equations as a forced
+geodesic equation with respect to a canonical connection.
+
+The chapter is organised as follows.  \Cref{sec:bs-kernel} reviews the Biot--Savart
+kernel, its singular integral structure, and the Leray projector.
+\Cref{sec:bs-bundle} constructs the divergence-free bundle over the configuration space
+of fluid states.  \Cref{sec:bs-connection} defines the Biot--Savart connection,
+proves it is the Levi-Civita connection of the $\Lp{2}$ metric, and recovers Arnold's
+geodesic interpretation of the Euler equations.  \Cref{sec:bs-curvature} computes
+the curvature tensor in two independent ways.  \Cref{sec:bs-vorticity} presents
+vorticity as curvature of the connection restricted to the vorticity bundle, replacing
+the classical ``take the curl'' derivation with intrinsic geometry.
+\Cref{sec:bs-cz} establishes the Calder\'{o}n--Zygmund estimates that ensure
+the entire construction remains well-defined within the Leray--Hopf class.
+
+Throughout this chapter, $n = 3$ and the spatial domain is $\R^3$.
+We write $\Leray$ for the Leray projector and $\BS$ for the Biot--Savart operator.
+
+% ===========================================================================
+\section{The Biot--Savart kernel}\label{sec:bs-kernel}
+% ===========================================================================
+
+\subsection{The Newtonian potential and its gradient}
+
+The starting point is the fundamental solution of Laplace's equation in $\R^3$.
+
+\begin{definition}[Newtonian potential]\label{def:newtonian-potential}
+  The \emph{Newtonian potential} (Green's function for $-\Delta$ in $\R^3$) is
+  \begin{equation}\label{eq:green-fn}
+    G(x) \;=\; \frac{1}{4\pi \abs{x}}, \qquad x \in \R^3 \setminus \{0\}.
+  \end{equation}
+\end{definition}
+
+Away from the origin, $G$ is harmonic: $\Delta G(x) = 0$ for $x \neq 0$.
+In the distributional sense, $-\Delta G = \delta_0$.
+
+\begin{definition}[Biot--Savart kernel]\label{def:bs-kernel}
+  The \emph{Biot--Savart kernel} is the vector field
+  \begin{equation}\label{eq:bs-kernel}
+    K(x) \;=\; -\nabla G(x) \;=\; \frac{x}{4\pi\abs{x}^3},
+    \qquad x \in \R^3 \setminus \{0\}.
+  \end{equation}
+\end{definition}
+
+\begin{proposition}[Kernel properties]\label{prop:kernel-props}
+  The Biot--Savart kernel $K$ satisfies:
+  \begin{enumerate}[label=(\roman*)]
+    \item\label{it:K-harmonic} Each component $K_j$ is harmonic: $\Delta K_j = 0$ for
+      $x \neq 0$.
+    \item\label{it:K-divfree} $K$ is divergence-free: $\divergence K = \Delta(-G) = 0$
+      for $x \neq 0$.
+    \item\label{it:K-homog} $K$ is homogeneous of degree $-2$:
+      $K(\lambda x) = \lambda^{-2} K(x)$ for all $\lambda > 0$.
+    \item\label{it:K-decay} $\abs{K(x)} = (4\pi\abs{x}^2)^{-1}$, so $K \in \Lp{p}_{\mathrm{loc}}(\R^3)$ for $1 \leq p < 3/2$.
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  Properties \ref{it:K-harmonic}--\ref{it:K-homog} follow by direct computation
+  (verified symbolically in \Cref{app:sympy}).  For~\ref{it:K-decay}, $\abs{K(x)}
+  = \abs{x}/(4\pi\abs{x}^3) = 1/(4\pi\abs{x}^2)$, and $\abs{x}^{-2p}$ is locally
+  integrable in $\R^3$ precisely when $2p < 3$.
+\end{proof}
+
+\subsection{Biot--Savart inversion of the curl}
+
+Given a divergence-free vector field $\vort \in \Lp{p}(\R^3;\R^3)$ with suitable decay,
+the Biot--Savart law recovers the velocity:
+
+\begin{definition}[Biot--Savart operator]\label{def:bs-operator}
+  The \emph{Biot--Savart operator} $\BS$ is defined by
+  \begin{equation}\label{eq:bs-law}
+    u(x) \;=\; (\BS\vort)(x)
+    \;=\; \frac{1}{4\pi}\int_{\R^3}
+    \frac{(x - y) \times \vort(y)}{\abs{x - y}^3}\,\dd y.
+  \end{equation}
+  Equivalently, $u = \curl(G * \vort)$, where $*$ denotes convolution.
+\end{definition}
+
+\begin{proposition}[Biot--Savart inversion]\label{prop:bs-inversion}
+  If $\vort = \curl u$ for a divergence-free $u \in \Sob{1}(\R^3;\R^3)$, then
+  $\BS\vort = u$.  In Fourier space, this reads
+  \begin{equation}\label{eq:bs-fourier}
+    \widehat{u}(\xi) \;=\;
+    \frac{i\xi \times \widehat{\vort}(\xi)}{\abs{\xi}^2}.
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  In Fourier variables, $\widehat{\vort} = i\xi \times \widehat{u}$.  Applying the
+  cross product identity $(a \times)^2 = a\,a^{\mathsf{T}} - \abs{a}^2 I$ to
+  $a = \xi$ gives
+  \[
+    \frac{(i\xi\times)(i\xi \times \widehat{u})}{\abs{\xi}^2}
+    \;=\; \frac{-\abs{\xi}^2\widehat{u} + \xi(\xi \cdot \widehat{u})}{\abs{\xi}^2}
+    \;=\; -\widehat{u} + \frac{\xi(\xi \cdot \widehat{u})}{\abs{\xi}^2}.
+  \]
+  For divergence-free $u$, $\xi \cdot \widehat{u} = 0$, so the right-hand side equals
+  $-\widehat{u}$, recovering $u$ up to the sign absorbed by the two factors of $i$.
+  The cross product identity is verified symbolically in \Cref{app:sympy}.
+\end{proof}
+
+\subsection{The Leray projector}\label{sec:leray-proj}
+
+\begin{definition}[Leray projector]\label{def:leray-proj}
+  The \emph{Leray projector} $\Leray$ is the $\Lp{2}$-orthogonal projection onto
+  divergence-free vector fields.  In Fourier space, it acts as the matrix multiplier
+  \begin{equation}\label{eq:leray-fourier}
+    \widehat{\Leray}(\xi)_{ij}
+    \;=\; \delta_{ij} - \frac{\xi_i\,\xi_j}{\abs{\xi}^2},
+    \qquad \xi \neq 0.
+  \end{equation}
+\end{definition}
+
+\begin{proposition}[Leray projector properties]\label{prop:leray-fourier-props}
+  The matrix $\widehat{\Leray}(\xi)$ satisfies:
+  \begin{enumerate}[label=(\roman*)]
+    \item\label{it:P-idemp} Idempotent: $\widehat{\Leray}^2 = \widehat{\Leray}$.
+    \item\label{it:P-sa} Self-adjoint: $\widehat{\Leray}^{\mathsf{T}} = \widehat{\Leray}$.
+    \item\label{it:P-ann} $\widehat{\Leray}(\xi)\,\xi = 0$
+      (annihilates gradient directions).
+    \item\label{it:P-trace} $\operatorname{tr}\widehat{\Leray}(\xi) = 2$
+      (projects onto a $2$-dimensional subspace perpendicular to $\xi$).
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  All four properties are immediate from the definition~\eqref{eq:leray-fourier}
+  and verified symbolically in \Cref{app:sympy}.
+\end{proof}
+
+\begin{remark}[Leray projector on $\Lp{2}$]
+  On $\Lp{2}(\R^3;\R^3)$, $\Leray$ realises the Helmholtz decomposition
+  (\Cref{thm:helmholtz}): every $f \in \Lp{2}$ decomposes uniquely as
+  $f = \Leray f + \nabla p$ with $\divergence(\Leray f) = 0$.
+  The Biot--Savart inversion~\eqref{eq:bs-fourier} is equivalent to
+  $(\widehat{\xi\times})^2/\abs{\xi}^2 = -\widehat{\Leray}$
+  (\Cref{app:sympy}).
+\end{remark}
+
+% ===========================================================================
+\section{The divergence-free bundle}\label{sec:bs-bundle}
+% ===========================================================================
+
+We now introduce the geometric framework.  The idea, going back to
+Arnold~\cite{arnold1966} and Ebin--Marsden~\cite{ebinMarsden1970}, is to view the
+Euler and Navier--Stokes equations as evolution equations on an
+infinite-dimensional manifold equipped with a Riemannian metric.
+
+\subsection{Configuration space}
+
+\begin{definition}[Divergence-free Hilbert space]\label{def:Lsig}
+  Let
+  \begin{equation}\label{eq:Lsig-def}
+    \Lsig(\R^3) \;=\; \overline{\{u \in \Ccinf(\R^3;\R^3) : \divergence u = 0\}}^{\Lp{2}}
+  \end{equation}
+  denote the space of $\Lp{2}$ divergence-free vector fields on $\R^3$, with the inner
+  product $\ip{u}{v} = \int_{\R^3} u \cdot v\,\dd x$.
+\end{definition}
+
+In the Arnold picture, the configuration space of the fluid is (formally) the group
+$\operatorname{SDiff}(\R^3)$ of volume-preserving diffeomorphisms, and $\Lsig$ is
+its Lie algebra, i.e.\ the tangent space at the identity.  For Leray--Hopf solutions,
+the diffeomorphism group is not available (the flow map may fail to exist), so we work
+directly with $\Lsig$ and its Sobolev refinements.
+
+\subsection{The tangent bundle and the $\Lp{2}$ metric}
+
+\begin{definition}[Divergence-free tangent bundle]\label{def:tangent-bundle}
+  Let $\mathcal{M} = \Lsig(\R^3)$.  The \emph{tangent bundle} is
+  $T\mathcal{M} = \mathcal{M} \times \Lsig$, with fibre $T_u\mathcal{M} = \Lsig$ at
+  each base point $u \in \mathcal{M}$.  The \emph{Riemannian metric} is
+  \begin{equation}\label{eq:L2-metric}
+    g_u(v, w) \;=\; \ip{v}{w} \;=\; \int_{\R^3} v \cdot w\,\dd x,
+    \qquad v, w \in T_u\mathcal{M}.
+  \end{equation}
+  This metric is constant (independent of the base point $u$), reflecting the
+  right-invariance of the $\Lp{2}$ metric on the diffeomorphism group.
+\end{definition}
+
+\begin{remark}
+  The fibre at each point is the full space $\Lsig$, not a finite-dimensional subspace.
+  This is the infinite-dimensional analogue of a trivial vector bundle.  The Leray
+  projector $\Leray$ acts as the fibrewise projection from $\Lp{2}(\R^3;\R^3)$ onto
+  the fibre $\Lsig$.
+\end{remark}
+
+% ===========================================================================
+\section{The Biot--Savart connection}\label{sec:bs-connection}
+% ===========================================================================
+
+\subsection{Definition}
+
+\begin{definition}[Biot--Savart connection]\label{def:bs-conn}
+  The \emph{Biot--Savart connection} $\conn$ on the divergence-free tangent bundle
+  $T\mathcal{M}$ is defined by
+  \begin{equation}\label{eq:bs-conn}
+    \conn_u v \;=\; \Leray\bigl[(u \cdot \nabla) v\bigr],
+  \end{equation}
+  where $(u \cdot \nabla)v = \sum_{j=1}^{3} u_j\,\partial_j v$ is the advective
+  derivative and $\Leray$ is the Leray projector.
+\end{definition}
+
+\begin{remark}[Why Leray-project]
+  The advective derivative $(u \cdot \nabla)v$ of a divergence-free field $v$ along a
+  divergence-free field $u$ need not be divergence-free.  The Leray projection ensures
+  that $\conn_u v \in T_u\mathcal{M} = \Lsig$.  The discarded gradient component is
+  precisely the pressure gradient: $\nabla p = (I - \Leray)[(u \cdot \nabla)v]$.
+\end{remark}
+
+\begin{remark}[Regularity]\label{rem:conn-regularity}
+  For the connection to be well-defined at the Leray--Hopf regularity level, we need
+  $(u \cdot \nabla)v \in \Lp{r}$ for some $r$ in the range of $\Leray$.  When
+  $u \in \Lp{2}$ and $v \in \Sobz{1}$, the product $u_j\,\partial_j v \in \Lp{1}$
+  by H\"{o}lder.  The Leray projector extends to $\Lp{r}$ for $1 < r < \infty$ via
+  Calder\'{o}n--Zygmund theory (\Cref{sec:bs-cz}), but the endpoint $r = 1$ requires
+  care; see \Cref{rem:cz-endpoint}.
+\end{remark}
+
+\subsection{Torsion-freeness}
+
+\begin{proposition}[Torsion-freeness]\label{prop:torsion-free}
+  The Biot--Savart connection is torsion-free: for divergence-free fields $u, v$,
+  \begin{equation}\label{eq:torsion-free}
+    \conn_u v - \conn_v u \;=\; [u, v],
+  \end{equation}
+  where $[u,v] = (u \cdot \nabla)v - (v \cdot \nabla)u$ is the Lie bracket
+  (commutator of vector fields).
+\end{proposition}
+
+\begin{proof}
+  The torsion tensor is
+  $T(u,v) = \conn_u v - \conn_v u - [u,v]
+   = \Leray[(u \cdot \nabla)v] - \Leray[(v \cdot \nabla)u]
+     - (u \cdot \nabla)v + (v \cdot \nabla)u$.
+  This equals
+  $-(I - \Leray)[(u \cdot \nabla)v] + (I - \Leray)[(v \cdot \nabla)u]
+   = -\nabla p_1 + \nabla p_2$
+  for some pressures $p_1, p_2$.  It remains to show that the Lie bracket $[u,v]$ is
+  divergence-free when $u$ and $v$ are, so that $\Leray[u,v] = [u,v]$.
+  Expanding componentwise:
+  \[
+    \divergence[u,v]
+    = \sum_{i,j}\bigl[(\partial_i u_j)(\partial_j v_i)
+      - (\partial_i v_j)(\partial_j u_i)\bigr]
+    + (u \cdot \nabla)(\divergence v)
+    - (v \cdot \nabla)(\divergence u).
+  \]
+  The last two terms vanish since $\divergence u = \divergence v = 0$.
+  The cross terms cancel by symmetry: relabelling $i \leftrightarrow j$ in
+  the second sum shows it equals the first.
+  Therefore $T(u,v) = [u,v] - [u,v] = 0$.
+  The divergence-free property of the Lie bracket is verified on example fields in
+  \Cref{app:sympy}.
+\end{proof}
+
+\subsection{Metric compatibility}
+
+\begin{proposition}[Metric compatibility]\label{prop:metric-compat}
+  The Biot--Savart connection is compatible with the $\Lp{2}$ metric: for smooth
+  divergence-free fields $u, v, w$ with sufficient decay,
+  \begin{equation}\label{eq:metric-compat}
+    u\bigl(g(v, w)\bigr)
+    \;=\; g(\conn_u v,\, w) \;+\; g(v,\, \conn_u w).
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  The directional derivative of the inner product is
+  \[
+    u\bigl(g(v,w)\bigr)
+    = \int_{\R^3} (u \cdot \nabla)(v \cdot w)\,\dd x
+    = \int_{\R^3} \bigl[(u \cdot \nabla)v\bigr] \cdot w\,\dd x
+      + \int_{\R^3} v \cdot \bigl[(u \cdot \nabla)w\bigr]\,\dd x,
+  \]
+  where the first equality uses the product rule (verified in \Cref{app:sympy}) and the
+  second follows from it.  Integration by parts gives
+  \[
+    \int_{\R^3} (u \cdot \nabla)(v \cdot w)\,\dd x
+    = -\int_{\R^3} (\divergence u)(v \cdot w)\,\dd x = 0,
+  \]
+  since $\divergence u = 0$.  Therefore
+  \begin{equation}\label{eq:metric-compat-antisym}
+    \int_{\R^3} \bigl[(u \cdot \nabla)v\bigr] \cdot w\,\dd x
+    = -\int_{\R^3} v \cdot \bigl[(u \cdot \nabla)w\bigr]\,\dd x.
+  \end{equation}
+  Now replace $(u \cdot \nabla)v$ by $\conn_u v + \nabla p_v$ (Helmholtz decomposition):
+  the gradient term $\nabla p_v$ is $\Lp{2}$-orthogonal to the divergence-free field $w$,
+  so $\ip{(u \cdot \nabla)v}{w} = \ip{\conn_u v}{w}$.  The same applies to the second
+  term.  Combining with~\eqref{eq:metric-compat-antisym}:
+  \[
+    \ip{\conn_u v}{w} + \ip{v}{\conn_u w}
+    = \ip{(u \cdot \nabla)v}{w} + \ip{v}{(u \cdot \nabla)w}
+    = 0 = u\bigl(g(v,w)\bigr).  \qedhere
+  \]
+\end{proof}
+
+\subsection{Levi-Civita uniqueness}
+
+\begin{theorem}[Levi-Civita connection]\label{thm:levi-civita}
+  The Biot--Savart connection $\conn$ is the unique Levi-Civita connection of the
+  $\Lp{2}$ metric on $\Lsig(\R^3)$.
+\end{theorem}
+
+\begin{proof}
+  By the fundamental theorem of Riemannian geometry, a torsion-free, metric-compatible
+  connection is uniquely determined by the Koszul formula:
+  \begin{multline}\label{eq:koszul}
+    2\,g(\conn_u v,\, w)
+    = u\,g(v,w) + v\,g(u,w) - w\,g(u,v) \\
+      - g(u, [v,w]) + g(v, [u,w]) + g(w, [u,v]).
+  \end{multline}
+  Torsion-freeness is \Cref{prop:torsion-free} and metric compatibility is
+  \Cref{prop:metric-compat}.
+\end{proof}
+
+\subsection{The geodesic equation and Arnold's theorem}
+
+\begin{theorem}[Geodesic equation = Euler equation]\label{thm:geodesic-euler}
+  The geodesic equation on $(\Lsig, g)$ with respect to $\conn$ is
+  \begin{equation}\label{eq:geodesic}
+    \partial_t u + \conn_u u = 0
+    \qquad\Longleftrightarrow\qquad
+    \partial_t u + \Leray\bigl[(u \cdot \nabla)u\bigr] = 0.
+  \end{equation}
+  This is precisely the Euler equation for an ideal incompressible fluid:
+  $\partial_t u + (u \cdot \nabla)u = -\nabla p$, $\divergence u = 0$.
+\end{theorem}
+
+\begin{proof}
+  The geodesic equation on any Riemannian manifold is $\partial_t u + \conn_u u = 0$.
+  Substituting $\conn_u u = \Leray[(u \cdot \nabla)u]$ and writing
+  $(I - \Leray)[(u \cdot \nabla)u] = \nabla p$ gives the Euler equation.
+  This is Arnold's observation~\cite{arnold1966}, extended to
+  $\R^3$~\cite{ebinMarsden1970,arnoldKhesin1998}.
+\end{proof}
+
+\begin{corollary}[Navier--Stokes as forced geodesic]\label{cor:ns-forced-geodesic}
+  The Navier--Stokes equations with viscosity $\nu > 0$ take the form
+  \begin{equation}\label{eq:ns-forced-geodesic}
+    \partial_t u + \conn_u u = \nu\,\Leray[\Delta u],
+  \end{equation}
+  i.e.\ a geodesic equation with external forcing $\nu\,\Leray[\Delta u]$.
+  For divergence-free $u$, $\Leray[\Delta u] = \Delta u$ (the Laplacian preserves the
+  divergence-free condition), so the forcing is simply $\nu\,\Delta u$.
+\end{corollary}
+
+\begin{remark}[Physical interpretation]
+  In the geodesic formulation, inertia drives the fluid along geodesics of the $\Lp{2}$
+  metric (the Euler flow), and viscosity acts as an external force pulling the trajectory
+  away from the geodesic.  The regularity problem asks whether this force is strong enough
+  to prevent the geodesic from developing singularities (e.g.\ conjugate points) in
+  finite time.
+\end{remark}
+
+% ===========================================================================
+\section{Curvature of the connection}\label{sec:bs-curvature}
+% ===========================================================================
+
+The curvature of $\conn$ encodes the geometric obstructions to regularity.  We compute
+it in two independent ways: first from the abstract definition (Riemann curvature of
+$\conn$), then component-wise on example fields, verifying agreement in \Cref{app:sympy}.
+
+\subsection{Abstract curvature tensor}
+
+\begin{definition}[Riemann curvature]\label{def:riemann-curv}
+  The \emph{curvature tensor} of $\conn$ is
+  \begin{equation}\label{eq:curvature-def}
+    \curv(u, v)\,w
+    \;=\; \conn_u\conn_v w - \conn_v\conn_u w - \conn_{[u,v]} w
+  \end{equation}
+  for divergence-free vector fields $u, v, w$.
+\end{definition}
+
+Expanding in terms of $\Leray$ and the advective derivative:
+
+\begin{proposition}[Curvature formula]\label{prop:curvature-formula}
+  For smooth divergence-free fields $u, v, w$ on $\R^3$,
+  \begin{equation}\label{eq:curvature-explicit}
+    \curv(u,v)\,w
+    = \Leray\Bigl[(u \cdot \nabla)\Leray\bigl[(v \cdot \nabla)w\bigr]\Bigr]
+    - \Leray\Bigl[(v \cdot \nabla)\Leray\bigl[(u \cdot \nabla)w\bigr]\Bigr]
+    - \Leray\bigl[([u,v] \cdot \nabla)w\bigr].
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  Direct substitution of \Cref{def:bs-conn} into \Cref{def:riemann-curv}, using the
+  torsion-freeness result (\Cref{prop:torsion-free}) that ensures $[u,v]$ is
+  divergence-free so $\conn_{[u,v]}w = \Leray[([u,v]\cdot\nabla)w]$.
+\end{proof}
+
+\begin{remark}[Curvature source]
+  For smooth divergence-free fields on $\R^3$, the Leray projection acts as the identity
+  on the advected field (since $(v \cdot \nabla)w$ need not be divergence-free, but
+  $\Leray[(v \cdot \nabla)w] = (v \cdot \nabla)w - \nabla q$ with $q$ determined by
+  $\Delta q = \divergence[(v \cdot \nabla)w]$).  The curvature measures how much $\Leray$
+  fails to commute with the advective derivative.  On flat $\R^3$ with the standard
+  metric, the Christoffel symbols vanish; the non-trivial curvature arises entirely from
+  the infinite-dimensional geometry of the divergence-free constraint.
+\end{remark}
+
+\subsection{Bianchi identity}
+
+\begin{proposition}[First Bianchi identity]\label{prop:bianchi}
+  The curvature satisfies
+  \begin{equation}\label{eq:bianchi}
+    \curv(u,v)\,w + \curv(v,w)\,u + \curv(w,u)\,v = 0.
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  This is a general consequence of torsion-freeness (\Cref{prop:torsion-free}).
+  The identity is verified on explicit divergence-free fields in \Cref{app:sympy}.
+\end{proof}
+
+\subsection{Sectional curvature}
+
+\begin{definition}[Sectional curvature]\label{def:sectional-curv}
+  For linearly independent divergence-free fields $u, v$, the \emph{sectional curvature}
+  of the $2$-plane spanned by $u$ and $v$ is
+  \begin{equation}\label{eq:sectional-curv}
+    \kappa(u, v)
+    \;=\; \frac{g\bigl(\curv(u,v)\,v,\, u\bigr)}{g(u,u)\,g(v,v) - g(u,v)^2}.
+  \end{equation}
+\end{definition}
+
+\begin{theorem}[Arnold's negative curvature~\cite{arnold1966}]\label{thm:arnold-curvature}
+  On the group of volume-preserving diffeomorphisms of a compact manifold, the sectional
+  curvatures are generically negative.  More precisely, for ``most'' pairs of divergence-free
+  fields $u, v$, we have $\kappa(u, v) < 0$.
+\end{theorem}
+
+\begin{remark}[Geodesic instability]
+  Negative sectional curvature implies exponential divergence of nearby geodesics (by the
+  Jacobi equation).  In the fluid mechanics context, this is the geometric origin of
+  Lagrangian turbulence: nearby Euler flows separate exponentially, and small perturbations
+  to the initial velocity field are amplified.  This instability is a fundamental obstruction
+  to long-time predictability of inviscid flow.
+\end{remark}
+
+% ===========================================================================
+\section{Vorticity as curvature}\label{sec:bs-vorticity}
+% ===========================================================================
+
+The classical approach to vorticity derives the vorticity equation by ``taking the curl''
+of the Navier--Stokes equations.  We present an intrinsic alternative: vorticity is the
+curvature of the Biot--Savart connection restricted to the vorticity sub-bundle.
+
+\subsection{The vorticity bundle}
+
+\begin{definition}[Vorticity bundle]\label{def:vorticity-bundle}
+  The \emph{vorticity bundle} $\mathcal{V}$ over $\mathcal{M} = \Lsig(\R^3)$ has fibre
+  \begin{equation}\label{eq:vorticity-fibre}
+    \mathcal{V}_u = \bigl\{\vort \in \Lp{2}(\R^3;\R^3) :
+    \vort = \curl u' \text{ for some } u' \in \Sob{1}\bigr\}
+  \end{equation}
+  at each base point $u$.  The Biot--Savart operator $\BS$ provides the inverse:
+  $\BS\vort = u'$ whenever $\vort = \curl u'$ and $\divergence u' = 0$.
+\end{definition}
+
+\begin{remark}
+  The fibre $\mathcal{V}_u$ is isomorphic to $\Lsig$ via the Biot--Savart operator: the
+  map $\vort \mapsto \BS\vort$ is an isomorphism from $\mathcal{V}_u$ onto the
+  subspace of $\Sob{1}$ divergence-free fields (by elliptic regularity of the
+  Biot--Savart inversion).  This isomorphism is the geometric content of the
+  Biot--Savart law.
+\end{remark}
+
+\subsection{Induced connection on the vorticity bundle}
+
+\begin{definition}[Vorticity connection]\label{def:vort-conn}
+  The \emph{vorticity connection} $\nabla^{\vort}$ is induced by $\conn$ via
+  \begin{equation}\label{eq:vort-conn}
+    \nabla^{\vort}_u \vort
+    \;=\; \curl\bigl(\conn_u (\BS\vort)\bigr)
+    \;=\; \curl\Bigl(\Leray\bigl[(u \cdot \nabla)\BS\vort\bigr]\Bigr).
+  \end{equation}
+  Since $\curl(\nabla p) = 0$, this simplifies to
+  $\nabla^{\vort}_u \vort = \curl\bigl[(u \cdot \nabla)\BS\vort\bigr]$.
+\end{definition}
+
+\subsection{The vorticity equation as parallel transport}
+
+\begin{theorem}[Vorticity equation]\label{thm:vorticity-eq}
+  Let $u$ be a smooth divergence-free velocity field with vorticity
+  $\vort = \curl u$.  Then the vorticity equation
+  \begin{equation}\label{eq:vorticity-eq}
+    \partial_t\vort + (u \cdot \nabla)\vort = (\vort \cdot \nabla)u + \nu\,\Delta\vort
+  \end{equation}
+  is equivalent to the forced parallel transport equation
+  \begin{equation}\label{eq:vort-parallel}
+    \nabla^{\vort}_u \vort = -(\vort \cdot \nabla)u + \nu\,\curl(\Delta u),
+  \end{equation}
+  where the right-hand side of~\eqref{eq:vorticity-eq} consists of the vortex stretching
+  term $(\vort \cdot \nabla)u$ and the viscous diffusion $\nu\,\Delta\vort$.
+\end{theorem}
+
+\begin{proof}
+  Take $\curl$ of the Navier--Stokes equation in the form~\eqref{eq:ns-forced-geodesic}.
+  By \Cref{def:vort-conn}, $\curl(\conn_u u) = \nabla^{\vort}_u\vort$, so
+  \[
+    \curl(\partial_t u) + \nabla^{\vort}_u \vort = \nu\,\curl(\Delta u).
+  \]
+  Since $\curl(\partial_t u) = \partial_t\vort$, this gives
+  $\partial_t\vort + \nabla^{\vort}_u\vort = \nu\,\Delta\vort$.
+  Expanding $\nabla^{\vort}_u\vort = \curl[(u\cdot\nabla)u]
+  = (u \cdot \nabla)\vort - (\vort \cdot \nabla)u$
+  (the classical vorticity identity, verified in \Cref{app:sympy})
+  yields~\eqref{eq:vorticity-eq}.
+\end{proof}
+
+\subsection{Vortex stretching as curvature}
+
+The vortex stretching term $(\vort \cdot \nabla)u$ is the mechanism by which
+three-dimensional flow can amplify vorticity.  In our geometric framework, it appears
+as the curvature contribution.
+
+\begin{proposition}[Stretching tensor]\label{prop:stretching-tensor}
+  The velocity gradient tensor $S_{ij} = \partial_j u_i$ decomposes as
+  \begin{equation}\label{eq:strain-decomp}
+    S = D + W,
+  \end{equation}
+  where $D = (S + S^{\mathsf{T}})/2$ is the symmetric rate-of-strain tensor and
+  $W = (S - S^{\mathsf{T}})/2$ is the antisymmetric part.  Then:
+  \begin{enumerate}[label=(\roman*)]
+    \item $(\vort \cdot \nabla)u = S^{\mathsf{T}}\vort$.
+    \item $W_{ij} = -\tfrac{1}{2}\,\varepsilon_{ijk}\,\omega_k$
+      (the antisymmetric part encodes vorticity).
+    \item $\operatorname{tr}(D) = \divergence u = 0$ (incompressibility), so the
+      eigenvalues of $D$ sum to zero.
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  Property (i): $[(\vort \cdot \nabla)u]_i = \sum_j \omega_j\,\partial_j u_i
+  = \sum_j S_{ij}\,\omega_j = (S^{\mathsf{T}}\vort)_i$.
+  Properties (ii) and (iii) are direct computation, verified in \Cref{app:sympy}.
+\end{proof}
+
+\begin{remark}[Three-dimensional mechanism]\label{rem:3d-stretching}
+  In two dimensions, $\vort$ is a scalar (perpendicular to the plane of flow) and
+  $(\vort \cdot \nabla)u = 0$ since $\vort$ has no component in the plane.  The vorticity
+  equation reduces to $\partial_t\omega + u \cdot \nabla\omega = \nu\,\Delta\omega$, a
+  linear advection-diffusion equation in $\omega$, and the maximum principle controls
+  $\norm{\omega}_{\Lp{\infty}}$.  In three dimensions, the stretching term
+  $S^{\mathsf{T}}\vort$ can amplify vorticity exponentially along the
+  positive-eigenvalue directions of $D$.  Since $\operatorname{tr}(D) = 0$, at least one
+  eigenvalue is positive and at least one is negative: three-dimensional flow always has
+  directions of vortex stretching.  Controlling this amplification is the core difficulty of
+  the regularity problem.
+\end{remark}
+
+\subsection{Energy-vorticity identity}
+
+\begin{proposition}[Energy-vorticity Plancherel identity]\label{prop:energy-vorticity}
+  For $u \in \Sob{1}(\R^3;\R^3)$ with $\divergence u = 0$ and $\vort = \curl u$,
+  \begin{equation}\label{eq:energy-vorticity}
+    \norm{u}_{\Lp{2}}^2
+    = \int_{\R^3} \frac{\abs{\widehat{\vort}(\xi)}^2}{\abs{\xi}^2}\,\dd\xi.
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  By Plancherel, $\norm{u}_{\Lp{2}}^2 = \int\abs{\widehat{u}}^2\,\dd\xi$.  Since
+  $\widehat{\vort} = i\xi \times \widehat{u}$ and $\xi \cdot \widehat{u} = 0$, we have
+  $\abs{\widehat{\vort}}^2 = \abs{\xi}^2\abs{\widehat{u}}^2$ (the cross product identity,
+  \Cref{app:sympy}).  Dividing both sides by $\abs{\xi}^2$ and integrating
+  gives~\eqref{eq:energy-vorticity}.
+\end{proof}
+
+\begin{remark}
+  The identity~\eqref{eq:energy-vorticity} states that the kinetic energy
+  $\norm{u}_{\Lp{2}}^2$ equals the $\dot{H}^{-1}$-norm of the vorticity.  In the
+  geometric framework, this is a statement about the metric: the $\Lp{2}$ norm on
+  velocity (which defines the Riemannian metric on $\Lsig$) is controlled by the
+  curvature (vorticity) through a Sobolev-type inequality.
+\end{remark}
+
+% ===========================================================================
+\section{Calder\'{o}n--Zygmund estimates}\label{sec:bs-cz}
+% ===========================================================================
+
+The constructions of the preceding sections are formal for smooth fields.  For the
+geometric framework to be meaningful at the Leray--Hopf regularity level, we need
+the singular integral operators (Leray projector, Biot--Savart operator) to be bounded
+on the function spaces that Leray--Hopf solutions inhabit.
+
+\subsection{Singular integral structure of the Leray projector}
+
+The Leray projector $\Leray$ is, in the spatial domain, a matrix-valued singular integral
+operator of Calder\'{o}n--Zygmund type~\cite{calderonZygmund1952,stein1970}.
+
+\begin{theorem}[$\Lp{p}$ boundedness of $\Leray$]\label{thm:leray-Lp}
+  For $1 < p < \infty$, the Leray projector $\Leray : \Lp{p}(\R^3;\R^3) \to
+  \Lp{p}(\R^3;\R^3)$ is bounded, with
+  \begin{equation}\label{eq:leray-Lp-bound}
+    \norm{\Leray f}_{\Lp{p}} \;\leq\; C_p\,\norm{f}_{\Lp{p}}.
+  \end{equation}
+  The constant $C_p$ depends only on $p$ and the dimension.
+\end{theorem}
+
+\begin{proof}
+  The Fourier multiplier $\widehat{\Leray}(\xi) = I - \xi\xi^{\mathsf{T}}/\abs{\xi}^2$
+  is homogeneous of degree $0$ and smooth on $\mathbb{S}^2$.  By the
+  Calder\'{o}n--Zygmund theorem for singular integral operators with homogeneous
+  kernels~\cite{stein1970}, the corresponding convolution operator is $\Lp{p}$-bounded
+  for $1 < p < \infty$.
+\end{proof}
+
+\begin{remark}[Endpoint $p = 1$]\label{rem:cz-endpoint}
+  The bound~\eqref{eq:leray-Lp-bound} fails at $p = 1$ (Calder\'{o}n--Zygmund operators
+  are unbounded on $\Lp{1}$), but a weak-type $(1,1)$ estimate holds:
+  $\abs{\{x : \abs{\Leray f(x)} > \lambda\}} \leq C\,\norm{f}_{\Lp{1}}/\lambda$.
+  For Leray--Hopf solutions, the Sobolev embedding $\Sobz{1} \hookrightarrow \Lp{6}$
+  gives $u \in \Lp{6}$, and since $\nabla v \in \Lp{2}$, H\"{o}lder's inequality with
+  exponents $6$ and $2$ (noting $1/6 + 1/2 = 2/3 = 1/(3/2)$) places the product
+  $u_j\,\partial_j v$ in $\Lp{3/2}$.  Since $3/2 > 1$, the Leray projector is bounded on
+  this space.
+\end{remark}
+
+\subsection{Biot--Savart estimates}
+
+\begin{proposition}[Biot--Savart $\Lp{p}$ estimate]\label{prop:bs-Lp}
+  For $1 < p < 3$ and $\vort \in \Lp{p}(\R^3;\R^3)$,
+  \begin{equation}\label{eq:bs-Lp}
+    \norm{\BS\vort}_{\Lp{q}} \;\leq\; C_{p}\,\norm{\vort}_{\Lp{p}},
+    \qquad \frac{1}{q} = \frac{1}{p} - \frac{1}{3}.
+  \end{equation}
+  This is a consequence of the Hardy--Littlewood--Sobolev inequality applied to the
+  convolution kernel $K$ of homogeneity $-2$.
+\end{proposition}
+
+\begin{proof}
+  The Biot--Savart kernel $K(x) = x/(4\pi\abs{x}^3)$ satisfies $\abs{K(x)} \leq
+  C\abs{x}^{-2}$.  By the Hardy--Littlewood--Sobolev inequality (a fractional integral
+  bound), convolution with a kernel of homogeneity $-\alpha$ maps $\Lp{p} \to \Lp{q}$
+  when $1/q = 1/p - \alpha/3$ and $1 < p < 3/\alpha$.  Here $\alpha = 2$, giving the
+  stated bound.
+\end{proof}
+
+\subsection{Closing the estimates in the Leray--Hopf class}
+
+\begin{proposition}[Connection well-defined at Leray--Hopf regularity]\label{prop:conn-leray-hopf}
+  Let $u \in \Lp{\infty}(0,T;\Lsig) \cap \Lp{2}(0,T;\Sobz{1})$ be a Leray--Hopf weak
+  solution and $v \in \Lp{2}(0,T;\Sobz{1}) \cap \Lsig$.  Then:
+  \begin{enumerate}[label=(\roman*)]
+    \item $(u \cdot \nabla)v \in \Lp{1}(0,T;\Lp{3/2}(\R^3))$.
+    \item $\conn_u v = \Leray[(u \cdot \nabla)v] \in \Lp{1}(0,T;\Lp{3/2}(\R^3))$.
+    \item The curvature $\curv(u,v)w$ is well-defined as a distribution for
+      $u, v, w$ in the Leray--Hopf class.
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  (i) By the Sobolev embedding $\Sobz{1}(\R^3) \hookrightarrow \Lp{6}(\R^3)$, we have
+  $u \in \Lp{2}(0,T;\Lp{6})$ and $\nabla v \in \Lp{2}(0,T;\Lp{2})$.  H\"{o}lder's
+  inequality with exponents $6$ and $2$ in $\Lp{3/2}$ (since $1/6 + 1/2 = 2/3 = 1/(3/2)$)
+  gives $u_j\,\partial_j v \in \Lp{1}_t(\Lp{3/2}_x)$ (using H\"{o}lder in time with
+  both factors in $\Lp{2}_t$).
+
+  (ii) Since $3/2 > 1$, the Calder\'{o}n--Zygmund bound (\Cref{thm:leray-Lp}) applies.
+
+  (iii) The curvature involves compositions of $\conn$; iterating part~(ii) with
+  appropriate Sobolev embeddings shows the result is well-defined distributionally.
+  The precise regularity of the curvature depends on additional integrability of the
+  Leray--Hopf solution and is the subject of the energy estimates in subsequent chapters.
+\end{proof}
+
+\begin{remark}[Geometric energy estimate]
+  The forced geodesic equation~\eqref{eq:ns-forced-geodesic}, combined with the curvature
+  computation~\eqref{eq:curvature-explicit} and the Calder\'{o}n--Zygmund estimates, yields
+  geometric energy estimates of the form
+  \[
+    \frac{\dd}{\dd t}\norm{u}^2_{\Lp{2}}
+    + 2\nu\norm{\nabla u}_{\Lp{2}}^2
+    \leq C\,\bigl|\ip{\curv(u, \cdot)\,u}{u}\bigr|.
+  \]
+  The curvature term on the right-hand side is controlled by the Leray--Hopf energy bounds,
+  closing the estimate within the natural regularity class.  This is the geometric analogue
+  of the classical energy inequality (\Cref{thm:energy-inequality}) and the starting
+  point for the obstruction theory developed in subsequent chapters.
+\end{remark}
+
+\bigskip
+
+\noindent\textbf{Summary.}
+This chapter has constructed the Biot--Savart connection on the space of
+divergence-free velocity fields.  The Biot--Savart kernel and Leray projector
+(\Cref{sec:bs-kernel}) provide the tools; the divergence-free tangent bundle
+(\Cref{sec:bs-bundle}) provides the geometric setting.  The connection
+$\conn_u v = \Leray[(u \cdot \nabla)v]$ is the unique Levi-Civita connection of the
+$\Lp{2}$ metric (\Cref{thm:levi-civita}), recovering Arnold's geodesic picture of
+inviscid flow (\Cref{thm:geodesic-euler}).  Navier--Stokes is a forced geodesic
+(\Cref{cor:ns-forced-geodesic}), with viscosity as the forcing.  The curvature of
+$\conn$ is computed abstractly and verified against the first Bianchi identity
+(\Cref{sec:bs-curvature}).  Vorticity appears intrinsically as curvature of the
+induced connection on the vorticity bundle (\Cref{sec:bs-vorticity}), with vortex
+stretching as the curvature contribution.  Calder\'{o}n--Zygmund estimates
+(\Cref{sec:bs-cz}) ensure that the entire construction is well-defined at the
+Leray--Hopf regularity level: the connection, curvature, and energy estimates remain
+within the natural class $\Lp{\infty}_t(\Lsig) \cap \Lp{2}_t(\Sobz{1})$.

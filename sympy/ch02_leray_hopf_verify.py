@@ -2,7 +2,7 @@
 Chapter 2 -- SymPy verification of Leray-Hopf weak solution identities.
 
 Verifies:
-  1. Trilinear form antisymmetry: b(u,v,v) = 0 on a concrete div-free field
+  1. Trilinear form antisymmetry: b(u,v,v) = 0 on an example div-free field
   2. Energy equality for Galerkin: d/dt ||u||^2 + 2*nu*||grad u||^2 = 0
      implies ||u(t)||^2 + 2*nu*int_0^t ||grad u||^2 = ||u(0)||^2
   3. Sobolev interpolation: ||u||_L3 <= ||u||_L2^{1/2} ||u||_L6^{1/2}
@@ -18,7 +18,7 @@ import sympy as sp
 
 def main():
     # ------------------------------------------------------------------
-    # 1. Trilinear antisymmetry on a concrete divergence-free field
+    # 1. Trilinear antisymmetry on an example divergence-free field
     # ------------------------------------------------------------------
     x, y, z = sp.symbols("x y z")
 

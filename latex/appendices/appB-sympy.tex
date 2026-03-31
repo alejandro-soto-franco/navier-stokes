@@ -1,1 +1,216 @@
 \chapter{Symbolic Verification}\label{app:sympy}
+
+This appendix catalogues the SymPy verification scripts that accompany the text.
+Each script independently checks the identities, exponents, and structural properties
+stated in the corresponding chapter.  The scripts are fully reproducible: they require
+only a standard SymPy installation and can be executed with
+\texttt{python sympy/<script>.py} from the repository
+root.\footnote{Source:
+\href{https://github.com/alejandro-soto-franco/navier-stokes/tree/main/sympy}%
+{\texttt{sympy/}} in the project repository.}
+
+Where identities are verified on example fields (as opposed to purely algebraic or
+Fourier-space checks), the scripts use multiple independent divergence-free test fields
+from different families (ABC flows, mixed trigonometric) to ensure the results are not
+artifacts of a particular symmetry.
+
+% ---------------------------------------------------------------------------
+\section{Chapter 1: Sobolev exponents}
+\label{sec:sympy-ch01-sobolev}
+% ---------------------------------------------------------------------------
+
+\textbf{Script:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/main/sympy/ch01_sobolev_exponents.py}%
+{\texttt{sympy/ch01\_sobolev\_exponents.py}}
+
+\medskip\noindent
+Verifies the exponent arithmetic underlying the Sobolev embedding theorems of
+\Cref{ch:foundations}:
+\begin{enumerate}[label=(\roman*)]
+  \item The Sobolev conjugate identity $1/p^{*} = 1/p - 1/n$ with
+    $p^{*} = np/(n-p)$.
+  \item Evaluation at $(n,p) = (3,2)$: $p^{*} = 6$
+    (\Cref{thm:sobolev-subcritical}).
+  \item Evaluation at $(n,p) = (3,1)$: $p^{*} = 3/2$.
+  \item Morrey exponent $\alpha = 1 - n/p$ at $(n,p) = (3,4)$ and $(3,6)$.
+  \item Poincar\'{e} constant scaling: $C_P \sim \lambda^{-1}$
+    (proportional to the domain diameter).
+\end{enumerate}
+
+% ---------------------------------------------------------------------------
+\section{Chapter 1: Helmholtz decomposition}
+\label{sec:sympy-ch01-helmholtz}
+% ---------------------------------------------------------------------------
+
+\textbf{Script:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/main/sympy/ch01_helmholtz_verify.py}%
+{\texttt{sympy/ch01\_helmholtz\_verify.py}}
+
+\medskip\noindent
+Verifies the Helmholtz decomposition (\Cref{thm:helmholtz}) on the example field
+$u = (x^2 y,\, {-}xy^2,\, z)$:
+\begin{enumerate}[label=(\roman*)]
+  \item Computes $\divergence u = 1 \neq 0$.
+  \item Solves $\Delta p = \divergence u$ with particular solution
+    $p = (\abs{x}^2)/6$.
+  \item Forms $v = u - \nabla p$ and checks $\divergence v = 0$.
+  \item Verifies $\Lp{2}$-orthogonality:
+    $\int_{[-a,a]^3} v \cdot \nabla p\,\dd x = 0$.
+  \item Confirms idempotence: $\Leray(\Leray u) = \Leray u$.
+\end{enumerate}
+
+% ---------------------------------------------------------------------------
+\section{Chapter 2: Leray--Hopf identities}
+\label{sec:sympy-ch02}
+% ---------------------------------------------------------------------------
+
+\textbf{Script:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/main/sympy/ch02_leray_hopf_verify.py}%
+{\texttt{sympy/ch02\_leray\_hopf\_verify.py}}
+
+\medskip\noindent
+Verifies the identities and exponent relations from \Cref{ch:leray-hopf}:
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Trilinear antisymmetry.}  For the divergence-free field
+    $u = (\sin y, \sin z, \sin x)$, confirms $b(u,u,u) = \tfrac{1}{2}(u \cdot \nabla)\abs{u}^2$
+    pointwise, which integrates to zero by the divergence theorem
+    (\Cref{lem:trilinear-antisymmetry}).
+  \item \textbf{Energy equality structure.}  Verifies that the ODE
+    $\dd E/\dd t = -D(t)$ implies
+    $E(t) + \int_0^t D(s)\,\dd s = E(0)$
+    (\Cref{thm:energy-inequality}).
+  \item \textbf{H\"{o}lder interpolation.}  Checks
+    $1/3 = \theta/2 + (1-\theta)/6$ gives $\theta = 1/2$, so
+    $\norm{u}_{\Lp{3}} \leq \norm{u}_{\Lp{2}}^{1/2}\norm{u}_{\Lp{6}}^{1/2}$.
+  \item \textbf{Navier--Stokes scaling.}  The rescaling
+    $u_{\lambda}(x,t) = \lambda\,u(\lambda x, \lambda^2 t)$ gives
+    $\norm{u_\lambda}_{\Lp{r}} = \lambda^{1 - 3/r}\norm{u}_{\Lp{r}}$;
+    the critical exponent $r = 3$ is the zero of $1 - 3/r$.
+  \item \textbf{Serrin condition.}  Verifies that the pairs
+    $(q,r) \in \{(\infty,3),\,(4,6),\,(8,4)\}$ satisfy $2/q + 3/r = 1$.
+  \item \textbf{Reynolds number.}  $\mathrm{Re} = UL/\nu$; at $U = L = 1$,
+    $\mathrm{Re} = 1/\nu$.
+  \item \textbf{Time derivative exponent.}  Confirms $\tfrac{3}{2} \cdot \tfrac{4}{3} = 2$,
+    closing the $\Lp{4/3}_t(\Sob{-1})$ bound on $\partial_t u$.
+\end{enumerate}
+
+% ---------------------------------------------------------------------------
+\section{Chapter 3: Biot--Savart connection}
+\label{sec:sympy-ch03}
+% ---------------------------------------------------------------------------
+
+\textbf{Script:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/main/sympy/ch03_biot_savart_verify.py}%
+{\texttt{sympy/ch03\_biot\_savart\_verify.py}}
+
+\medskip\noindent
+The most extensive verification script, covering all four parts of \Cref{ch:connection}
+with 19 checks.  Where noted, checks run across a bank of five independent
+divergence-free test fields:
+\begin{itemize}
+  \item ABC-1: $(\sin y,\, \sin z,\, \sin x)$
+  \item ABC-2: $(\cos z,\, \cos x,\, \cos y)$
+  \item ABC-3: $(\sin 2y,\, \sin 2z,\, \sin 2x)$
+  \item ABC-4: $(\cos 3z,\, \cos 3x,\, \cos 3y)$
+  \item mixed-1: $(\sin y + \cos z,\, \sin z + \cos x,\, \sin x + \cos y)$
+\end{itemize}
+All are smooth, periodic, and divergence-free.  Using fields with different wavenumbers
+and functional forms guards against symmetry-specific cancellations.
+
+\subsection*{Part I: Kernel and Leray projector (checks 1--10)}
+
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Green's function.}  $G = 1/(4\pi\abs{x})$ satisfies
+    $\Delta G = 0$ for $x \neq 0$ (\Cref{def:newtonian-potential}).
+
+  \item \textbf{Biot--Savart kernel.}  $K_j = -\partial_j G = x_j/(4\pi\abs{x}^3)$
+    (\Cref{def:bs-kernel}).
+
+  \item \textbf{Divergence-free.}  $\divergence K = 0$ away from the origin
+    (\Cref{prop:kernel-props}\ref{it:K-divfree}).
+
+  \item \textbf{Homogeneity.}  $K(\lambda x) = \lambda^{-2} K(x)$
+    (\Cref{prop:kernel-props}\ref{it:K-homog}).
+
+  \item \textbf{Leray projector.}  Constructs $\widehat{\Leray}(\xi)_{ij}
+    = \delta_{ij} - \xi_i\xi_j/\abs{\xi}^2$ and verifies idempotence,
+    self-adjointness, gradient annihilation ($\widehat{\Leray}\xi = 0$),
+    and $\operatorname{tr}\widehat{\Leray} = 2$
+    (\Cref{prop:leray-fourier-props}).
+
+  \item \textbf{Cross product identity.}  $(\xi\times)^2 = \xi\xi^{\mathsf{T}} - \abs{\xi}^2 I$
+    (\Cref{prop:bs-inversion}).
+
+  \item \textbf{Biot--Savart inversion.}  $(\xi\times)^2/\abs{\xi}^2 = -\widehat{\Leray}$
+    (recovers divergence-free $u$ from $\curl u$).
+
+  \item \textbf{Vorticity identity.}
+    $\curl((u\cdot\nabla)u) = (u\cdot\nabla)\vort - (\vort\cdot\nabla)u$,
+    verified on all five example fields (\Cref{thm:vorticity-eq}).
+
+  \item \textbf{Stretching tensor.}
+    $(\vort\cdot\nabla)u = S^{\mathsf{T}}\vort$ where $S_{ij} = \partial_j u_i$;
+    antisymmetric part $W_{ij} = -\tfrac{1}{2}\varepsilon_{ijk}\omega_k$;
+    $\operatorname{tr}(D) = 0$ (incompressibility).  All verified on five
+    example fields (\Cref{prop:stretching-tensor}).
+
+  \item \textbf{Energy-vorticity identity.}
+    $\abs{\xi\times v}^2 = \abs{\xi}^2\abs{v}^2 - (\xi\cdot v)^2$,
+    confirming $\norm{u}_{\Lp{2}}^2 = \norm{\vort}_{\dot{H}^{-1}}^2$
+    (\Cref{prop:energy-vorticity}).
+\end{enumerate}
+
+\subsection*{Part II: Connection geometry (checks 11--14)}
+
+\begin{enumerate}[resume,label=(\roman*)]
+  \item \textbf{Torsion-freeness.}  The Lie bracket $[u,v]$ of divergence-free fields
+    is divergence-free, verified on all $\binom{5}{2} = 10$ pairs of example fields
+    (\Cref{prop:torsion-free}).
+
+  \item \textbf{Metric compatibility.}  The pointwise product rule
+    $(u\cdot\nabla)(v\cdot w) = [(u\cdot\nabla)v]\cdot w + v\cdot[(u\cdot\nabla)w]$,
+    verified on four independent triples of example fields.
+    The integral form (metric compatibility) follows by integration by parts
+    with $\divergence u = 0$ (\Cref{prop:metric-compat}).
+
+  \item \textbf{Levi-Civita uniqueness.}  Torsion-free (check xi) and metric-compatible
+    (check xii) together imply the Biot--Savart connection is the unique Levi-Civita
+    connection (\Cref{thm:levi-civita}).
+
+  \item \textbf{Geodesic = Euler.}  In Fourier space, $\xi\cdot(\widehat{\Leray}f) = 0$
+    for arbitrary $f$, confirming $\Leray$ removes the gradient component and the
+    geodesic equation $\partial_t u + \conn_u u = 0$ is the Euler equation
+    (\Cref{thm:geodesic-euler}).
+\end{enumerate}
+
+\subsection*{Part III: Curvature (checks 15--17)}
+
+\begin{enumerate}[resume,label=(\roman*)]
+  \item \textbf{Curvature tensor.}
+    $\curv(u,v)w = (u\cdot\nabla)(v\cdot\nabla)w - (v\cdot\nabla)(u\cdot\nabla)w
+    - [u,v]\cdot\nabla w$,
+    computed on four triples of example fields.  Each result is verified to be
+    divergence-free (confirming that $\Leray$ acts as the identity on smooth
+    divergence-free fields) (\Cref{prop:curvature-formula}).
+
+  \item \textbf{First Bianchi identity.}
+    $\curv(u,v)w + \curv(v,w)u + \curv(w,u)v = 0$,
+    verified component-wise on the same four triples (\Cref{prop:bianchi}).
+
+  \item \textbf{Sectional curvature.}  The integrand
+    $\curv(u,v)v\cdot u$ is computed on three example pairs, demonstrating the
+    sectional curvature formula (\Cref{def:sectional-curv},
+    \Cref{thm:arnold-curvature}).
+\end{enumerate}
+
+\subsection*{Part IV: Vorticity as curvature (checks 18--19)}
+
+\begin{enumerate}[resume,label=(\roman*)]
+  \item \textbf{Vorticity as curvature.}
+    $\curl(\conn_u u) = (u\cdot\nabla)\vort - (\vort\cdot\nabla)u$,
+    verified on all five example fields (\Cref{thm:vorticity-eq}).
+
+  \item \textbf{Incompressible strain rate.}
+    $\operatorname{tr}(D) = 0$ on all five example fields, confirming that the
+    rate-of-strain tensor is trace-free (\Cref{prop:stretching-tensor}).
+\end{enumerate}
