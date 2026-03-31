@@ -1,1 +1,269 @@
-\chapter{Lean Formalisation Reference}\label{app:lean}
+\chapter{Lean 4 Formalisation Reference}\label{app:lean}
+
+This appendix documents the Lean~4 formalisation that accompanies the text.
+Each section corresponds to a \texttt{.lean} source file in the repository;
+the file links lead to the current version in the project repository.  All
+definitions and theorem statements type-check against the pinned Mathlib4 fork
+(commit \texttt{698d2b68}, based on \texttt{v4.29.0-rc8}) with 2753 build jobs
+and zero errors.
+
+Theorems are classified as \textbf{proved} (no \texttt{sorry}) or
+\emph{sorry-stub} (hypothesis stated precisely; proof deferred).  All
+\emph{sorry-stubs} correspond to Category~C obligations: standard PDE or
+functional-analysis results not yet available in Mathlib that can in principle
+be completed independently.
+
+% ===========================================================================
+\section{Chapter 1: Functional-analytic foundations}\label{sec:lean-ch1}
+% ===========================================================================
+
+% ---------------------------------------------------------------------------
+\subsection{Weak derivatives}\label{sec:lean-ch1-weakderiv}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/WeakDerivative.lean}%
+{\texttt{NavierStokes/Foundations/WeakDerivative.lean}}
+
+\medskip\noindent
+Formalises the distributional definition of weak partial derivative and proves
+uniqueness via the fundamental lemma of the calculus of variations.
+
+\begin{itemize}
+  \item \texttt{NavierStokes.IsWeakPartialDeriv} --- predicate: $v \in
+    L^{1}_{\mathrm{loc}}(\Omega)$ is a weak $\alpha$-th partial derivative of $u$
+    (\Cref{def:weak-deriv}).
+  \item \texttt{NavierStokes.weakPartialDeriv\_unique} \textbf{(proved)} --- weak
+    partial derivatives are unique almost everywhere, via
+    \texttt{IsOpen.ae\_eq\_zero\_of\_integral\_contDiff\_smul\_eq\_zero}
+    (\Cref{thm:weak-deriv-unique}).
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\subsection{Sobolev spaces}\label{sec:lean-ch1-sobolev}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/SobolevSpace.lean}%
+{\texttt{NavierStokes/Foundations/SobolevSpace.lean}}
+
+\medskip\noindent
+Defines the Sobolev spaces $W^{1,p}(\Omega)$, $H^{1}(\Omega)$, and
+$H^{1}_{0}(\Omega)$; proves symmetry of the $H^{1}$ inner product.
+
+\begin{itemize}
+  \item \texttt{NavierStokes.SobolevW1p} --- the Banach space $W^{1,p}(\Omega)$
+    as a subtype of $L^{p}$ with $\norm{\cdot}_{W^{1,p}}$ norm
+    (\Cref{def:W1p}).
+  \item \texttt{NavierStokes.SobolevH1} --- the Hilbert space $H^{1}(\Omega) =
+    W^{1,2}(\Omega)$ with the standard inner product (\Cref{def:H1}).
+  \item \texttt{NavierStokes.SobolevH1Zero} --- the space $H^{1}_{0}(\Omega)$
+    as the $H^{1}$-closure of $C^{\infty}_{c}(\Omega)$; the definition is
+    sorry-free (\Cref{def:H10}).
+  \item \texttt{NavierStokes.sobolevH1InnerProduct\_comm} \textbf{(proved)} ---
+    symmetry of the $H^{1}$ inner product: $\langle u, v \rangle_{H^{1}} =
+    \langle v, u \rangle_{H^{1}}$ (\Cref{def:H1}).
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\subsection{Sobolev embeddings}\label{sec:lean-ch1-embedding}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/SobolevEmbedding.lean}%
+{\texttt{NavierStokes/Foundations/SobolevEmbedding.lean}}
+
+\medskip\noindent
+States the Gagliardo--Nirenberg--Sobolev embedding and Morrey inequality, and
+proves the conjugate exponent identities.
+
+\begin{itemize}
+  \item \texttt{NavierStokes.sobolevConjugate\_gt} \textbf{(proved)} --- the
+    Sobolev conjugate satisfies $p^{*} > p$ for $1 \le p < n$
+    (\Cref{thm:sobolev-subcritical}).
+  \item \texttt{NavierStokes.sobolevConjugate\_inv} \textbf{(proved)} --- the
+    dimensional identity $1/p^{*} = 1/p - 1/n$
+    (\Cref{thm:sobolev-subcritical}).
+  \item \texttt{NavierStokes.sobolev\_embedding\_subcritical} \emph{(sorry-stub)}
+    --- $W^{1,p}(\R^{n}) \hookrightarrow L^{p^{*}}(\R^{n})$ continuously for $1
+    \le p < n$ (\Cref{thm:sobolev-subcritical}).
+  \item \texttt{NavierStokes.sobolev\_embedding\_supercritical} \emph{(sorry-stub)}
+    --- $W^{1,p}(\R^{n}) \hookrightarrow C^{0,\alpha}(\R^{n})$ continuously for
+    $p > n$, $\alpha = 1 - n/p$ (\Cref{thm:sobolev-morrey}).
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\subsection{Rellich--Kondrachov compactness}\label{sec:lean-ch1-rellich}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/RellichKondrachov.lean}%
+{\texttt{NavierStokes/Foundations/RellichKondrachov.lean}}
+
+\medskip\noindent
+States the compact embedding theorem used in the Poincar\'{e} inequality proof
+and the Galerkin construction for Leray--Hopf solutions.
+
+\begin{itemize}
+  \item \texttt{NavierStokes.rellich\_kondrachov} \emph{(sorry-stub)} --- on a
+    bounded Lipschitz domain $\Omega$, the embedding $H^{1}(\Omega) \hookrightarrow
+    L^{2}(\Omega)$ is compact in the sense that every bounded sequence in $H^{1}$
+    has an $L^{2}$-convergent subsequence (\Cref{thm:rellich-kondrachov}).
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\subsection{Poincar\'{e} inequality}\label{sec:lean-ch1-poincare}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/Poincare.lean}%
+{\texttt{NavierStokes/Foundations/Poincare.lean}}
+
+\medskip\noindent
+States the Poincar\'{e} inequality and the Payne--Weinberger bound on the
+optimal constant for convex domains.
+
+\begin{itemize}
+  \item \texttt{NavierStokes.poincare\_inequality} \emph{(sorry-stub)} --- for a
+    bounded connected domain $\Omega \subset \R^{n}$, there exists $C_{P} > 0$ such
+    that $\norm{u}_{L^{2}} \le C_{P}\norm{\nabla u}_{L^{2}}$ for every $u \in
+    H^{1}_{0}(\Omega)$.  The \texttt{IsConnected} hypothesis is required: without
+    it, a constant-gradient argument fails on disconnected domains
+    (\Cref{thm:poincare}).
+  \item \texttt{NavierStokes.poincare\_constant\_bound\_convex} \emph{(sorry-stub)}
+    --- for convex $\Omega$ the optimal constant satisfies $C_{P} \le
+    \operatorname{diam}(\Omega)/\sqrt{n}$ (Payne--Weinberger 1960)
+    (\Cref{thm:poincare}).
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\subsection{Divergence-free spaces and Helmholtz decomposition}%
+\label{sec:lean-ch1-divfree}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/DivFreeSpace.lean}%
+{\texttt{NavierStokes/Foundations/DivFreeSpace.lean}}
+
+\medskip\noindent
+Defines the distributional divergence-free condition, the space $L^{2}_{\sigma}$,
+and the Leray projector; proves sequential closedness of $L^{2}_{\sigma}$ under
+$L^{2}$ convergence.
+
+\begin{itemize}
+  \item \texttt{NavierStokes.IsDistribDivFree} --- predicate: $u \in L^{2}$ is
+    distributionally divergence-free, i.e.\ $\int u \cdot \nabla\varphi\,\dd x = 0$
+    for all $\varphi \in C^{\infty}_{c}$ (\Cref{def:distrib-divfree}).
+  \item \texttt{NavierStokes.L2sigma} --- the space $L^{2}_{\sigma}(\Omega)$ as
+    the $L^{2}$-closure of smooth compactly supported divergence-free fields
+    (\Cref{def:L2sigma}).
+  \item \texttt{NavierStokes.l2sigma\_closed\_under\_l2\_convergence}
+    \textbf{(proved)} --- $L^{2}_{\sigma}$ is closed under $L^{2}$ convergence,
+    via H\"{o}lder (Cauchy--Schwarz, $p = q = 2$), \texttt{PiLp.norm\_apply\_le}
+    for component bounds, and \texttt{tendsto\_nhds\_unique} for uniqueness of
+    limits (\Cref{prop:L2sigma-closed}).
+  \item \texttt{NavierStokes.helmholtz\_decomposition} \emph{(sorry-stub)} ---
+    every $u \in L^{2}(\Omega;\R^{n})$ decomposes orthogonally as $u = v + \nabla
+    p$ with $v \in L^{2}_{\sigma}$ and $\nabla p \perp L^{2}_{\sigma}$
+    (\Cref{thm:helmholtz}).
+  \item \texttt{NavierStokes.lerayProjector} \emph{(sorry-stub)} --- the bounded
+    linear projection $\mathbb{P}: L^{2}(\R^{n};\R^{n}) \to L^{2}_{\sigma}(\R^{n})$
+    (\Cref{def:leray-proj}).
+  \item \texttt{NavierStokes.lerayProjector\_idempotent} \emph{(sorry-stub)} ---
+    $\mathbb{P}^{2} = \mathbb{P}$ (projection algebra; depends on Helmholtz).
+  \item \texttt{NavierStokes.lerayProjector\_selfAdjoint} \emph{(sorry-stub)} ---
+    $\mathbb{P}^{*} = \mathbb{P}$ (orthogonal projection; depends on Helmholtz).
+\end{itemize}
+
+% ===========================================================================
+\section{Chapter 2: Leray--Hopf weak solutions}\label{sec:lean-ch2}
+% ===========================================================================
+
+% ---------------------------------------------------------------------------
+\subsection{Weak Navier--Stokes solution}\label{sec:lean-ch2-weak}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/WeakNSSolution.lean}%
+{\texttt{NavierStokes/LerayHopf/WeakNSSolution.lean}}
+
+\medskip\noindent
+Defines the weak formulation of the Navier--Stokes equations and the Stokes
+operator.
+
+\begin{itemize}
+  \item \texttt{NavierStokes.IsWeakNSSolution} --- predicate encoding the weak
+    Navier--Stokes equations: the integral identity against divergence-free test
+    functions $\varphi \in C^{\infty}_{c}(\R^{3} \times [0,T))$
+    (\Cref{def:weak-ns}).
+  \item \texttt{NavierStokes.StokesOperator} --- the operator $A =
+    -\mathbb{P}\Delta$ with compact resolvent on bounded domains; on $\R^{3}$ it is
+    self-adjoint with purely continuous spectrum
+    (\Cref{rem:bounded-domain-alternative,def:weak-ns}).
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\subsection{Trilinear form}\label{sec:lean-ch2-trilinear}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/TrilinearForm.lean}%
+{\texttt{NavierStokes/LerayHopf/TrilinearForm.lean}}
+
+\medskip\noindent
+Defines the trilinear form and proves antisymmetry at distributional regularity.
+
+\begin{itemize}
+  \item \texttt{NavierStokes.trilinearForm} --- the integral $b(u,v,w) = \int
+    (u\cdot\nabla)v\cdot w\,\dd x$; the definition carries no \texttt{sorry}
+    (\Cref{eq:trilinear-form}).
+  \item \texttt{NavierStokes.trilinearForm\_antisymmetric} \textbf{(proved)} ---
+    $b(u,v,v) = 0$ for distributionally divergence-free $u$ and $v \in
+    C^{\infty}_{c}(\R^{3};\R^{3})$, proved via per-component test functions
+    $\varphi_{k} = v_{k}^{2}$ with \texttt{fderiv\_fun\_pow} chain rule and
+    \texttt{integral\_const\_mul} (\Cref{lem:trilinear-antisymmetry}).
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\subsection{Energy inequality}\label{sec:lean-ch2-energy}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/EnergyInequality.lean}%
+{\texttt{NavierStokes/LerayHopf/EnergyInequality.lean}}
+
+\medskip\noindent
+Defines the energy inequality satisfied by Leray--Hopf solutions.
+
+\begin{itemize}
+  \item \texttt{NavierStokes.SatisfiesEnergyInequality} --- predicate: the weak
+    solution $u$ satisfies
+    \[
+      \norm{u(t)}_{L^{2}}^{2}
+      + 2\nu\int_{0}^{t}\norm{\nabla u(s)}_{L^{2}}^{2}\,\dd s
+      \;\le\; \norm{u_{0}}_{L^{2}}^{2}
+    \]
+    for almost every $t \ge 0$ (\Cref{thm:energy-inequality}).
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\subsection{Existence of Leray--Hopf solutions}\label{sec:lean-ch2-existence}
+% ---------------------------------------------------------------------------
+
+\textbf{File:}
+\href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/Existence.lean}%
+{\texttt{NavierStokes/LerayHopf/Existence.lean}}
+
+\medskip\noindent
+States the global existence theorem and the Serrin regularity criterion.
+
+\begin{itemize}
+  \item \texttt{NavierStokes.IsLerayHopfSolution} --- predicate: a weak solution
+    in the energy class $L^{\infty}_{t}(L^{2}_{\sigma}) \cap
+    L^{2}_{t}(H^{1}_{0})$ that satisfies the energy inequality
+    (\Cref{def:leray-hopf}).
+  \item \texttt{NavierStokes.lerayHopf\_existence} \emph{(sorry-stub)} --- for
+    every $u_{0} \in L^{2}_{\sigma}(\R^{3})$ there exists a global Leray--Hopf
+    solution; the proof requires the full Galerkin compactness argument via
+    Aubin--Lions (\Cref{thm:leray-hopf-existence}).
+\end{itemize}

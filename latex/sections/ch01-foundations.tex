@@ -105,8 +105,7 @@ For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
 
 \subsection{Weak partial derivatives}
 
-\begin{definition}[Weak partial derivative%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/WeakDerivative.lean}{\texttt{NavierStokes.IsWeakPartialDeriv}}}]%
+\begin{definition}[Weak partial derivative (\Cref{sec:lean-ch1-weakderiv})]%
   \label{def:weak-deriv}
   Let $u \in L^{1}_{\mathrm{loc}}(\Omega)$ and $\alpha \in \N^{n}$.  A function
   $v \in L^{1}_{\mathrm{loc}}(\Omega)$ is a \emph{weak $\alpha$-th partial derivative} of
@@ -120,8 +119,7 @@ For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
   \end{equation}
 \end{definition}
 
-\begin{theorem}[Uniqueness of weak derivatives%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/WeakDerivative.lean}{\texttt{NavierStokes.weakPartialDeriv\_unique}}}]%
+\begin{theorem}[Uniqueness of weak derivatives (\Cref{sec:lean-ch1-weakderiv})]%
   \label{thm:weak-deriv-unique}
   If $v_{1}, v_{2} \in L^{1}_{\mathrm{loc}}(\Omega)$ are both weak $\alpha$-th partial
   derivatives of $u$, then $v_{1} = v_{2}$ almost everywhere in $\Omega$.
@@ -143,8 +141,7 @@ For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
 
 \subsection{Sobolev spaces}
 
-\begin{definition}[$W^{1,p}(\Omega)$%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/SobolevSpace.lean}{\texttt{NavierStokes.SobolevW1p}}}]%
+\begin{definition}[$W^{1,p}(\Omega)$ (\Cref{sec:lean-ch1-sobolev})]%
   \label{def:W1p}
   For $1 \le p \le \infty$, the \emph{Sobolev space} $W^{1,p}(\Omega)$ consists of
   all $u \in \Lp{p}(\Omega)$ whose weak partial derivatives $D_{i} u$ exist in
@@ -163,8 +160,7 @@ For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
   \end{equation}
 \end{definition}
 
-\begin{definition}[$\Sob{1}(\Omega) = W^{1,2}(\Omega)$%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/SobolevSpace.lean}{\texttt{NavierStokes.SobolevH1}}}]%
+\begin{definition}[$\Sob{1}(\Omega) = W^{1,2}(\Omega)$ (\Cref{sec:lean-ch1-sobolev})]%
   \label{def:H1}
   The space $\Sob{1}(\Omega) = W^{1,2}(\Omega)$ is a \emph{Hilbert space} with inner
   product
@@ -177,8 +173,7 @@ For the fluid applications in \Cref{ch:leray-hopf} we set $n = 3$.
   \end{equation}
 \end{definition}
 
-\begin{definition}[$\Sobz{1}(\Omega)$%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/SobolevSpace.lean}{\texttt{NavierStokes.SobolevH1Zero}}}]%
+\begin{definition}[$\Sobz{1}(\Omega)$ (\Cref{sec:lean-ch1-sobolev})]%
   \label{def:H10}
   The space $\Sobz{1}(\Omega)$ is defined as the closure of $\Ccinf(\Omega)$ in
   $\Sob{1}(\Omega)$:
@@ -207,8 +202,7 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
 
 \subsection{Subcritical (Gagliardo--Nirenberg--Sobolev) embedding}
 
-\begin{theorem}[Subcritical Sobolev embedding%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/SobolevEmbedding.lean}{\texttt{NavierStokes.sobolev\_embedding\_subcritical}}}]%
+\begin{theorem}[Subcritical Sobolev embedding (\Cref{sec:lean-ch1-embedding})]%
   \label{thm:sobolev-subcritical}
   Let $1 \le p < n$.  There exists a constant $C = C(n, p) > 0$ such that for all
   $u \in W^{1,p}(\R^{n})$,
@@ -274,8 +268,7 @@ or $\Lp{q}$ regularity.  The critical exponent for $W^{1,p}(\R^{n})$ is
 
 \subsection{Supercritical (Morrey) embedding}
 
-\begin{theorem}[Morrey embedding%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/SobolevEmbedding.lean}{\texttt{NavierStokes.sobolev\_embedding\_supercritical}}}]%
+\begin{theorem}[Morrey embedding (\Cref{sec:lean-ch1-embedding})]%
   \label{thm:sobolev-morrey}
   Let $p > n$ and set $\alpha = 1 - n/p \in (0, 1)$.  Then there exists a constant
   $C = C(n, p) > 0$ such that for all $u \in W^{1,p}(\R^{n})$,
@@ -345,8 +338,7 @@ The Rellich--Kondrachov theorem upgrades the continuous Sobolev embedding to a
 Compactness is essential for the convergence of Galerkin approximations in
 \Cref{ch:leray-hopf}.
 
-\begin{theorem}[Rellich--Kondrachov%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/RellichKondrachov.lean}{\texttt{NavierStokes.rellich\_kondrachov}}}]%
+\begin{theorem}[Rellich--Kondrachov (\Cref{sec:lean-ch1-rellich})]%
   \label{thm:rellich-kondrachov}
   Let $\Omega \subset \R^{n}$ be a bounded open set with Lipschitz boundary.  Then the
   inclusion
@@ -434,8 +426,7 @@ Compactness is essential for the convergence of Galerkin approximations in
 \section{The Poincar\'{e} inequality}\label{sec:poincare}
 % ---------------------------------------------------------------------------
 
-\begin{theorem}[Poincar\'{e} inequality%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/Poincare.lean}{\texttt{NavierStokes.poincare\_inequality}}}]%
+\begin{theorem}[Poincar\'{e} inequality (\Cref{sec:lean-ch1-poincare})]%
   \label{thm:poincare}
   Let $\Omega \subset \R^{n}$ be a bounded, connected open set.  There exists a
   constant $C_{\mathrm{P}} = C_{\mathrm{P}}(\Omega) > 0$ such that
@@ -492,9 +483,8 @@ distributional divergence-free condition.
 
 \subsection{Distributional divergence-free fields}
 
-\begin{definition}[Divergence-free fields]%
-  \label{def:distrib-divfree}%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/DivFreeSpace.lean}{\texttt{NavierStokes.IsDistribDivFree}}.}
+\begin{definition}[Divergence-free fields (\Cref{sec:lean-ch1-divfree})]%
+  \label{def:distrib-divfree}
   A vector field $u \in \Lp{2}(\Omega;\R^{n})$ is \emph{distributionally divergence-free}
   if
   \begin{equation}\label{eq:distrib-divfree}
@@ -507,8 +497,7 @@ distributional divergence-free condition.
 
 \subsection{The space $\Lsig(\Omega)$}
 
-\begin{definition}[$\Lsig(\Omega)$%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/DivFreeSpace.lean}{\texttt{NavierStokes.L2sigma}}}]%
+\begin{definition}[$\Lsig(\Omega)$ (\Cref{sec:lean-ch1-divfree})]%
   \label{def:L2sigma}
   Define
   \[
@@ -524,9 +513,8 @@ distributional divergence-free condition.
   fields.
 \end{definition}
 
-\begin{proposition}[Closedness of $\Lsig$]%
-  \label{prop:L2sigma-closed}%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/DivFreeSpace.lean}{\texttt{NavierStokes.l2sigma\_closed\_under\_l2\_convergence}}.}
+\begin{proposition}[Closedness of $\Lsig$ (\Cref{sec:lean-ch1-divfree})]%
+  \label{prop:L2sigma-closed}
   The space $\Lsig(\Omega)$ is a closed subspace of $\Lp{2}(\Omega;\R^{n})$, hence
   itself a Hilbert space.
 \end{proposition}
@@ -544,7 +532,7 @@ distributional divergence-free condition.
 \subsection{Helmholtz decomposition}
 
 \begin{theorem}[Helmholtz decomposition%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/DivFreeSpace.lean}{\texttt{NavierStokes.helmholtz\_decomposition}}}]%
+  (\Cref{sec:lean-ch1-divfree})]%
   \label{thm:helmholtz}
   Let $\Omega \subset \R^{n}$ be a simply connected bounded open set with $C^{1}$
   boundary, or $\Omega = \R^{n}$.  Then $\Lp{2}(\Omega;\R^{n})$ admits the orthogonal
@@ -623,8 +611,7 @@ distributional divergence-free condition.
 
 \subsection{The Leray projector}
 
-\begin{definition}[Leray projector%
-  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/DivFreeSpace.lean}{\texttt{NavierStokes.lerayProjector}}}]%
+\begin{definition}[Leray projector (\Cref{sec:lean-ch1-divfree})]%
   \label{def:leray-projector}
   The \emph{Leray (or Helmholtz--Leray) projector} is the bounded linear operator
   \[

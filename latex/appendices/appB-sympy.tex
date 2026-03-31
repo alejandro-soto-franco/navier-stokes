@@ -117,7 +117,7 @@ divergence-free test fields:
 All are smooth, periodic, and divergence-free.  Using fields with different wavenumbers
 and functional forms guards against symmetry-specific cancellations.
 
-\subsection*{Part I: Kernel and Leray projector (checks 1--10)}
+\subsection{Kernel and Leray projector (checks 1--10)}\label{sec:sympy-ch03-kernel}
 
 \begin{enumerate}[label=(\roman*)]
   \item \textbf{Green's function.}  $G = 1/(4\pi\abs{x})$ satisfies
@@ -160,7 +160,7 @@ and functional forms guards against symmetry-specific cancellations.
     (\Cref{prop:energy-vorticity}).
 \end{enumerate}
 
-\subsection*{Part II: Connection geometry (checks 11--14)}
+\subsection{Connection geometry (checks 11--14)}\label{sec:sympy-ch03-conn}
 
 \begin{enumerate}[resume,label=(\roman*)]
   \item \textbf{Torsion-freeness.}  The Lie bracket $[u,v]$ of divergence-free fields
@@ -183,7 +183,7 @@ and functional forms guards against symmetry-specific cancellations.
     (\Cref{thm:geodesic-euler}).
 \end{enumerate}
 
-\subsection*{Part III: Curvature (checks 15--17)}
+\subsection{Curvature (checks 15--17)}\label{sec:sympy-ch03-curv}
 
 \begin{enumerate}[resume,label=(\roman*)]
   \item \textbf{Curvature tensor.}
@@ -203,7 +203,7 @@ and functional forms guards against symmetry-specific cancellations.
     \Cref{thm:arnold-curvature}).
 \end{enumerate}
 
-\subsection*{Part IV: Vorticity as curvature (checks 18--19)}
+\subsection{Vorticity as curvature (checks 18--19)}\label{sec:sympy-ch03-vort}
 
 \begin{enumerate}[resume,label=(\roman*)]
   \item \textbf{Vorticity as curvature.}
@@ -215,7 +215,7 @@ and functional forms guards against symmetry-specific cancellations.
     rate-of-strain tensor is trace-free (\Cref{prop:stretching-tensor}).
 \end{enumerate}
 
-\subsection*{Part V: Calder\'{o}n--Zygmund and HLS exponents (checks 20--23)}
+\subsection{Calder\'{o}n--Zygmund and HLS exponents (checks 20--23)}\label{sec:sympy-ch03-cz}
 
 \begin{enumerate}[resume,label=(\roman*)]
   \item \textbf{Leray multiplier homogeneity.}
@@ -229,8 +229,11 @@ and functional forms guards against symmetry-specific cancellations.
     second hypothesis of the Calder\'{o}n--Zygmund theorem.
 
   \item \textbf{HLS exponents.}
-    For the Biot--Savart kernel of homogeneity $-2$ in $\R^3$, verifies
-    $1/q = 1/p - 2/3$ and the constraint $1 < p < 3/2$
+    For the Biot--Savart operator $\mathrm{BS} = \mathrm{curl} \circ (-\Delta)^{-1}$
+    in $\R^{3}$, verifies the HLS gain parameter $\alpha_{\mathrm{HLS}} = 1$ (one
+    derivative gained), giving $1/q = 1/p - 1/3$ and the constraint $1 < p < 3$;
+    checks $q(p=2) = 6$, $q(p=3/2) = 3$, and the complementarity relation
+    $\sigma + \alpha_{\mathrm{HLS}} = n$ (i.e.\ $2 + 1 = 3$)
     (\Cref{prop:bs-Lp}).
 
   \item \textbf{H\"{o}lder product estimates.}
