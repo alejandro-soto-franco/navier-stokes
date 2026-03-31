@@ -173,7 +173,7 @@ Collecting terms yields the weak formulation.
 \subsection{Definition of weak solution}
 
 \begin{definition}[Weak solution of Navier--Stokes%
-  \footnote{Lean 4: \texttt{NavierStokes.IsWeakNSSolution}}]%
+  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/WeakNSSolution.lean}{\texttt{NavierStokes.IsWeakNSSolution}}}]%
   \label{def:weak-ns}
   Let $u_{0} \in \Lsig(\R^{3})$, $f \in \Lp{2}(0, T; H^{-1}(\R^{3}))$, and
   $0 < T \le \infty$.  A vector field
@@ -262,7 +262,7 @@ construction.
 \begin{remark}[Bounded-domain alternative]
   On a bounded domain $\Omega$ with smooth boundary, the Stokes operator
   $A = -\Leray\Delta$ has compact
-  resolvent\footnote{Lean~4: \texttt{NavierStokes.StokesOperator}.}
+  resolvent\footnote{Lean~4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/WeakNSSolution.lean}{\texttt{NavierStokes.StokesOperator}}.}
   and therefore possesses a complete orthonormal system of eigenfunctions in
   $\Lsig(\Omega)$ with eigenvalues
   $0 < \lambda_{1} \le \lambda_{2} \le \cdots \to \infty$.  This eigenbasis is the
@@ -291,7 +291,8 @@ We seek an approximate solution of the form
   \sum_{k=1}^{m} c_{k}^{(m)}(t)\,w_{k},
 \end{equation}
 where the coefficient functions $c_{k}^{(m)} \colon [0, T_{m}) \to \R$ are to be
-determined.  The trilinear form
+determined.  The trilinear form%
+  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/TrilinearForm.lean}{\texttt{NavierStokes.trilinearForm}}}
 \begin{equation}\label{eq:trilinear-form}
   b(u, v, w)
   \;=\;
@@ -313,7 +314,9 @@ the projected equations: for each $k = 1, \ldots, m$,
 The antisymmetry of the trilinear form is the key structural property underpinning
 all energy estimates.
 
-\begin{lemma}[Antisymmetry of the trilinear form]\label{lem:trilinear-antisymmetry}
+\begin{lemma}[Antisymmetry of the trilinear form%
+  \footnote{Lean 4 (machine-checked): \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/TrilinearForm.lean}{\texttt{NavierStokes.trilinearForm\_antisymmetric}}}]%
+  \label{lem:trilinear-antisymmetry}
   Let $u \in \Ccinf(\R^{3}; \R^{3})$ with $\divergence u = 0$, and let
   $v \in \Sob{1}(\R^{3}; \R^{3})$.  Then
   \begin{equation}\label{eq:trilinear-antisymmetry}
@@ -698,7 +701,7 @@ The Galerkin approximations satisfy an energy \emph{equality}
 \subsection{Statement and derivation}
 
 \begin{theorem}[Energy inequality%
-  \footnote{Lean 4: \texttt{NavierStokes.SatisfiesEnergyInequality}}]%
+  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/EnergyInequality.lean}{\texttt{NavierStokes.SatisfiesEnergyInequality}}}]%
   \label{thm:energy-inequality}
   Let $u$ be the weak solution obtained in \Cref{thm:passage-limit}.  Then for
   almost every $t \in (0, T)$,
@@ -806,7 +809,7 @@ definition.
 \subsection{The definition}
 
 \begin{definition}[Leray--Hopf weak solution%
-  \footnote{Lean 4: \texttt{NavierStokes.IsLerayHopfSolution}}]%
+  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/Existence.lean}{\texttt{NavierStokes.IsLerayHopfSolution}}}]%
   \label{def:leray-hopf}
   Let $u_{0} \in \Lsig(\R^{3})$ and $0 < T \le \infty$.  A vector field
   $u : \R^{3} \times (0, T) \to \R^{3}$ is a \emph{Leray--Hopf weak solution}
@@ -854,7 +857,7 @@ definition.
 \subsection{The existence theorem}
 
 \begin{theorem}[Existence of Leray--Hopf weak solutions%
-  \footnote{Lean 4: \texttt{NavierStokes.lerayHopf\_existence}}]%
+  \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/LerayHopf/Existence.lean}{\texttt{NavierStokes.lerayHopf\_existence}}}]%
   \label{thm:leray-hopf-existence}
   For every $u_{0} \in \Lsig(\R^{3})$ and every $T > 0$ (including $T = \infty$), there
   exists a Leray--Hopf weak solution $u$ of the Navier--Stokes equations on

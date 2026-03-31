@@ -31,14 +31,9 @@
 % Upright differential operator
 \newcommand{\dd}{\mathrm{d}}
 
-% Average integral (dash through integral sign)
-\newcommand{\fint}{%
-  \mathop{\mathchoice%
-    {\,\rlap{\raise.2ex\hbox{$\displaystyle-\,$}}\displaystyle\int}%
-    {\,\rlap{\raise.2ex\hbox{$\textstyle-\,$}}\textstyle\int}%
-    {\,\rlap{\raise.15ex\hbox{$\scriptstyle-\,$}}\scriptstyle\int}%
-    {\,\rlap{\raise.1ex\hbox{$\scriptscriptstyle-\,$}}\scriptscriptstyle\int}%
-  }\nolimits}
+% Average integral (\dashint)
+\usepackage{esint}
+\let\dashint\fint
 
 % Norms and inner products
 \newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
