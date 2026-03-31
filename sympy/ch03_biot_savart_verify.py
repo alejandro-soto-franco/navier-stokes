@@ -25,7 +25,7 @@ Part IV: Vorticity as curvature
 Part V: Calderon-Zygmund and Hardy-Littlewood-Sobolev
   20. Leray multiplier homogeneity degree 0
   21. Leray multiplier smooth on S^2 (polynomial restriction)
-  22. HLS exponent relation: 1/q = 1/p - 2/3, p < 3/2
+  22. HLS exponent relation: 1/q = 1/p - 1/3, p < 3  (alpha_HLS=1, BS gains one derivative)
   23. Holder exponent for Leray-Hopf advection product: L^6 * L^2 => L^{3/2}
 
 All identity checks that use example fields are verified across multiple
@@ -299,8 +299,9 @@ def main():
     # 13. Koszul formula: integrand difference is a total divergence
     # ------------------------------------------------------------------
     # For a right-invariant metric on SDiff, the Koszul formula is:
-    #   2 g(nabla_u v, w) = -g(u,[v,w]) + g(v,[u,w]) + g(w,[u,v])
+    #   2 g(nabla_u v, w) = -g(u,[v,w]) + g(v,[w,u]) + g(w,[u,v])
     # (directional derivatives of g vanish since the metric is constant).
+    # Note: the second bracket is [w,u] = -[u,w], not [u,w].
     #
     # LHS integrand: 2 [(u.grad)v].w
     # RHS integrand: -u.[v,w] + v.[u,w] + w.[u,v]
@@ -462,28 +463,46 @@ def main():
     # ------------------------------------------------------------------
     # 22. Hardy-Littlewood-Sobolev exponent verification
     # ------------------------------------------------------------------
-    # BS kernel has homogeneity alpha = 2, dimension n = 3.
-    # HLS: ||K * f||_Lq <= C ||f||_Lp when 1/q = 1/p - alpha/n
-    # and 1 < p < n/alpha.
-    # Verify: alpha = 2, n = 3 => 1/q = 1/p - 2/3, p_max = 3/2.
+    # The Biot-Savart operator BS = curl o (-Delta)^{-1} is a smoothing operator
+    # of order 1 (alpha_HLS = 1 in the HLS gain convention: the kernel is
+    # |x|^{-(n - alpha_HLS)} = |x|^{-2} in R^3, gaining one derivative over omega).
+    #
+    # HLS theorem (gain convention): if 0 < alpha_HLS < n, 1 < p < n/alpha_HLS, and
+    #   1/q = 1/p - alpha_HLS/n,
+    # then ||I_{alpha_HLS} * f||_Lq <= C ||f||_Lp.
+    #
+    # With n = 3, alpha_HLS = 1:
+    #   exponent relation: 1/q = 1/p - 1/3   (matches eq:bs-Lp in LaTeX)
+    #   range:             1 < p < 3          (not 3/2, which would hold for pure HLS
+    #                                          with kernel singularity order sigma=2;
+    #                                          the full range p<3 uses mean-value
+    #                                          cancellation of K)
+    #
+    # Distinguish from the kernel singularity order sigma = 2:
+    #   sigma + alpha_HLS = n  =>  2 + 1 = 3.  (These are complementary parameters.)
     p_sym = symbols("p", positive=True)
-    alpha_hls = sp.Integer(2)
+    alpha_hls = sp.Integer(1)   # HLS gain parameter (one derivative gained)
     n_dim = sp.Integer(3)
-    q_inv = 1/p_sym - alpha_hls/n_dim  # 1/q = 1/p - 2/3
+    q_inv = 1/p_sym - alpha_hls/n_dim  # 1/q = 1/p - 1/3
     q_sym = 1/q_inv
 
-    # At p = 1: q = 1/(1 - 2/3) = 3
-    q_at_1 = simplify(q_sym.subs(p_sym, 1))
-    assert q_at_1 == 3, f"q(p=1) = {q_at_1}, expected 3"
+    # At p = 2: q = 1/(1/2 - 1/3) = 1/(1/6) = 6  (BS: L^2 -> L^6)
+    q_at_2 = simplify(q_sym.subs(p_sym, 2))
+    assert q_at_2 == 6, f"q(p=2) = {q_at_2}, expected 6"
 
-    # At p = 6/5: q = 1/(5/6 - 2/3) = 1/(1/6) = 6
-    q_at_65 = simplify(q_sym.subs(p_sym, Rational(6, 5)))
-    assert q_at_65 == 6, f"q(p=6/5) = {q_at_65}, expected 6"
+    # At p = 3/2: q = 1/(2/3 - 1/3) = 1/(1/3) = 3  (BS: L^{3/2} -> L^3)
+    q_at_32 = simplify(q_sym.subs(p_sym, Rational(3, 2)))
+    assert q_at_32 == 3, f"q(p=3/2) = {q_at_32}, expected 3"
 
-    # Upper bound on p: p < n/alpha = 3/2
+    # Upper bound on p: p < n/alpha_HLS = 3
     p_max = n_dim / alpha_hls
-    assert p_max == Rational(3, 2)
-    print("[PASS] HLS exponents: 1/q = 1/p - 2/3, p < 3/2 (for BS kernel in R^3)")
+    assert p_max == 3
+
+    # Verify kernel singularity + HLS gain = n (consistency check)
+    sigma_kernel = sp.Integer(2)
+    assert sigma_kernel + alpha_hls == n_dim, "sigma + alpha_HLS != n"
+
+    print("[PASS] HLS exponents: 1/q = 1/p - 1/3, p < 3 (alpha_HLS=1, BS gains one derivative)")
 
     # ------------------------------------------------------------------
     # 23. Holder exponent for Leray-Hopf advection product

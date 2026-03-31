@@ -45,13 +45,12 @@ bibliography.bib    BibLaTeX references (Biber backend)
 
 sections/
   ch01-foundations.tex    Functional analytic foundations
-  ch02-leray-hopf.tex    Leray-Hopf weak solutions
-  ch03-biot-savart.tex    Biot-Savart law and vorticity
-  ch04-connection.tex     Connection and parallel transport
-  ch05-curvature.tex      Curvature of the diffeomorphism group
-  ch06-topology.tex       Topological obstructions
-  ch07-obstruction.tex    Obstruction theory
-  ch08-singularity.tex    Singularity analysis
+  ch02-leray-hopf.tex     Leray-Hopf weak solutions
+  ch03-biot-savart.tex    The Biot-Savart connection (Levi-Civita on the divergence-free bundle)
+  ch04-curvature.tex      Curvature of the flow
+  ch05-topology.tex       Topological constraints
+  ch06-obstruction.tex    The obstruction theorem
+  ch07-singularity.tex    Singularity analysis
 
 appendices/
   appA-lean.tex     Lean 4 formalisation appendix

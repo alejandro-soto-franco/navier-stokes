@@ -2,6 +2,88 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.4] - 2026-03-31
+
+### Fixed (Critical)
+- **Koszul formula sign error** (ch03, eq:koszul): the second bracket term was
+  `g(v,[u,w])`; corrected to `g(v,[w,u])` per the standard formula (do Carmo /
+  Lee). The algebraic verification (six-term expansion) was fully rewritten to
+  match the corrected formula: labels A-F introduced, antisymmetry applied to
+  show A+F=0, B+C=0, D+E=2∫w·(u·∇)v, giving the correct RHS=2g(∇_u v,w).
+- **eq:vort-parallel** (ch03, thm:vorticity-eq): the stated "forced parallel
+  transport" form was missing the ∂_t ω term and had a sign error. Corrected to
+  `∂_t ω + ∇^vort_u ω = ν Δω` (the covariant material derivative form), with a
+  note that expanding ∇^vort_u ω = (u·∇)ω − (ω·∇)ω recovers the full vorticity
+  equation.
+- **L^{6/5} → L^{3/2}** (ch03, rem:conn-regularity): the Hölder product exponent
+  for u_j ∈ L^6, ∂_j v ∈ L^2 satisfies 1/r = 1/6+1/2 = 2/3, so r = 3/2 (not 6/5).
+  Fixed throughout the remark and rem:koszul-distributional.
+
+### Fixed (Important)
+- **Torsion-free proof gap** (ch03, prop:torsion-free): added the explicit
+  intermediate step `Leray[[u,v]] = [u,v]` (since [u,v] is divergence-free),
+  before concluding T(u,v) = 0.
+- **No regularity hypothesis on prop:torsion-free** (ch03): the proposition now
+  states `u, v ∈ H^1_0,σ(R^3)` as required for the pointwise distributional
+  computation.
+- **Arnold's curvature theorem** (ch03, thm:arnold-curvature): added "compact
+  Riemannian manifold" qualifier (the theorem is for T^3 or S^2, not R^3
+  directly). Added remark on extension to R^3 citing Arnold-Khesin 1998.
+- **HLS proof notation** (ch03, prop:bs-Lp): rewrote Step 2 to clearly distinguish
+  the HLS gain parameter α_HLS=1 (one derivative gained by BS = curl^{-1}) from
+  the kernel singularity order σ=2 (|K(x)| ~ |x|^{-2}). The range 1<p<3 now
+  follows from α_HLS=1 giving p < n/α_HLS = 3, consistent with the stated bound.
+- **Metric compatibility proof** (ch03, prop:metric-compat): rewrote to explicitly
+  justify u(g(v,w)) = 0 as the Fréchet derivative of a constant functional on the
+  flat Hilbert space L^2_σ; both sides of the compatibility identity are shown to
+  vanish independently, with a clear concluding line matching them.
+- **Poincaré inequality hypothesis** (ch01, thm:poincare): added "connected" to
+  the domain hypothesis (required for the argument that ∇u=0 implies u=const).
+- **Helmholtz decomposition for R^n** (ch01, thm:helmholtz): the proof previously
+  only handled the bounded domain case via Lax-Milgram + Neumann BVP. Added the
+  whole-space argument: p = (−Δ)^{-1}(div u) via Riesz potential, Fourier
+  multiplier characterisation of the Leray projector, and Plancherel to confirm
+  v ∈ L^2_σ(R^n).
+
+### Changed
+- **Chapter 3**: clarified that the Biot-Savart connection is valid only in the
+  distributional sense at Leray-Hopf regularity.
+  - `rem:conn-regularity` expanded: Sobolev embedding `H^1 → L^6` sharpens the
+    Hölder bound to `L^{3/2}`; states explicitly that `∇_u v ∈ L^{3/2}_σ ⊊ L^2_σ`.
+  - `thm:levi-civita` statement qualified: uniqueness distributionally.
+  - New `rem:koszul-distributional`: Lie brackets ∈ L^{3/2}, pairings g(u,[v,w])
+    as L^6×L^{3/2} → L^{6/5} with compact support/decay condition; uniqueness
+    within distributional connections.
+
+### Restructured
+- Deleted stub `sections/ch04-connection.tex` (content was merged into ch03
+  in v0.2.2; the file was an unused empty chapter shell).
+- Renamed chapter files down one: ch05 → ch04, ch06 → ch05, ch07 → ch06,
+  ch08 → ch07. Chapter numbering is now contiguous (ch01–ch07).
+- Updated `main.tex` and `main-dark.tex` includes accordingly.
+- Updated README chapter table (7 chapters) and badge strip (removed Ch4
+  Connection badge; shifted Curvature/Topology/Obstruction/Singularity to
+  Ch4–7).
+- Preface: `LaTeX` text → `\LaTeX{}` macro (two instances).
+
+### Concordance (SymPy + Lean)
+
+**SymPy ch03_biot_savart_verify.py:**
+- Check 13 comment: corrected Koszul formula from `g(v,[u,w])` to `g(v,[w,u])`,
+  in sync with the LaTeX fix to eq:koszul.
+- Check 22 (HLS exponents): was using `α=2` (kernel singularity order) giving
+  `1/q = 1/p − 2/3` and `p < 3/2`. Fixed to use `α_HLS=1` (HLS gain parameter:
+  BS = curl∘(−Δ)^{-1} gains one derivative), giving the correct exponent relation
+  `1/q = 1/p − 1/3` and range `p < 3`, consistent with eq:bs-Lp in the LaTeX.
+  Numeric assertions updated: q(p=2)=6, q(p=3/2)=3, p_max=3. Added consistency
+  check σ + α_HLS = n (2+1=3). All 23 checks pass.
+
+**Lean NavierStokes/Foundations/Poincare.lean:**
+- `poincare_inequality`: added `hConn : IsConnected Ω` hypothesis, in sync with
+  the LaTeX fix adding "connected" to thm:poincare. Comment explains why
+  connectedness is required (constant-gradient argument breaks on disconnected
+  domains). Theorem remains a sorry-stub; no proofs affected.
+
 ## [0.2.3] - 2026-03-31
 
 ### Changed

@@ -53,10 +53,14 @@ def gradientL2NormSq (u : SobolevH1 Ω hΩ) : ℝ :=
     ||grad u_k||_{L^2} -> 0, which by Rellich-Kondrachov has an L^2-convergent subsequence;
     the limit is constant with gradient 0 in H^1_0, hence 0, contradicting ||u||_{L^2} = 1. -/
 theorem poincare_inequality
-    (hBdd : Bornology.IsBounded Ω) :
+    (hBdd : Bornology.IsBounded Ω)
+    (hConn : IsConnected Ω) :
     ∃ C_P : ℝ, 0 < C_P ∧
       ∀ (u : SobolevH1Zero Ω hΩ),
         l2NormSq Ω u.val.f ≤ C_P ^ 2 * gradientL2NormSq Ω hΩ u.val := by
+  -- hConn is required: if ∇u = 0 and u ∈ H^1_0(Ω), connectedness forces u ≡ 0
+  -- (u is constant on each connected component; the zero-trace condition then
+  -- forces the constant to be 0).  On a disconnected domain the argument breaks.
   sorry
 
 /-- **Poincare Constant Bound for Convex Domains**: When Omega is convex, the optimal

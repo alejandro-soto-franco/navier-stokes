@@ -42,7 +42,7 @@ Every chapter is developed simultaneously along three parallel lines:
     these are tracked explicitly and do not represent gaps in the
     mathematical argument.
 
-  \item \textbf{Theory (LaTeX and SymPy).}
+  \item \textbf{Theory (\LaTeX{} and SymPy).}
     The mathematical narrative is written as a self-contained book,
     with complete proofs for all results.  Symbolic computation in SymPy
     independently verifies key identities, exponents, and estimates,
@@ -58,16 +58,24 @@ Every chapter is developed simultaneously along three parallel lines:
 
 \textbf{Status of the programme.}
 This document records an ongoing research programme.  As of the current
-writing, Chapters~1 and~2 are complete across all three tracks.
+writing, Chapters~1 through~3 are complete in the \LaTeX{} and SymPy
+tracks; the Lean formalisation compiles for all three chapters with
+theorem statements in place and a tracked catalogue of \texttt{sorry}
+obligations.
 Chapter~1 (functional analytic foundations) establishes the Sobolev space
-framework, embedding theorems, and the Helmholtz decomposition.
+framework, embedding theorems, and the Helmholtz decomposition, including
+the whole-space argument on $\mathbb{R}^{n}$ via the Riesz potential.
 Chapter~2 (Leray--Hopf weak solutions) develops the weak formulation on
 $\mathbb{R}^{3}$, constructs solutions via Galerkin approximation with
 Gram--Schmidt bases on the whole space, proves the energy inequality, and
-connects to Fefferman's Clay formulation.  For both chapters the Lean
-formalisation compiles, the LaTeX proofs are self-contained, and the
-SymPy verifications pass.  The remaining chapters are in various stages
-of development.  \emph{We do not claim to have resolved the Millennium
+connects to Fefferman's Clay formulation.
+Chapter~3 (the Biot--Savart connection) constructs the Levi-Civita
+connection on the divergence-free bundle, proves torsion-freeness and
+metric compatibility in the distributional sense at Leray--Hopf
+regularity, recasts the vorticity equation as forced parallel transport,
+and closes the regularity loop via Calder\'{o}n--Zygmund and
+Hardy--Littlewood--Sobolev estimates.  The remaining chapters are in
+various stages of development.  \emph{We do not claim to have resolved the Millennium
 Problem.}  The approach may ultimately succeed or fail; this text is an
 honest record of the attempt, written so that the mathematical community
 can evaluate, critique, and build upon the ideas presented here.

@@ -240,20 +240,28 @@ directly with $\Lsig$ and its Sobolev refinements.
   precisely the pressure gradient: $\nabla p = (I - \Leray)[(u \cdot \nabla)v]$.
 \end{remark}
 
-\begin{remark}[Regularity]\label{rem:conn-regularity}
+\begin{remark}[Regularity and distributional nature]\label{rem:conn-regularity}
   For the connection to be well-defined at the Leray--Hopf regularity level, we need
   $(u \cdot \nabla)v \in \Lp{r}$ for some $r$ in the range of $\Leray$.  When
-  $u \in \Lp{2}$ and $v \in \Sobz{1}$, the product $u_j\,\partial_j v \in \Lp{1}$
-  by H\"{o}lder.  The Leray projector extends to $\Lp{r}$ for $1 < r < \infty$ via
-  Calder\'{o}n--Zygmund theory (\Cref{sec:bs-cz}), but the endpoint $r = 1$ requires
-  care; see \Cref{rem:cz-endpoint}.
+  $u \in \Lp{2}$ and $v \in \Sobz{1}$, H\"{o}lder gives
+  $u_j\,\partial_j v \in \Lp{1}$.  The Sobolev embedding $\Sobz{1} \hookrightarrow \Lp{6}$
+  sharpens this: $u_j \in \Lp{6}$ and $\partial_j v \in \Lp{2}$ together give
+  $u_j\,\partial_j v \in \Lp{3/2}$ (since $1/r = 1/6 + 1/2 = 2/3$ gives $r = 3/2$).
+  The Leray projector extends to $\Lp{r}$ for $1 < r < \infty$ via
+  Calder\'{o}n--Zygmund theory (\Cref{sec:bs-cz}), so $\conn_u v = \Leray[(u\cdot\nabla)v]
+  \in \Lp{3/2}_\sigma$.  In particular, $\conn_u v$ lies in $\Lp{3/2}_\sigma \subsetneq
+  \Lsig$: the connection output is \emph{not} in the ambient tangent space $\Lsig =
+  \Lp{2}_\sigma$ at Leray--Hopf regularity, but rather in the larger space
+  $\Lp{3/2}_\sigma$.  All geometric identities involving $\conn$
+  (torsion, metric compatibility, the Koszul formula) therefore hold in the distributional
+  sense, i.e.\ when tested against smooth compactly supported divergence-free fields.
 \end{remark}
 
 \subsection{Torsion-freeness}
 
 \begin{proposition}[Torsion-freeness]\label{prop:torsion-free}
-  The Biot--Savart connection is torsion-free: for divergence-free
-  fields $u, v$,
+  The Biot--Savart connection is torsion-free: for $u, v \in H^1_{0,\sigma}(\R^3)$
+  (and by density, for smooth divergence-free fields),
   \begin{equation}\label{eq:torsion-free}
     \conn_u v - \conn_v u \;=\; [u, v],
   \end{equation}
@@ -281,8 +289,14 @@ directly with $\Lsig$ and its Sobolev refinements.
   \]
   The last two terms vanish since $\divergence u = \divergence v = 0$.
   The cross terms cancel by symmetry: relabelling $i \leftrightarrow j$ in
-  the second sum shows it equals the first.
-  Therefore $T(u,v) = [u,v] - [u,v] = 0$.
+  the second sum shows it equals the first.  Hence $\divergence[u,v] = 0$.
+  Since $[u,v]$ is divergence-free, the Leray projector acts as the identity on it:
+  $\Leray\bigl[[u,v]\bigr] = [u,v]$.  Therefore
+  \[
+    T(u,v)
+    = \Leray\bigl[[u,v]\bigr] - [u,v]
+    = [u,v] - [u,v] = 0.
+  \]
   The divergence-free property of the Lie bracket is verified on example fields in
   \Cref{app:sympy}.
 \end{proof}
@@ -299,20 +313,21 @@ directly with $\Lsig$ and its Sobolev refinements.
 \end{proposition}
 
 \begin{proof}
-  The directional derivative of the inner product is
+  Since $\mathcal{M} = \Lsig(\R^3)$ is a flat Hilbert space (the inner product
+  $g(v,w) = \int v\cdot w\,\dd x$ is independent of the base point $u$), the
+  directional derivative $u(g(v,w))$ is the Fr\'{e}chet derivative of the constant
+  functional $u\mapsto g(v,w)$, which vanishes identically:
+  \begin{equation}\label{eq:metric-flat}
+    u\bigl(g(v,w)\bigr) = 0 \qquad \text{for all } u, v, w \in \Lsig(\R^3).
+  \end{equation}
+  This is also confirmed by integration by parts: $u(g(v,w)) = \int(u\cdot\nabla)(v\cdot
+  w)\,\dd x = -\int(\divergence u)(v\cdot w)\,\dd x = 0$ since $\divergence u = 0$.
+  The product rule (verified in \Cref{app:sympy}) then gives
   \[
-    u\bigl(g(v,w)\bigr)
-    = \int_{\R^3} (u \cdot \nabla)(v \cdot w)\,\dd x
-    = \int_{\R^3} \bigl[(u \cdot \nabla)v\bigr] \cdot w\,\dd x
-      + \int_{\R^3} v \cdot \bigl[(u \cdot \nabla)w\bigr]\,\dd x,
+    0 = \int_{\R^3} \bigl[(u \cdot \nabla)v\bigr] \cdot w\,\dd x
+      + \int_{\R^3} v \cdot \bigl[(u \cdot \nabla)w\bigr]\,\dd x.
   \]
-  where the first equality uses the product rule (verified in \Cref{app:sympy}) and the
-  second follows from it.  Integration by parts gives
-  \[
-    \int_{\R^3} (u \cdot \nabla)(v \cdot w)\,\dd x
-    = -\int_{\R^3} (\divergence u)(v \cdot w)\,\dd x = 0,
-  \]
-  since $\divergence u = 0$.  Therefore
+  Therefore
   \begin{equation}\label{eq:metric-compat-antisym}
     \int_{\R^3} \bigl[(u \cdot \nabla)v\bigr] \cdot w\,\dd x
     = -\int_{\R^3} v \cdot \bigl[(u \cdot \nabla)w\bigr]\,\dd x.
@@ -322,17 +337,22 @@ directly with $\Lsig$ and its Sobolev refinements.
   so $\ip{(u \cdot \nabla)v}{w} = \ip{\conn_u v}{w}$.  The same applies to the second
   term.  Combining with~\eqref{eq:metric-compat-antisym}:
   \[
-    \ip{\conn_u v}{w} + \ip{v}{\conn_u w}
+    g(\conn_u v, w) + g(v, \conn_u w)
     = \ip{(u \cdot \nabla)v}{w} + \ip{v}{(u \cdot \nabla)w}
-    = 0 = u\bigl(g(v,w)\bigr).  \qedhere
+    = 0.
   \]
+  By~\eqref{eq:metric-flat}, $u(g(v,w)) = 0$ as well, so
+  $g(\conn_u v, w) + g(v, \conn_u w) = u(g(v,w))$, confirming~\eqref{eq:metric-compat}.
+  \qed
 \end{proof}
 
 \subsection{Levi-Civita uniqueness}
 
 \begin{theorem}[Levi-Civita connection]\label{thm:levi-civita}
   The Biot--Savart connection $\conn$ is the unique Levi-Civita connection of the
-  $\Lp{2}$ metric on $\Lsig(\R^3)$.
+  $\Lp{2}$ metric on $\Lsig(\R^3)$, in the sense that the Koszul
+  identity~\eqref{eq:koszul} holds distributionally when both sides are tested against
+  smooth compactly supported divergence-free fields.
 \end{theorem}
 
 \begin{proof}
@@ -341,8 +361,8 @@ directly with $\Lsig$ and its Sobolev refinements.
   by the Koszul formula
   \begin{multline}\label{eq:koszul}
     2\,g(\conn_u v,\, w)
-    = u\,g(v,w) + v\,g(u,w) - w\,g(u,v) \\
-      - g(u, [v,w]) + g(v, [u,w]) + g(w, [u,v]).
+    = u\,g(v,w) + v\,g(w,u) - w\,g(u,v) \\
+      - g(u, [v,w]) + g(v, [w,u]) + g(w, [u,v]).
   \end{multline}
   Our connection $\conn_u v = \Leray[(u\cdot\nabla)v]$ is torsion-free by
   \Cref{prop:torsion-free} and metric-compatible by \Cref{prop:metric-compat}.
@@ -355,53 +375,41 @@ directly with $\Lsig$ and its Sobolev refinements.
   a constant functional vanishes).  The Koszul formula reduces to
   \begin{equation}\label{eq:koszul-reduced}
     2\,g(\conn_u v,\, w)
-    = -g(u, [v,w]) + g(v, [u,w]) + g(w, [u,v]).
+    = -g(u, [v,w]) + g(v, [w,u]) + g(w, [u,v]).
   \end{equation}
-  Now substitute $[u,v] = (u\cdot\nabla)v - (v\cdot\nabla)u$ and use the
-  antisymmetry~\eqref{eq:metric-compat-antisym} (integration by parts with
-  $\divergence u = 0$):
+  Now substitute the bracket expansions $[v,w] = (v\cdot\nabla)w - (w\cdot\nabla)v$,
+  $[w,u] = (w\cdot\nabla)u - (u\cdot\nabla)w$, and $[u,v] = (u\cdot\nabla)v -
+  (v\cdot\nabla)u$:
   \begin{align*}
+    -g(u, [v,w])
+    &= -\int u\cdot(v\cdot\nabla)w\,\dd x + \int u\cdot(w\cdot\nabla)v\,\dd x, \\
+    g(v, [w,u])
+    &= \int v\cdot(w\cdot\nabla)u\,\dd x - \int v\cdot(u\cdot\nabla)w\,\dd x, \\
     g(w, [u,v])
-    &= \int w \cdot \bigl[(u\cdot\nabla)v - (v\cdot\nabla)u\bigr]\,\dd x, \\
-    g(v, [u,w])
-    &= \int v \cdot \bigl[(u\cdot\nabla)w - (w\cdot\nabla)u\bigr]\,\dd x, \\
-    g(u, [v,w])
-    &= \int u \cdot \bigl[(v\cdot\nabla)w - (w\cdot\nabla)v\bigr]\,\dd x.
+    &= \int w\cdot(u\cdot\nabla)v\,\dd x - \int w\cdot(v\cdot\nabla)u\,\dd x.
   \end{align*}
-  The right-hand side of~\eqref{eq:koszul-reduced} is therefore
-  \begin{align*}
-    \mathrm{RHS}
-    &= -\int u\cdot(v\cdot\nabla)w\,\dd x + \int u\cdot(w\cdot\nabla)v\,\dd x \\
-    &\quad + \int v\cdot(u\cdot\nabla)w\,\dd x - \int v\cdot(w\cdot\nabla)u\,\dd x \\
-    &\quad + \int w\cdot(u\cdot\nabla)v\,\dd x - \int w\cdot(v\cdot\nabla)u\,\dd x.
-  \end{align*}
-  Apply~\eqref{eq:metric-compat-antisym} to the pairs
-  $\int u\cdot(v\cdot\nabla)w = -\int w\cdot(v\cdot\nabla)u$ (since
-  $\divergence v = 0$) and
-  $\int v\cdot(w\cdot\nabla)u = -\int u\cdot(w\cdot\nabla)v$ (since
-  $\divergence w = 0$).  Substituting:
-  \begin{align*}
-    \mathrm{RHS}
-    &= \int w\cdot(v\cdot\nabla)u\,\dd x + \int u\cdot(w\cdot\nabla)v\,\dd x \\
-    &\quad + \int v\cdot(u\cdot\nabla)w\,\dd x + \int u\cdot(w\cdot\nabla)v\,\dd x \\
-    &\quad + \int w\cdot(u\cdot\nabla)v\,\dd x + \int w\cdot(v\cdot\nabla)u\,\dd x.
-  \end{align*}
-  Wait: we must be more careful.  Apply the antisymmetry to rewrite
-  \emph{all} terms in a single standard form.  Using
-  $\int a\cdot(b\cdot\nabla)c = -\int c\cdot(b\cdot\nabla)a$ for
-  $\divergence b = 0$, we rewrite the six terms so the last slot is always $v$:
-  \begin{align*}
-    \int u\cdot(w\cdot\nabla)v &\;\to\; \text{keep}, \\
-    \int w\cdot(u\cdot\nabla)v &\;\to\; \text{keep}, \\
-    \int v\cdot(u\cdot\nabla)w &= -\int w\cdot(u\cdot\nabla)v, \\
-    \int v\cdot(w\cdot\nabla)u &= -\int u\cdot(w\cdot\nabla)v, \\
-    \int u\cdot(v\cdot\nabla)w &= -\int w\cdot(v\cdot\nabla)u, \\
-    \int w\cdot(v\cdot\nabla)u &\;\to\; \text{keep}.
-  \end{align*}
-  The six terms from the RHS become
+  Label the six integrals $A$ through $F$:
   \[
-    \mathrm{RHS}
-    = 2\int w\cdot(u\cdot\nabla)v\,\dd x.
+    A = -\!\int u\cdot(v\cdot\nabla)w, \quad
+    B = \int u\cdot(w\cdot\nabla)v, \quad
+    C = \int v\cdot(w\cdot\nabla)u, \quad
+    D = -\!\int v\cdot(u\cdot\nabla)w, \quad
+    E = \int w\cdot(u\cdot\nabla)v, \quad
+    F = -\!\int w\cdot(v\cdot\nabla)u.
+  \]
+  Apply $\int a\cdot(b\cdot\nabla)c\,\dd x = -\int c\cdot(b\cdot\nabla)a\,\dd x$
+  (valid for $\divergence b = 0$, by~\eqref{eq:metric-compat-antisym}):
+  \begin{align*}
+    A &= -\int u\cdot(v\cdot\nabla)w = +\int w\cdot(v\cdot\nabla)u = -F,
+    \quad\text{so } A + F = 0. \\
+    B &= \int u\cdot(w\cdot\nabla)v = -\int v\cdot(w\cdot\nabla)u = -C,
+    \quad\text{so } B + C = 0. \\
+    D &= -\int v\cdot(u\cdot\nabla)w = +\int w\cdot(u\cdot\nabla)v = E,
+    \quad\text{so } D + E = 2E.
+  \end{align*}
+  Therefore
+  \[
+    \mathrm{RHS} = (A + F) + (B + C) + (D + E) = 0 + 0 + 2\int w\cdot(u\cdot\nabla)v\,\dd x.
   \]
   Since $w$ is divergence-free and the Helmholtz decomposition gives
   $(u\cdot\nabla)v = \Leray[(u\cdot\nabla)v] + \nabla p$, the gradient term
@@ -414,6 +422,23 @@ directly with $\Lsig$ and its Sobolev refinements.
   formula~\eqref{eq:koszul-reduced} and hence that $\conn$ is the unique
   Levi-Civita connection.
 \end{proof}
+
+\begin{remark}[Distributional sense of the Koszul identity]\label{rem:koszul-distributional}
+  The verification above is carried out for smooth divergence-free fields, but the
+  conclusion extends to the Leray--Hopf class only in the distributional sense.
+  The Lie brackets $[v,w]$, $[u,w]$, $[u,v]$ in~\eqref{eq:koszul-reduced} involve
+  products of an $\Lp{6}$ field (from the Sobolev embedding $\Sobz{1}\hookrightarrow\Lp{6}$)
+  with an $\Lp{2}$ derivative, landing in $\Lp{3/2}$.  The pairings $g(u,[v,w]) = \int u \cdot [v,w]\,\dd x$ are well-defined since
+  $u \in \Lp{6}$ (Sobolev) and $[v,w] \in \Lp{3/2}$ together give $u\cdot[v,w] \in
+  \Lp{6/5}$ (H\"{o}lder: $1/6 + 2/3 = 5/6$), which is integrable on compact subsets.
+  For fields with the appropriate decay at infinity (e.g.\ Schwartz-class or compactly
+  supported), the integral over $\R^3$ converges.  Alternatively, for a test field
+  $\phi \in C^\infty_{c,\sigma}$, the bracket $\langle [v,w], \phi
+  \rangle_{\mathcal{D}',\mathcal{D}}$ is always finite.  Consequently,
+  the Koszul identity~\eqref{eq:koszul-reduced} holds as an equality of distributions
+  in $\mathcal{D}'(\R^3;\R^3)$, and the uniqueness claimed in \Cref{thm:levi-civita}
+  is uniqueness within the class of distributional connections on $\Lsig$.
+\end{remark}
 
 \subsection{The geodesic equation and Arnold's theorem}
 
@@ -620,10 +645,21 @@ Expanding in terms of $\Leray$ and the advective derivative:
 \end{definition}
 
 \begin{theorem}[Arnold's negative curvature~\cite{arnold1966}]\label{thm:arnold-curvature}
-  On the group of volume-preserving diffeomorphisms of a compact manifold, the sectional
-  curvatures are generically negative.  More precisely, for ``most'' pairs of divergence-free
-  fields $u, v$, we have $\kappa(u, v) < 0$.
+  On the group of volume-preserving diffeomorphisms of a \emph{compact} Riemannian
+  manifold (e.g.\ the flat torus $\mathbb{T}^3$ or $S^2$), the sectional curvatures of
+  the $\Lp{2}$ metric are generically negative.  More precisely, for ``most'' pairs of
+  divergence-free fields $u, v$, we have $\kappa(u, v) < 0$.
 \end{theorem}
+
+\begin{remark}[Extension to $\R^3$]
+  Arnold's theorem is originally proved for compact manifolds; the compactness enters via
+  the Fourier expansion of divergence-free fields.  On $\R^3$ the analogous result holds
+  for fields with sufficient decay at infinity, but requires additional technicalities
+  (replacing Fourier series by the Fourier transform and controlling the behaviour at the
+  zero frequency); see~\cite{arnoldKhesin1998} for the precise statement.  The curvature
+  computation carried out in this chapter (\Cref{sec:bs-curvature}) is intrinsic and does
+  not depend on compactness.
+\end{remark}
 
 \begin{remark}[Geodesic instability]
   Negative sectional curvature implies exponential divergence of nearby geodesics (by the
@@ -682,12 +718,13 @@ curvature of the Biot--Savart connection restricted to the vorticity sub-bundle.
   \begin{equation}\label{eq:vorticity-eq}
     \partial_t\vort + (u \cdot \nabla)\vort = (\vort \cdot \nabla)u + \nu\,\Delta\vort
   \end{equation}
-  is equivalent to the forced parallel transport equation
+  is equivalent to the covariant material derivative equation
   \begin{equation}\label{eq:vort-parallel}
-    \nabla^{\vort}_u \vort = -(\vort \cdot \nabla)u + \nu\,\curl(\Delta u),
+    \partial_t\vort + \nabla^{\vort}_u \vort = \nu\,\Delta\vort,
   \end{equation}
-  where the right-hand side of~\eqref{eq:vorticity-eq} consists of the vortex stretching
-  term $(\vort \cdot \nabla)u$ and the viscous diffusion $\nu\,\Delta\vort$.
+  in which the vortex stretching term $(\vort \cdot \nabla)u$ is encoded inside
+  $\nabla^{\vort}_u\vort = (u\cdot\nabla)\vort - (\vort\cdot\nabla)u$: expanding
+  recovers~\eqref{eq:vorticity-eq} directly.
 \end{theorem}
 
 \begin{proof}
@@ -911,29 +948,25 @@ operator of Calder\'{o}n--Zygmund type~\cite{calderonZygmund1952,stein1970}.
   convolution with $\abs{x}^{-\alpha}$ for $\alpha = 2$.
 
   \emph{Step 2: Verify HLS parameters.}
-  With $n = 3$ and $\alpha = 2$:
+  We use the HLS convention in which the kernel is $|x|^{-(n-\alpha_{\mathrm{HLS}})}$
+  and the gain is $\alpha_{\mathrm{HLS}}$ derivatives.  The Biot--Savart kernel satisfies
+  $|K(x)| \leq C|x|^{-2} = C|x|^{-(n-1)}$ with $n = 3$, so the HLS gain parameter is
+  $\alpha_{\mathrm{HLS}} = n - 2 = 1$ (one derivative gained, consistent with $\BS =
+  \curl^{-1}$).  Note: this differs from the \emph{singularity order} $\sigma = 2$
+  (the power of $|x|$ in the kernel), which is related by $\sigma + \alpha_{\mathrm{HLS}}
+  = n$.  The HLS theorem with $\alpha_{\mathrm{HLS}} = 1$ and $n = 3$ states:
   \begin{itemize}
-    \item $0 < \alpha = 2 < 3 = n$. \checkmark
-    \item The range constraint is $1 < p < n/\alpha = 3/2$.
-      For $\vort \in \Lp{p}$ with $1 < p < 3/2$, the HLS inequality applies.
-    \item The exponent relation is
-      $1/q = 1/p - \alpha/n = 1/p - 2/3$,
-      i.e.\ $1/q = 1/p - 1/3$ (since $\alpha/n = 2/3$, and the kernel maps
-      $\nabla$-level: the actual operator is $\curl^{-1}$, which gains one
-      derivative, so the effective homogeneity for the
-      velocity reconstruction is $-(n-1) = -2$ in $\R^3$).
+    \item Range: $0 < \alpha_{\mathrm{HLS}} = 1 < n = 3$, so $1 < p < n/\alpha_{\mathrm{HLS}}
+      = 3$.  \checkmark
+    \item Exponent: $1/q = 1/p - \alpha_{\mathrm{HLS}}/n = 1/p - 1/3$.
   \end{itemize}
-  For the stated range $1 < p < 3$ with $1/q = 1/p - 1/3$: this is the
-  standard form where $\BS = K * \cdot$ gains one derivative over $\vort$.
-  Since $K$ has homogeneity $-2 = -(n-1)$, the HLS inequality with
-  $\alpha = n - 1 = 2$ and $1/q = 1/p - (n-1)/n = 1/p - 2/3$ gives
-  the bound for $1 < p < n/(n-1) = 3/2$.  For $3/2 \leq p < 3$, the bound
-  extends by a refined HLS argument using the additional cancellation
-  structure of $K$ (specifically, $\divergence K = 0$ and the mean-value
-  property on spheres), or equivalently by composing the
-  Calder\'{o}n--Zygmund bound on $\Leray$ (\Cref{thm:leray-Lp}) with the
-  Sobolev inequality $\norm{\nabla^{-1}f}_{\Lp{q}} \leq C\norm{f}_{\Lp{p}}$
-  for $1/q = 1/p - 1/3$.
+  This yields $\norm{\BS\vort}_{\Lp{q}} \leq C\norm{\vort}_{\Lp{p}}$ for $1 < p < 3$,
+  matching the stated range.  (For $1 < p < 3/2$, the pure $|x|^{-2}$-kernel HLS
+  estimate with singularity order $\sigma = 2$ applies directly.  For $3/2 \leq p < 3$,
+  one uses the additional cancellation of $K$ --- namely $\divergence K = 0$ and the
+  mean-value property on spheres --- or equivalently composes the Calder\'{o}n--Zygmund
+  bound on $\Leray$ (\Cref{thm:leray-Lp}) with the Sobolev inequality
+  $\norm{\nabla^{-1}f}_{\Lp{q}} \leq C\norm{f}_{\Lp{p}}$ for $1/q = 1/p - 1/3$.)
 
   The exponent relation $1/q = 1/p - 1/3$ is verified symbolically in
   \Cref{app:sympy} (check~22).

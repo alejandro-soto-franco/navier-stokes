@@ -7,16 +7,15 @@
 [![License](https://img.shields.io/badge/License-All_Rights_Reserved-red)](https://github.com/alejandro-soto-franco/navier-stokes/blob/master/LICENSE)
 [![Chapter 1](https://img.shields.io/badge/Ch_1-Foundations_%E2%9C%93-brightgreen)](#chapter-status)
 [![Chapter 2](https://img.shields.io/badge/Ch_2-Leray--Hopf_%E2%9C%93-brightgreen)](#chapter-status)
-[![Chapter 3](https://img.shields.io/badge/Ch_3-Biot--Savart-yellow)](#chapter-status)
-[![Chapter 4](https://img.shields.io/badge/Ch_4-Connection-yellow)](#chapter-status)
-[![Chapter 5](https://img.shields.io/badge/Ch_5-Curvature-yellow)](#chapter-status)
-[![Chapter 6](https://img.shields.io/badge/Ch_6-Topology-yellow)](#chapter-status)
-[![Chapter 7](https://img.shields.io/badge/Ch_7-Obstruction-yellow)](#chapter-status)
-[![Chapter 8](https://img.shields.io/badge/Ch_8-Singularity-yellow)](#chapter-status)
+[![Chapter 3](https://img.shields.io/badge/Ch_3-Biot--Savart_%E2%9C%93-brightgreen)](#chapter-status)
+[![Chapter 4](https://img.shields.io/badge/Ch_4-Curvature-yellow)](#chapter-status)
+[![Chapter 5](https://img.shields.io/badge/Ch_5-Topology-yellow)](#chapter-status)
+[![Chapter 6](https://img.shields.io/badge/Ch_6-Obstruction-yellow)](#chapter-status)
+[![Chapter 7](https://img.shields.io/badge/Ch_7-Singularity-yellow)](#chapter-status)
 [![Dark Mode](https://img.shields.io/badge/Dark_Mode-WCAG_AA-blueviolet)](#compilation)
 [![Build](https://img.shields.io/badge/Lean_Build-2753_jobs-informational)](#lean-formalisation)
-[![Sorry Count](https://img.shields.io/badge/sorry-11_total-yellow)](#lean-formalisation)
-[![Proved](https://img.shields.io/badge/Proved-5_theorems-brightgreen)](#proven-theorems)
+[![Sorry Count](https://img.shields.io/badge/sorry-10_total-yellow)](#lean-formalisation)
+[![Proved](https://img.shields.io/badge/Proved-6_theorems-brightgreen)](#proven-theorems)
 
 A geometric approach to the Clay Millennium regularity problem for the 3D incompressible Navier-Stokes equations, via the Biot-Savart connection on the divergence-free bundle.
 
@@ -38,14 +37,13 @@ The tracks are reconciled at chapter boundaries via sync documents in `sync/`.
 
 | Chapter | Title | Lean | LaTeX | SymPy | Sync |
 |---------|-------|------|-------|-------|------|
-| 1 | Functional Analytic Foundations | 9 defs, 5 proved, 8 sorry | Complete | 8/8 pass | [Passed](sync/ch01-foundations.md) |
-| 2 | Leray-Hopf Weak Solutions | 8 defs, 3 sorry | Complete | 13/13 pass | [Passed](sync/ch02-leray-hopf.md) |
-| 3 | The Biot-Savart Operator | Stubs | In progress | Planned | -- |
-| 4 | The Biot-Savart Connection | Stubs | In progress | Planned | -- |
-| 5 | Curvature of the Flow | -- | In progress | Planned | -- |
-| 6 | Topological Constraints | Stubs | In progress | Planned | -- |
-| 7 | The Obstruction Theorem | Stubs | In progress | Planned | -- |
-| 8 | Singularity Analysis | -- | In progress | Planned | -- |
+| 1 | Functional Analytic Foundations | 9 defs, 5 proved, 9 sorry | Complete | 8/8 pass | [Passed](sync/ch01-foundations.md) |
+| 2 | Leray-Hopf Weak Solutions | 8 defs, 1 proved, 1 sorry | Complete | 13/13 pass | [Passed](sync/ch02-leray-hopf.md) |
+| 3 | The Biot-Savart Connection | Stubs | Complete (64pp) | 23/23 pass | -- |
+| 4 | Curvature of the Flow | -- | In progress | Planned | -- |
+| 5 | Topological Constraints | Stubs | In progress | Planned | -- |
+| 6 | The Obstruction Theorem | Stubs | In progress | Planned | -- |
+| 7 | Singularity Analysis | -- | In progress | Planned | -- |
 
 ## Repository Structure
 
@@ -64,13 +62,14 @@ The tracks are reconciled at chapter boundaries via sync documents in `sync/`.
     NavierStokes/
       Foundations/         Ch1: Sobolev spaces, embeddings, Helmholtz decomposition
       LerayHopf/           Ch2: Weak solutions, trilinear form, energy inequality
-      BiotSavart/          Ch3: Biot-Savart operator (stubs)
-      Topology/            Ch6: Topological constraints (stubs)
-      Obstruction/         Ch7: Obstruction theorem (stubs)
+      BiotSavart/          Ch3: Biot-Savart connection (stubs)
+      Topology/            Ch5: Topological constraints (stubs)
+      Obstruction/         Ch6: Obstruction theorem (stubs)
   sympy/                  Symbolic verification scripts
     ch01_sobolev_exponents.py
     ch01_helmholtz_verify.py
     ch02_leray_hopf_verify.py
+    ch03_biot_savart_verify.py
   sync/                   Cross-track reconciliation documents
   numerics/               Numerical solvers (planned)
 ```
@@ -88,10 +87,11 @@ The Lean 4 formalisation builds against a [pinned fork of Mathlib4](https://gith
 | `sobolevConjugate_inv` | `Foundations/SobolevEmbedding.lean` | The dimensional relation 1/p* = 1/p - 1/n |
 | `sobolevH1InnerProduct_comm` | `Foundations/SobolevSpace.lean` | Symmetry of the H^1 inner product |
 | `l2sigma_closed_under_l2_convergence` | `Foundations/DivFreeSpace.lean` | L²σ is closed under L² convergence, via Hölder (Cauchy-Schwarz) and `tendsto_nhds_unique` |
+| `trilinearForm_antisymmetric` | `LerayHopf/TrilinearForm.lean` | b(u,v,v) = 0 for distributionally divergence-free u and smooth compactly-supported v, via per-component test functions phi_k = v_k^2 |
 
 ### Sorry Classification
 
-All 11 remaining sorries are Category C (fundamental PDE/functional analysis results not yet in Mathlib):
+All 10 remaining sorries are Category C (fundamental PDE/functional analysis results not yet in Mathlib):
 
 | File | Sorry | Reason |
 |------|-------|--------|
@@ -102,18 +102,17 @@ All 11 remaining sorries are Category C (fundamental PDE/functional analysis res
 | `SobolevEmbedding.lean` | `sobolev_embedding_subcritical` | Gagliardo-Nirenberg-Sobolev on domains |
 | `SobolevEmbedding.lean` | `sobolev_embedding_supercritical` | Morrey inequality |
 | `RellichKondrachov.lean` | `rellich_kondrachov` | Frechet-Kolmogorov compactness |
-| `Poincare.lean` | `poincare_inequality` | Relies on Rellich-Kondrachov |
+| `Poincare.lean` | `poincare_inequality` | Relies on Rellich-Kondrachov; requires bounded connected domain |
 | `Poincare.lean` | `poincare_constant_bound_convex` | Payne-Weinberger optimal constant |
-| `TrilinearForm.lean` | `trilinearForm_antisymmetric` | Integration by parts for H^1 |
 | `Existence.lean` | `lerayHopf_existence` | Full Galerkin + Aubin-Lions construction |
 
 **Definitions now sorry-free:**
 - `SobolevH1Zero` (H^1_0 as subtype of H^1 via smooth approximation)
 - `trilinearForm` (concrete integral: sum_{i,j} int u_j * d_j(v_i) * w_i)
 
-**Chapter 1 (8 sorry):** Embedding theorems, Poincare inequality, Helmholtz decomposition, Leray projector.
+**Chapter 1 (9 sorry):** Embedding theorems, Poincare inequality, Helmholtz decomposition, Leray projector.
 
-**Chapter 2 (3 sorry):** Trilinear form antisymmetry, Leray-Hopf existence, energy inequality placeholder.
+**Chapter 2 (1 sorry):** Leray-Hopf existence (full Galerkin + Aubin-Lions construction).
 
 ```bash
 cd lean && lake build    # 2753 jobs, ~2 min
@@ -124,12 +123,13 @@ cd lean && lake build    # 2753 jobs, ~2 min
 Each chapter has one or more Python scripts that symbolically verify the key identities and estimates from the LaTeX text.
 
 ```bash
-python sympy/ch01_sobolev_exponents.py     # 6 checks
-python sympy/ch01_helmholtz_verify.py       # 2 checks
-python sympy/ch02_leray_hopf_verify.py      # 13 checks
+python sympy/ch01_sobolev_exponents.py      #  6 checks
+python sympy/ch01_helmholtz_verify.py        #  2 checks
+python sympy/ch02_leray_hopf_verify.py       # 13 checks
+python sympy/ch03_biot_savart_verify.py      # 23 checks
 ```
 
-All scripts use assert-based checks and print `[PASS]` for each verified identity.
+All scripts use assert-based checks and print `[PASS]` for each verified identity. The ch03 script covers: Leray projector properties (5 test fields), Koszul formula sign consistency, Holder/Sobolev product exponents (H^1 into L^6 in R^3, product into L^{3/2}), Calderon-Zygmund kernel hypotheses, Biot-Savart HLS exponents (alpha_HLS=1, giving 1/q = 1/p - 1/3, p < 3), and stretching tensor trace identities.
 
 ## Compilation
 
@@ -161,12 +161,26 @@ that incompressibility imposes on the flow, and the programme asks whether these
 constraints obstruct finite-time blowup.
 
 **Chapter 1** establishes the functional analytic foundations: Sobolev spaces, embedding
-theorems, the Helmholtz decomposition, and the Leray projector.
+theorems, the Helmholtz decomposition, and the Leray projector. The whole-space Helmholtz
+decomposition on R^n is handled via the Riesz potential and Fourier multiplier
+characterisation of the Leray projector.
 
 **Chapter 2** develops Leray-Hopf weak solutions on R^3: the weak formulation,
 trilinear form antisymmetry, Galerkin approximation via Gram-Schmidt on
 C_c^infty intersect L^2_sigma, the energy inequality, Serrin's regularity criterion,
 and the connection to Fefferman's Clay formulation (Problems A through D).
+
+**Chapter 3** constructs the Biot-Savart connection on the divergence-free bundle.
+The Biot-Savart map (curl composed with minus the inverse Laplacian) is shown to be
+torsion-free and metric-compatible with respect to the L^2 metric, establishing it as
+the Levi-Civita connection of the divergence-free bundle. All geometric identities
+(Koszul formula, torsion, metric compatibility) are understood in the distributional
+sense at Leray-Hopf regularity: at this regularity the connection takes values in
+L^{3/2}_sigma, which is strictly smaller than L^2_sigma. The vorticity equation is
+recast as a forced parallel-transport equation along the flow. Curvature is computed
+via the abstract Riemann tensor and the first Bianchi identity is verified algebraically.
+Calderon-Zygmund and Hardy-Littlewood-Sobolev estimates close the Leray-Hopf regularity
+loop (BS: L^p to L^q with 1/q = 1/p - 1/3, 1 < p < 3).
 
 ## Citation
 

@@ -437,8 +437,8 @@ Compactness is essential for the convergence of Galerkin approximations in
 \begin{theorem}[Poincar\'{e} inequality%
   \footnote{Lean 4: \href{https://github.com/alejandro-soto-franco/navier-stokes/blob/master/lean/NavierStokes/Foundations/Poincare.lean}{\texttt{NavierStokes.poincare\_inequality}}}]%
   \label{thm:poincare}
-  Let $\Omega \subset \R^{n}$ be a bounded open set.  There exists a constant
-  $C_{\mathrm{P}} = C_{\mathrm{P}}(\Omega) > 0$ such that
+  Let $\Omega \subset \R^{n}$ be a bounded, connected open set.  There exists a
+  constant $C_{\mathrm{P}} = C_{\mathrm{P}}(\Omega) > 0$ such that
   \begin{equation}\label{eq:poincare}
     \norm{u}_{\Lp{2}(\Omega)}
     \;\le\;
@@ -607,7 +607,18 @@ distributional divergence-free condition.
   \Lsig(\Omega) \cap G(\Omega)$, and orthogonality forces $v_{1} - v_{2} = 0$.  On
   simply connected domains (or $\R^{n}$), the de Rham theorem ensures that every
   curl-free $\Lp{2}$ vector field is a gradient, so $G(\Omega)$ coincides with the
-  orthogonal complement $\Lsig(\Omega)^{\perp}$, completing the proof.
+  orthogonal complement $\Lsig(\Omega)^{\perp}$, completing the proof for bounded domains.
+
+  For $\Omega = \R^{n}$, the Neumann boundary problem is replaced by the whole-space
+  problem: given $u \in \Lp{2}(\R^n;\R^n)$, set $p = (-\Delta)^{-1}(\divergence u)$,
+  where $(-\Delta)^{-1}$ is the Riesz potential $(-\Delta)^{-1}f = c_n\,\abs{\cdot}^{-(n-2)}
+  * f$ (for $n \geq 3$).  On the Fourier side, $\hat{p}(\xi) = \abs{\xi}^{-2}\,
+  \widehat{\divergence u}(\xi) = i\xi \cdot \hat{u}(\xi)/\abs{\xi}^2$.  Then
+  $\nabla p$ has Fourier multiplier $\xi(\xi\cdot\hat{u})/\abs{\xi}^2$, which is the
+  projection onto the gradient part, and $v = u - \nabla p$ has Fourier multiplier
+  $\delta_{ij} - \xi_i\xi_j/\abs{\xi}^2$, precisely the Leray projector in Fourier space
+  (\Cref{prop:leray-fourier-props}).  Plancherel's theorem and the $\Lp{2}$-boundedness
+  of bounded multipliers confirm $v \in \Lsig(\R^n)$ and $\nabla p \in G(\R^n)$.
 \end{proof}
 
 \subsection{The Leray projector}
