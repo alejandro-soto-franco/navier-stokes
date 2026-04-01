@@ -2,6 +2,37 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.8] - 2026-04-01
+
+### Lean: Sorry Reduction (10 -> 9, norm bridge proved)
+
+**`l2sigmaSubmodule_isSeqClosed` is now sorry-free.**
+
+The ENNReal norm bridge converting `‖f_k - f‖_{Lp 2} → 0` to `∫ ‖⇑f_k - ⇑f‖² dμ → 0`
+is proved via the L2 inner product identity:
+
+```
+‖g‖² = ⟪g, g⟫_ℝ          (real_inner_self_eq_norm_sq)
+     = ∫ ⟪g x, g x⟫_ℝ ∂μ  (L2.inner_def)
+     = ∫ ‖g x‖² ∂μ         (real_inner_self_eq_norm_sq pointwise)
+```
+
+Combined with `Lp.coeFn_sub` for the a.e. equality `⇑(f_k - f) =ᵐ ⇑f_k - ⇑f`,
+and `rpow_natCast` to bridge `ℕ`-power and `ℝ`-power.
+
+**HelmholtzProjection.lean is now fully sorry-free:** all 8 definitions and theorems
+(`l2sigmaSubmodule`, closedness, `lerayProjectorLp`, idempotence, self-adjointness,
+`helmholtz_l2_decomposition`) compile without sorry.
+
+Added `import Mathlib.Analysis.SpecialFunctions.Pow.Real` for `rpow_natCast`.
+
+### Documentation: DivFreeSpace.lean Legacy Stubs
+
+Updated docstrings for the 3 remaining function-level sorries (`helmholtz_decomposition`,
+`lerayProjector_idempotent`, `lerayProjector_selfAdjoint`) to clearly mark them as
+legacy stubs requiring de Rham theory, with pointers to the sorry-free Lp-level versions
+in `HelmholtzProjection.lean`.
+
 ## [0.2.7] - 2026-04-01
 
 ### Lean: Sorry Reduction (9 -> 10, net +3 proved theorems)

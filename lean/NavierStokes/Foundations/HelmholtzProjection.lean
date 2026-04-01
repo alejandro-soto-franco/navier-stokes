@@ -12,8 +12,9 @@ Key sorry-free results:
   - `lerayProjectorLp_selfAdjoint`: `⟪Pf, g⟫ = ⟪f, Pg⟫` — from `inner_starProjection_left_eq_right`
   - `helmholtz_l2_decomposition`: Hilbert-space orthogonal splitting of any `f ∈ Lp E 2 μ`
 
-The one remaining sorry (`l2sigmaSubmodule_isSeqClosed`) converts `‖f_k - f‖_{Lp 2} → 0`
-to `∫ ‖⇑f_k - ⇑f‖² dμ → 0` using `Lp.norm_def` for p=2 (ENNReal bookkeeping).
+All results are sorry-free. The norm bridge (`l2sigmaSubmodule_isSeqClosed`) converting
+`‖f_k - f‖_{Lp 2} → 0` to `∫ ‖⇑f_k - ⇑f‖² dμ → 0` is proved via L2.inner_def and
+real_inner_self_eq_norm_sq, with rpow_natCast bridging ℕ-power and ℝ-power.
 -/
 import NavierStokes.Foundations.DivFreeSpace
 import Mathlib.MeasureTheory.Function.LpSpace.Complete
@@ -21,6 +22,7 @@ import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.Analysis.InnerProductSpace.Projection.Basic
 import Mathlib.Topology.Algebra.Module.ClosedSubmodule
 import Mathlib.Topology.Sequences
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 open MeasureTheory Measure TopologicalSpace Filter
 open scoped ENNReal NNReal ContDiff
@@ -161,8 +163,9 @@ def l2sigmaSubmodule :
 /-! ## Closedness of l2sigmaSubmodule -/
 
 /-- The carrier of `l2sigmaSubmodule` is sequentially closed in `Lp E 2 μ`.
-    Uses `l2sigma_closed_under_l2_convergence` (proved in `DivFreeSpace.lean`) via
-    a bridge (sorry) converting `‖f_k - f‖_{Lp2} → 0` to `∫ ‖⇑f_k - ⇑f‖² dμ → 0`. -/
+    Uses `l2sigma_closed_under_l2_convergence` (proved in `DivFreeSpace.lean`) with
+    a norm bridge converting `‖f_k - f‖_{Lp2} → 0` to `∫ ‖⇑f_k - ⇑f‖² dμ → 0`
+    via `L2.inner_def` and `real_inner_self_eq_norm_sq`. -/
 theorem l2sigmaSubmodule_isSeqClosed :
     IsSeqClosed (l2sigmaSubmodule Ω hΩ).carrier := by
   intro f_seq f_lim h_mem h_tends
@@ -174,10 +177,45 @@ theorem l2sigmaSubmodule_isSeqClosed :
   have hconv : Filter.Tendsto
       (fun k => ∫ x in Ω, ‖⇑(f_seq k) x - ⇑f_lim x‖ ^ (2 : ℝ))
       Filter.atTop (nhds 0) := by
-    -- ‖f_k - f‖_{Lp2}^2 = ∫ ‖⇑(f_k - f)‖^2 dμ  (p=2 formula)
-    -- ⇑(f_k - f) =ᵐ ⇑f_k - ⇑f  (Lp.coeFn_sub)
-    -- So ∫ ‖⇑f_k - ⇑f‖^2 dμ = ‖f_k - f‖^2 → 0
-    sorry
+    -- Convert ℝ-power to ℕ-power throughout (rpow_natCast: x^(2:ℝ) = x^(2:ℕ) for all x)
+    simp_rw [show ∀ x : ℝ, x ^ (2 : ℝ) = x ^ (2 : ℕ) from fun x => Real.rpow_natCast x 2]
+    -- Key identity: for g : LP2 Ω, ‖g‖² = ∫ ‖g x‖² ∂μ (L2 inner product).
+    -- Chain: ‖g‖² = ⟪g,g⟫_ℝ = ∫ ⟪g x, g x⟫_ℝ = ∫ ‖g x‖²
+    have norm_sq_eq : ∀ g : LP2 Ω,
+        ‖g‖ ^ 2 = ∫ a, ‖(⇑g : _ → EuclideanSpace ℝ (Fin n)) a‖ ^ 2
+            ∂(volume.restrict Ω) := by
+      intro g
+      have h1 := (real_inner_self_eq_norm_sq g).symm
+      rw [h1, L2.inner_def (𝕜 := ℝ)]
+      congr 1; ext a
+      exact real_inner_self_eq_norm_sq _
+    -- Step 1: f_seq k → f_lim in Lp implies ‖f_seq k - f_lim‖ → 0
+    have h_sub_tends : Tendsto (fun k => f_seq k - f_lim) atTop (nhds 0) := by
+      have := h_tends.sub (tendsto_const_nhds (x := f_lim))
+      simp only [sub_self] at this
+      exact this
+    have h_norm_tends : Tendsto (fun k => ‖f_seq k - f_lim‖) atTop (nhds 0) := by
+      have := h_sub_tends.norm
+      simp only [norm_zero] at this
+      exact this
+    -- Step 2: ‖f_seq k - f_lim‖^2 → 0
+    have h_sq_tends : Tendsto (fun k => ‖f_seq k - f_lim‖ ^ 2) atTop (nhds 0) := by
+      have := h_norm_tends.pow 2
+      simpa using this
+    -- Step 3: ‖f_seq k - f_lim‖^2 = ∫ ‖(f_seq k - f_lim) x‖^2 (L2 identity)
+    have h_eq : ∀ k, ‖f_seq k - f_lim‖ ^ 2 =
+        ∫ a, ‖⇑(f_seq k - f_lim) a‖ ^ 2 ∂(volume.restrict Ω) :=
+      fun k => norm_sq_eq (f_seq k - f_lim)
+    -- Step 4: ⇑(f_seq k - f_lim) =ᵐ ⇑(f_seq k) - ⇑f_lim (Lp.coeFn_sub)
+    have h_ae : ∀ k, ∫ a, ‖⇑(f_seq k - f_lim) a‖ ^ 2 ∂(volume.restrict Ω) =
+        ∫ a, ‖⇑(f_seq k) a - ⇑f_lim a‖ ^ 2 ∂(volume.restrict Ω) := by
+      intro k
+      apply integral_congr_ae
+      exact (Lp.coeFn_sub (f_seq k) f_lim).mono fun a ha => by
+        simp only [ha, Pi.sub_apply]
+    -- Step 5: combine
+    simp_rw [← h_ae, ← h_eq]
+    exact h_sq_tends
   exact (l2sigma_closed_under_l2_convergence Ω hΩ
     (fun k => ⇑(f_seq k)) ⇑f_lim hu hv_lp hconv).2
 
@@ -227,7 +265,7 @@ theorem lerayProjectorLp_selfAdjoint (f g : LP2 Ω) :
 
 /-! ## Helmholtz decomposition at the Lp level -/
 
-/-- **Helmholtz L2 decomposition** (sorry-free modulo the norm bridge):
+/-- **Helmholtz L2 decomposition** (sorry-free):
     `f = P(f) + (f - P(f))` with `P(f) ∈ l2sigmaSubmodule` and `⟪P(f), f - P(f)⟫ = 0`.
     The orthogonal complement `(l2sigmaSubmodule)ᗮ` contains all gradient fields by
     integration by parts, but the exact characterisation requires de Rham theory. -/

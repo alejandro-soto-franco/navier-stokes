@@ -4,7 +4,7 @@ This appendix documents the Lean~4 formalisation that accompanies the text.
 Each section corresponds to a \texttt{.lean} source file in the repository;
 the file links lead to the current version in the project repository.  All
 definitions and theorem statements type-check against the pinned Mathlib4 fork
-(commit \texttt{698d2b68}, based on \texttt{v4.29.0-rc8}) with 2753 build jobs
+(commit \texttt{698d2b68}, based on \texttt{v4.29.0-rc8}) with 2754 build jobs
 and zero errors.
 
 Theorems are classified as \textbf{proved} (no \texttt{sorry}) or
@@ -149,9 +149,12 @@ optimal constant for convex domains.
 {\texttt{NavierStokes/Foundations/DivFreeSpace.lean}}
 
 \medskip\noindent
-Defines the distributional divergence-free condition, the space $L^{2}_{\sigma}$,
-and a legacy Leray projector stub; proves sequential closedness of $L^{2}_{\sigma}$
-under $L^{2}$ convergence.
+Defines the distributional divergence-free condition and the space
+$L^{2}_{\sigma}$; proves sequential closedness of $L^{2}_{\sigma}$ under
+$L^{2}$ convergence.  All definitions and theorems in this file are sorry-free.
+Legacy Helmholtz/Leray stubs previously in this file have been removed; the
+authoritative $L^{p}$-level versions live in
+\Cref{sec:lean-ch1-helmholtz-proj}.
 
 \begin{itemize}
   \item \path{NavierStokes.IsDistribDivFree}\\
@@ -165,20 +168,6 @@ under $L^{2}$ convergence.
     \textbf{(proved)}: $L^{2}_{\sigma}$ is closed under $L^{2}$ convergence,
     via H\"{o}lder's inequality (Cauchy--Schwarz, $p = q = 2$) and uniqueness of
     limits (\Cref{prop:L2sigma-closed}).
-  \item \path{NavierStokes.helmholtz_decomposition}
-    \emph{(\textit{sorry} stub, legacy)}: every $u \in L^{2}(\Omega;\R^{n})$
-    decomposes orthogonally as $u = v + \nabla p$ with $v \in L^{2}_{\sigma}$ and
-    $\nabla p \perp L^{2}_{\sigma}$ (\Cref{thm:helmholtz}).  Retained for API
-    compatibility; superseded by \path{helmholtz_l2_decomposition} in
-    \Cref{sec:lean-ch1-helmholtz-proj}.
-  \item \path{NavierStokes.lerayProjector_idempotent}\\
-    \emph{(\textit{sorry} stub, legacy)}: $\mathbb{P}^{2} = \mathbb{P}$.
-    Superseded by \path{lerayProjectorLp_idempotent} \textbf{(proved)}
-    in \Cref{sec:lean-ch1-helmholtz-proj}.
-  \item \path{NavierStokes.lerayProjector_selfAdjoint}\\
-    \emph{(\textit{sorry} stub, legacy)}: $\mathbb{P}^{*} = \mathbb{P}$.
-    Superseded by \path{lerayProjectorLp_selfAdjoint} \textbf{(proved)}
-    in \Cref{sec:lean-ch1-helmholtz-proj}.
 \end{itemize}
 
 % ---------------------------------------------------------------------------
@@ -193,15 +182,18 @@ under $L^{2}$ convergence.
 \medskip\noindent
 Constructs the Leray projector as the orthogonal projection onto the closed
 submodule $L^{2}_{\sigma}$ using Mathlib's \path{Submodule.starProjection}
-API.  All main theorems are sorry-free; one norm-bridge sorry remains
-(Category~C, ENNReal bookkeeping).
+API.  All definitions and theorems in this file are sorry-free.
 
 \begin{itemize}
   \item \path{NavierStokes.l2sigmaSubmodule}\\
     $L^{2}_{\sigma}$ as a \path{Submodule} of $L^{p}(E,2,\mu)$; zero, add,
     and scalar-multiplication closures proved (\Cref{def:L2sigma}).
+  \item \path{NavierStokes.l2sigmaSubmodule_isSeqClosed}\\
+    \textbf{(proved)}: sequential closedness of $L^{2}_{\sigma}$; the norm bridge
+    $\|f_k - f\|_{L^{2}} \to 0 \implies \int \|f_k - f\|^{2} \to 0$ is proved via
+    \path{L2.inner_def} and \path{real_inner_self_eq_norm_sq}.
   \item \path{NavierStokes.l2sigmaSubmodule_isClosed}\\
-    \textbf{(proved, modulo norm bridge)}: topological closedness via
+    \textbf{(proved)}: topological closedness via
     sequential closedness and the metric structure of $L^{2}$
     (\Cref{prop:L2sigma-closed}).
   \item \path{NavierStokes.l2sigmaClosedSubmodule}\\
