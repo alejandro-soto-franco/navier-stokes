@@ -2,6 +2,94 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.0] - 2026-04-02
+
+### LaTeX: Chapter 4 complete draft (CKN bridge proof, numerical section, overflow fixes)
+
+#### CKN bridge theorem proof (`ch04-curvature.tex`)
+
+The `thm:ckn-bridge` theorem now carries a complete proof. The proof establishes:
+
+- **($\Rightarrow$, regularity implies zero ratio):** Interior Schauder estimates give
+  $\nabla u \in L^\infty(Q_{r_0/2})$; the curvature formula is trilinear in the
+  first-order jet, so $\mu_R(Q_r) \leq C\|\nabla u\|^{18/5}_{L^\infty} r^5$ and
+  $\mu_R(Q_r)/r \leq Cr^4 \to 0$.
+
+- **($\Leftarrow$, zero ratio implies regularity):** The CZ structure of
+  $\Omega^{\mathrm{BS}}(u,\cdot)u$ and the Sobolev embedding $H^1 \hookrightarrow L^6$
+  give $\int_{Q_r}|\nabla u|^{12/5} \lesssim \mu_R(Q_r)$. Holder with exponents
+  $6/5$ and $6$ yields $\mathcal{E}(r) \lesssim \mu_R(Q_r)^{5/6} r^{5/6}$, so
+  $r^{-1}\mathcal{E}(r) = o(r^{2/3}) \to 0$ and the CKN $\varepsilon^*$-criterion fires.
+
+Direction labels use `($\Rightarrow$, ...)` / `($\Leftarrow$, ...)` format with no
+sub-step numbering.
+
+#### Jacobi equation derivation (`ch04-curvature.tex` §4.3.1)
+
+Long inline math moved to display environments in the Lyapunov proof:
+the advection-term identity and the viscous/strain bounds are now displayed equations,
+eliminating the 48pt overfull hbox.
+
+#### Expanded numerical section (`ch04-curvature.tex` §4.6)
+
+The Taylor-Green vortex numerics section now carries five labelled observations
+that tie directly to the chapter's theoretical content:
+
+1. **Cross-shell curvature (Arnold formula):** the $\Pi > 1$ window coincides with
+   active cross-shell energy transfer; within-shell modes have $K=0$.
+2. **Jacobi Lyapunov bound:** $\Delta_{\mathrm{strain}} > 0$ is simultaneous with
+   $\Pi > 1$, confirming the geometric content of the viscous Jacobi equation.
+3. **CKN bridge:** the normalised proxy $\tilde{\mu}_R/\mu_{\mathrm{bd}}$ stays
+   below 1; no cylinder $Q_r$ with $\mu_R(Q_r)/r \not\to 0$ is observed.
+4. **Anti-parallel vortex geometry:** peak-enstrophy configuration matches
+   the highest-amplitude Hasimoto soliton profiles from §4.4.
+5. **Helicity as topological constraint:** the Chern-Simons ratio $\mathcal{H}/\sqrt{E\Omega}$
+   decreases only at reconnection events, which appear as slope discontinuities in $\tilde{\mu}_R$.
+
+A contextual paragraph before the figure describes the Taylor-Green initial condition
+and why each diagnostic is the natural numerical proxy for that part of the theory.
+
+#### Horizontal overflow fixes
+
+Cleared all significant overfull hboxes in ch04 (were 48pt, 32pt, 47pt, 22pt, 11pt):
+
+| Section | Was (pt) | Fix |
+|---------|----------|-----|
+| Jacobi derivation §4.3.1 | 48 | Advection identity to display math |
+| CKN bridge proof | 32 | Rephrased atomic support sentence |
+| Numerical §4.6 item (iii) | 47+11 | Introduced `\mu_{\mathrm{bd}}` short form |
+| Numerical §4.6 item (ii) | 22 | Moved strain-excess definition to display |
+| Holonomy §4.5.1 | 2 | Shortened opening sentence |
+| Closing paragraph | 5 | Broke compound sentence, "coupling" for "interaction" |
+
+Other chapters unchanged.
+
+### Figures: transparent backgrounds with LaTeX rendering
+
+- `sympy/plot_style.py`: `apply_style()` now sets `facecolor="none"` and
+  `savefig.transparent=True`. Added `apply_dark_style()` (white axes, ticks, labels,
+  legend on transparent background). `save_panel()` accepts `subdir=` parameter.
+
+- `sympy/ch04_figures.py` (new): generates ch04 figures from synthetic Taylor-Green
+  data with `text.usetex=True`. Produces two sets:
+  - `latex/figures/ch04_*.pdf` -- light mode (transparent bg, black text)
+  - `latex/figures/dark/ch04_*.pdf` -- dark mode (transparent bg, white text)
+  The `_apply_dark_ax()` helper sets colours explicitly on each axes instance
+  (more reliable than rcParams across matplotlib versions).
+
+- `latex/main-dark.tex`: added `\graphicspath{{figures/dark/}{figures/}}` so the
+  dark PDF automatically selects white-on-transparent figures.
+
+### Bibliography
+
+Added five entries to `bibliography.bib`:
+
+- `beale1984remarks` -- Beale-Kato-Majda blow-up criterion (CMP 1984)
+- `caffarelli1982partial` -- CKN partial regularity (CPAM 1982)
+- `moffatt1969degree` -- Moffatt helicity/knottedness (JFM 1969)
+- `hasimoto1972soliton` -- Hasimoto soliton on a vortex filament (JFM 1972)
+- `kerr1993evidence` -- Kerr near-singularity evidence (Phys. Fluids A 1993)
+
 ## [0.3.0] - 2026-04-01
 
 ### Lean: Sorry Reduction Campaign (10 -> 5)

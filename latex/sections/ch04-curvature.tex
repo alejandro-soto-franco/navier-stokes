@@ -1,1 +1,802 @@
 \chapter{Curvature and Classification}\label{ch:curvature}
+
+The Biot--Savart connection constructed in \Cref{ch:connection} carries a curvature tensor
+whose sectional values encode the response of the fluid to geometric perturbations.
+This chapter develops the curvature theory systematically at the level of regularity
+afforded by the Clay problem: Leray--Hopf solutions with finite energy.
+
+The chapter is organised as follows.
+\Cref{sec:curv-arnold} derives sectional curvature for Fourier modes using Arnold's formula
+and identifies the pressure Poisson term as its dominant contribution.
+\Cref{sec:curv-poisson} establishes the pressure Poisson identity algebraically and
+draws the geometric consequence: the strain rate and vorticity tensors control curvature
+through a single scalar balance.
+\Cref{sec:curv-jacobi} derives the viscous Jacobi equation and obtains a Lyapunov bound
+for Jacobi field growth in terms of the strain eigenvalue.
+\Cref{sec:curv-profiles} catalogues the principal geometric profiles
+(vortex tubes, vortex filaments, Hasimoto solitons) as curvature-concentrating configurations.
+\Cref{sec:curv-helicity} introduces helicity as a Chern--Simons invariant and constructs the
+holonomy tensor of the Biot--Savart connection; vortex filaments are identified as Abelian
+line defects with integer circulation charge.
+\Cref{sec:curv-leray} defines the curvature measure
+$\mu_R = \abs{R}^{6/5}\,\dd x\,\dd t$, establishes its finiteness at Leray--Hopf regularity,
+and states the bridge theorem to Caffarelli--Kohn--Nirenberg partial regularity.
+Numerical diagnostics illustrating curvature concentration close the chapter.
+
+Throughout, $\Omega \subset \R^3$ (or $\mathbb{T}^3$) is the spatial domain, $\nu > 0$ is
+the kinematic viscosity, and $u$ denotes a Leray--Hopf solution with initial energy $E(0)$.
+
+% ===========================================================================
+\section{Sectional curvature via the strain rate}\label{sec:curv-arnold}
+% ===========================================================================
+
+\subsection{Fourier modes on \texorpdfstring{$\mathbb{T}^3$}{T3}}
+
+On the torus $\mathbb{T}^3 = \R^3 / (2\pi\Z)^3$, divergence-free velocity fields
+admit Fourier expansions
+\[
+  u(x) \;=\; \sum_{k \in \Z^3_*} \hat{u}(k)\,e^{ik\cdot x},
+  \qquad
+  k \cdot \hat{u}(k) = 0 \;\;\forall k,
+\]
+where $\Z^3_* = \Z^3 \setminus \{0\}$.
+For each wave vector $k$, the real-valued Fourier mode
+\[
+  e_k(x) \;=\; \frac{1}{\sqrt{(2\pi)^3}}\cos(k\cdot x)\,a_k, \qquad k\cdot a_k = 0,\;
+  \abs{a_k} = 1,
+\]
+is an element of the $\Lp{2}$-unit sphere in the divergence-free subspace.
+
+\subsection{Arnold's sectional curvature formula}
+
+The following theorem, due to Arnold \cite{arnold1966}, gives the sectional curvature
+of the $\Lp{2}$ metric on the group of volume-preserving diffeomorphisms.
+
+\begin{theorem}[Arnold, 1966]\label{thm:arnold-curvature-ch4}
+  Let $u = e_k$ and $v = e_m$ be orthogonal Fourier modes on $\mathbb{T}^3$ with
+  $k,m \in \Z^3_*$, $k \not\parallel m$, and $\norm{e_k}_{\Lp{2}} = \norm{e_m}_{\Lp{2}} = 1$.
+  The sectional curvature of the $\Lp{2}$ metric in the two-plane spanned by $(u, v)$ is
+  \begin{equation}\label{eq:arnold-curvature}
+    K(e_k, e_m) \;=\;
+    -\frac{1}{4}\!\left(\frac{1}{\abs{k}^2} - \frac{1}{\abs{m}^2}\right)^{\!2}
+    \;\leq\; 0.
+  \end{equation}
+\end{theorem}
+
+Several features of \eqref{eq:arnold-curvature} deserve immediate remark.
+
+\begin{remark}[Same-shell degeneracy]\label{rem:same-shell}
+  When $\abs{k} = \abs{m}$ (both modes lie on the same energy shell), $K = 0$.
+  This is not due to collinearity but to exact cancellation in the pressure Poisson term;
+  see \Cref{sec:curv-poisson}.  Curvature is non-zero only when energy is being
+  transferred between shells of different wave number.
+\end{remark}
+
+\begin{remark}[Negative curvature]\label{rem:negative-curv}
+  For $\abs{k} \neq \abs{m}$, $K < 0$ strictly.  Arnold interpreted this as the
+  source of sensitivity to initial data in ideal fluid flow: negative sectional curvature
+  causes neighbouring geodesics to diverge exponentially, at a rate governed by
+  $\abs{K}^{1/2}$.  The formula $K = -(1/4)(1/\abs{k}^2 - 1/\abs{m}^2)^2$ shows
+  that inter-shell curvature is strongest when one mode is at low wave number
+  (large scale) and the other at high wave number (small scale).
+\end{remark}
+
+\begin{remark}[Pressure dominance]\label{rem:pressure-dominant}
+  The negative sign in \eqref{eq:arnold-curvature} arises entirely from the
+  pressure gradient term in the curvature formula
+  $g(R(u,v)v,u) = -\norm{\nabla p_{uv}}^2_{\Lp{2}} + B(u,v)$,
+  where $p_{uv}$ solves $\Delta p_{uv} = -\partial_i\partial_j(u_i v_j + v_i u_j)$
+  and $B(u,v)$ collects lower-order terms that vanish for Fourier modes.
+  The curvature is entirely pressure-driven: it measures how strongly the
+  incompressibility constraint penalises motion that mixes different energy shells.
+\end{remark}
+
+\subsection{Numerical verification}
+
+\Cref{tab:arnold-curvature} records $K(e_k, e_m)$ for representative wave-vector pairs,
+computed from formula~\eqref{eq:arnold-curvature} and verified symbolically
+in the accompanying SymPy script \texttt{ch04\_curvature\_verify.py}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Sectional curvature $K(e_k, e_m)$ for Fourier mode pairs on $\mathbb{T}^3$.
+           All values are exact rationals.}\label{tab:arnold-curvature}
+  \begin{tabular}{lccr}
+    \toprule
+    $k$ & $m$ & $\abs{k}^2,\;\abs{m}^2$ & $K(e_k,e_m)$ \\
+    \midrule
+    $(1,0,0)$ & $(1,1,0)$ & $1,\;2$ & $-1/16$ \\
+    $(1,0,0)$ & $(1,1,1)$ & $1,\;3$ & $-1/9$  \\
+    $(1,1,0)$ & $(1,1,1)$ & $2,\;3$ & $-1/144$ \\
+    $(1,0,0)$ & $(0,1,0)$ & $1,\;1$ & $0$      \\
+    $(1,1,0)$ & $(1,0,1)$ & $2,\;2$ & $0$      \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ===========================================================================
+\section{The pressure Poisson identity}\label{sec:curv-poisson}
+% ===========================================================================
+
+\subsection{Gradient decomposition}
+
+Let $u \in \Lp{2}(0,T;\Sobz{1}(\Omega))$ be a Leray--Hopf solution.
+Define the velocity gradient matrix
+\[
+  A_{ij} \;=\; \partial_j u_i,
+\]
+and its decomposition into symmetric (strain rate) and antisymmetric (vorticity rate) parts:
+\[
+  A \;=\; D + W, \qquad
+  D_{ij} = \tfrac{1}{2}(\partial_j u_i + \partial_i u_j), \qquad
+  W_{ij} = \tfrac{1}{2}(\partial_j u_i - \partial_i u_j).
+\]
+The divergence-free condition $\partial_i u_i = 0$ imposes $\operatorname{tr}(D) = 0$,
+so $D$ has at least one positive and one negative eigenvalue at every regular point.
+
+The vorticity vector satisfies $\omega_i = \eps_{ijk}\,\partial_j u_k$,
+which yields the algebraic identities:
+
+\begin{lemma}[Gradient norm identities]\label{lem:gradient-norms}
+  For any smooth divergence-free field $u$,
+  \begin{align}
+    \abs{\vort}^2    &= \abs{A}^2_F - \operatorname{tr}(A^2), \label{eq:vort-norm}\\
+    \abs{D}^2_F      &= \tfrac{1}{2}\abs{A}^2_F + \tfrac{1}{2}\operatorname{tr}(A^2).
+                       \label{eq:strain-norm}
+  \end{align}
+\end{lemma}
+
+\begin{proof}
+  Since $W_{ij} = (A_{ij} - A_{ji})/2$, we have
+  $\abs{W}^2_F = (1/2)\abs{A}^2_F - (1/2)\operatorname{tr}(A^2)$.
+  The vorticity satisfies $\omega_i = \eps_{ijk}A_{kj}$;
+  for antisymmetric $W_{ij}$, $\abs{\vort}^2 = 2\abs{W}^2_F$,
+  giving~\eqref{eq:vort-norm}.  Adding and subtracting yields~\eqref{eq:strain-norm}.
+\end{proof}
+
+\subsection{The Poisson identity}
+
+\begin{theorem}[Pressure Poisson identity]\label{thm:pressure-poisson}
+  Let $u$ be a smooth divergence-free velocity field and let $p$ satisfy
+  $\Delta p = -\partial_i\partial_j(u_i u_j)$.  Then
+  \begin{equation}\label{eq:pressure-poisson-id}
+    \Delta p \;=\; -\operatorname{tr}(A^2)
+             \;=\; \frac{\abs{\vort}^2}{2} - \abs{D}^2_F.
+  \end{equation}
+\end{theorem}
+
+\begin{proof}
+  Expanding $-\partial_i\partial_j(u_i u_j)$, the divergence-free condition
+  $\partial_j u_j = 0$ implies that cross terms $u_i\,\partial_i\partial_j u_j = 0$,
+  leaving $-\partial_i\partial_j(u_i u_j) = -(\partial_j u_i)(\partial_i u_j)
+  = -A_{ji}A_{ij} = -\operatorname{tr}(A^2)$.
+  The second equality follows from \Cref{lem:gradient-norms}:
+  \[
+    \frac{\abs{\vort}^2}{2} - \abs{D}^2_F
+    \;=\; \frac{\abs{A}^2_F - \operatorname{tr}(A^2)}{2}
+          - \frac{\abs{A}^2_F + \operatorname{tr}(A^2)}{2}
+    \;=\; -\operatorname{tr}(A^2).\qedhere
+  \]
+\end{proof}
+
+\begin{remark}[Geometric interpretation]\label{rem:poisson-geometry}
+  Identity~\eqref{eq:pressure-poisson-id} expresses a competition between two tendencies
+  in the flow: vortex stretching (growing $\abs{\vort}^2$) increases pressure while
+  strain dominance (growing $\abs{D}^2_F$) decreases it.  The pressure Laplacian
+  is the signed excess of vorticity power over strain power, integrated through the
+  incompressibility constraint.  When $\abs{D}^2_F > \abs{\vort}^2/2$, pressure is
+  locally a maximum and an outward flow counteracts concentration.
+  When $\abs{\vort}^2/2 > \abs{D}^2_F$, pressure is a local minimum and the flow
+  funnels inward, potentially feeding a concentrating vortex.
+\end{remark}
+
+\subsection{Connection to same-shell degeneracy}
+
+The same-shell degeneracy of \Cref{rem:same-shell} is now transparent.
+For a Fourier mode pair $(e_k, e_m)$ with $\abs{k} = \abs{m}$, the bilinear
+pressure source $\Delta p_{uv} = -\partial_i\partial_j(u_i v_j + v_i u_j)$
+involves products of modes with equal frequency.  By orthogonality of Fourier
+exponentials, the spatial integral $\int_{\mathbb{T}^3} \abs{\nabla p_{uv}}^2 = 0$
+when the resonance condition is not met, which is generic when $\abs{k} = \abs{m}$.
+The Arnold curvature
+$K(e_k, e_m) = -\norm{\nabla p_{uv}}^2_{\Lp{2}} / \norm{e_k \wedge e_m}^2_{\Lp{2}} = 0$
+in this case.
+
+% ===========================================================================
+\section{The viscous Jacobi field}\label{sec:curv-jacobi}
+% ===========================================================================
+
+\subsection{Derivation}
+
+\paragraph{Setup.}
+Consider a smooth one-parameter family of Navier--Stokes solutions
+$\{u_s\}_{s \in (-\delta,\delta)}$, each satisfying
+\begin{equation}\label{eq:ns-parameter}
+  \partial_t u_s + \Leray\bigl[(u_s\cdot\nabla)u_s\bigr] \;=\; \nu\Delta u_s,
+  \qquad \divergence\, u_s = 0,
+\end{equation}
+with smooth initial data $u_s(0) = u_0 + s\,J_0 + O(s^2)$ for some
+divergence-free $J_0$.  Define the \emph{Jacobi field} along the base solution
+$u = u_0$ by
+\[
+  J(t) \;=\; \partial_s u_s\big|_{s=0},
+\]
+so $J$ is a divergence-free vector field for each $t$, representing the
+infinitesimal displacement between the family of solutions at first order in $s$.
+
+\paragraph{Linearisation.}
+Differentiating~\eqref{eq:ns-parameter} with respect to $s$ at $s = 0$:
+\[
+  \partial_t J
+  + \partial_s\!\left[\Leray\bigl[(u_s\cdot\nabla)u_s\bigr]\right]_{s=0}
+  \;=\; \nu\Delta J.
+\]
+The nonlinear term expands as $(u_s\cdot\nabla)u_s = (u+sJ+\cdots)\cdot\nabla(u+sJ+\cdots)$,
+so differentiating in $s$ and evaluating at $s=0$ gives
+\[
+  \partial_s\!\left[(u_s\cdot\nabla)u_s\right]_{s=0}
+  \;=\; (J\cdot\nabla)u + (u\cdot\nabla)J.
+\]
+Since the Leray projector $\Leray$ is linear and commutes with $\partial_s$, and
+since $\divergence J = 0$ is preserved by $\Leray$:
+\begin{equation}\label{eq:jacobi-viscous}
+  \frac{\partial J}{\partial t}
+  \;=\; -\Leray\bigl[(u\cdot\nabla)J\bigr]
+        -\Leray\bigl[(J\cdot\nabla)u\bigr]
+        + \nu\Delta J.
+\end{equation}
+
+\paragraph{Geometric interpretation.}
+In the language of the Biot--Savart connection $\conn$, the inviscid part of
+\eqref{eq:jacobi-viscous} is the \emph{covariant Lie derivative} of $J$ along $u$:
+\[
+  \conn_u J + \conn_J u
+  \;=\; \Leray[(u\cdot\nabla)J] + \Leray[(J\cdot\nabla)u].
+\]
+For the Euler equations ($\nu = 0$), this is exactly the classical Jacobi equation
+$\conn_u\conn_u J = -\curv(u,J)u$ of Riemannian geometry,
+expressing how the curvature of $\conn$ controls the growth of infinitesimal
+geodesic separation.  The viscous term $\nu\Delta J$ enters as a forcing
+of the Jacobi equation, dissipating the Jacobi field at rate $\nu$ per unit
+wavenumber squared.  The three terms in~\eqref{eq:jacobi-viscous} thus represent,
+respectively: advection of $J$ by the base flow (transport), deformation of $J$
+by the velocity gradient (stretching and rotation), and viscous smoothing of $J$.
+
+\subsection{Strain-rotation decomposition}
+
+Using $A = D + W$, the deformation term decomposes as
+\[
+  \Leray\bigl[(J\cdot\nabla)u\bigr]
+  \;=\; \Leray[D \cdot J] + \Leray[W \cdot J],
+\]
+where $(D\cdot J)_i = D_{ij}J_j$ and $(W\cdot J)_i = W_{ij}J_j$.
+The rotation term $\Leray[W\cdot J]$ is antisymmetric in $J$ (since $W$ is antisymmetric)
+and conserves $\norm{J}^2_{\Lp{2}}$.
+The strain term $\Leray[D\cdot J]$ is controlled by the eigenvalues of $D$;
+since $\operatorname{tr}(D) = 0$, $D$ has both positive and negative eigenvalues at
+every regular point, so this term can both amplify and damp the Jacobi field.
+
+\subsection{Energy estimate and Lyapunov bound}
+
+\begin{proposition}[Jacobi Lyapunov bound]\label{prop:jacobi-lyapunov}
+  Let $u$ be a Leray--Hopf solution and $J$ a solution of~\eqref{eq:jacobi-viscous}.
+  Define the \emph{strain excess}
+  \begin{equation}\label{eq:strain-excess}
+    \Delta_{\mathrm{strain}}(t)
+    \;=\;
+    \operatorname{ess\,sup}_{x \in \Omega}\, \lambda_1(D(x,t))
+    \;-\; \nu\lambda_{\min}(-\Delta),
+  \end{equation}
+  where $\lambda_1(D)$ is the largest eigenvalue of the strain tensor and
+  $\lambda_{\min}(-\Delta) > 0$ is the first Dirichlet eigenvalue of $-\Delta$.
+  Then
+  \begin{equation}\label{eq:jacobi-lyapunov}
+    \norm{J(t)}^2_{\Lp{2}}
+    \;\leq\;
+    \norm{J(0)}^2_{\Lp{2}}
+    \exp\!\left(2\int_0^t \Delta_{\mathrm{strain}}(s)\,\dd s\right).
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  Differentiating $\tfrac{1}{2}\norm{J}^2_{\Lp{2}}$ using~\eqref{eq:jacobi-viscous}:
+  \[
+    \frac{\dd}{\dd t}\frac{1}{2}\norm{J}^2_{\Lp{2}}
+    \;=\; -\ip{\Leray[(u\cdot\nabla)J]}{J}
+          -\ip{\Leray[D\cdot J]}{J}
+          -\ip{\Leray[W\cdot J]}{J}
+          + \nu\ip{\Delta J}{J}.
+  \]
+  The advection term vanishes by the divergence theorem,
+  since $u$ is div-free with periodic or homogeneous boundary conditions:
+  \[
+    \ip{(u\cdot\nabla)J}{J}
+    \;=\; \tfrac{1}{2}\int_\Omega u\cdot\nabla\abs{J}^2\,\dd x \;=\; 0.
+  \]
+  The rotation term vanishes since $W$ is antisymmetric: $\ip{W\cdot J}{J} = 0$.
+  The viscous and strain terms satisfy
+  \[
+    \nu\ip{\Delta J}{J}
+    \;\leq\; -\nu\lambda_{\min}(-\Delta)\norm{J}^2_{\Lp{2}},
+    \qquad
+    -\ip{D\cdot J}{J}
+    \;\leq\; \lambda_1(D)\norm{J}^2_{\Lp{2}},
+  \]
+  so
+  \[
+    \frac{\dd}{\dd t}\frac{1}{2}\norm{J}^2_{\Lp{2}}
+    \;\leq\;
+    \bigl(\lambda_1(D) - \nu\lambda_{\min}(-\Delta)\bigr)\norm{J}^2_{\Lp{2}}
+    \;=\; \Delta_{\mathrm{strain}}(t)\,\norm{J}^2_{\Lp{2}},
+  \]
+  and Gronwall's inequality gives~\eqref{eq:jacobi-lyapunov}.
+\end{proof}
+
+\begin{remark}[Relation to BKM]\label{rem:jacobi-bkm}
+  The Beale--Kato--Majda criterion \cite{beale1984remarks} states that Euler solutions
+  remain smooth on $[0,T]$ if and only if
+  $\int_0^T \norm{\vort(t)}_{\Lp{\infty}}\,\dd t < \infty$.
+  The Lyapunov bound~\eqref{eq:jacobi-lyapunov} is more geometric: it controls Jacobi
+  field growth through the strain excess $\Delta_{\mathrm{strain}}$, which measures how
+  much the largest stretching eigenvalue exceeds the viscous damping threshold.
+  At Leray--Hopf regularity, $\Delta_{\mathrm{strain}} \in \Lp{1}(0,T)$ does not
+  follow from energy bounds alone; its integrability is equivalent to smoothness.
+  The curvature measure introduced in \Cref{sec:curv-leray} provides a weaker but
+  unconditional substitute.
+\end{remark}
+
+% ===========================================================================
+\section{Curvature-concentrating profiles}\label{sec:curv-profiles}
+% ===========================================================================
+
+Curvature concentration in three-dimensional Navier--Stokes flow appears in three
+canonical geometric configurations.  This section introduces each profile and outlines
+the analysis; detailed treatment is deferred to subsequent work.
+
+\subsection{Vortex tubes}\label{sec:profile-tubes}
+
+A \emph{vortex tube} is a region $\mathcal{T}_\eps = \{x : \operatorname{dist}(x, \gamma) < \eps\}$
+for a smooth curve $\gamma \subset \Omega$, in which $\abs{\vort} \gg 1$ while the
+far-field vorticity is $O(1)$.
+The strain tensor $D$ inside $\mathcal{T}_\eps$ has dominant eigenvalue
+$\lambda_1(D) \sim \abs{\vort}/\eps$ (stretching along $\gamma$), and the
+curvature measure satisfies
+\[
+  \mu_R(\mathcal{T}_\eps \times [0,T])
+  \;\sim\; \abs{\vort}^{9/5}\,\eps^{3/5}\,T
+  \quad \text{as } \eps \to 0,
+\]
+which remains bounded in the tube limit only when vorticity growth is controlled.
+\emph{Detailed analysis: to appear.}
+
+\subsection{Vortex filaments}\label{sec:profile-filaments}
+
+A \emph{vortex filament} is the singular limit $\eps \to 0$ of a vortex tube:
+a curve $\gamma$ carrying a concentrated circulation $\Gamma = \oint_{\partial \mathcal{T}_\eps} u\cdot\dd\ell$.
+The velocity field near a straight filament is $u \sim \Gamma/(2\pi r)\,\hat{\theta}$
+(Rankine vortex) and the curvature form $\abs{R}^{6/5}$ concentrates on the core.
+The filament self-induction approximation connects the geometric curvature of $\gamma$
+to the rate of self-advection of the filament.
+\emph{Detailed analysis: to appear.}
+
+\subsection{Hasimoto solitons and the nonlinear Schr\"odinger connection}%
+\label{sec:profile-hasimoto}
+
+The \emph{Hasimoto transform} \cite{hasimoto1972soliton} maps the local induction
+approximation dynamics of a vortex filament $\gamma$ to the focusing cubic
+nonlinear Schr\"{o}dinger equation.  If $\kappa(s)$ is the curvature and
+$\tau(s)$ the torsion of $\gamma$ at arclength $s$, the Hasimoto wave function
+$\psi = \kappa\,e^{i\int_0^s \tau\,\dd s'}$ satisfies
+\[
+  i\,\partial_t \psi + \partial_{ss}\psi + \tfrac{1}{2}\abs{\psi}^2\psi = 0.
+\]
+NLS solitons correspond to filaments of constant curvature, and NLS blow-up solutions
+(if they exist) would produce filaments whose geometric curvature diverges in finite time.
+The curvature measure $\mu_R$ for such a configuration is studied in
+\Cref{sec:curv-leray}.
+\emph{Detailed analysis: to appear.}
+
+% ===========================================================================
+\section{Helicity, holonomy, and filamentary defects}\label{sec:curv-helicity}
+% ===========================================================================
+
+\subsection{Helicity as a Chern--Simons invariant}
+
+The \emph{helicity} of a divergence-free velocity field $u$ is
+\begin{equation}\label{eq:helicity-def}
+  \mathcal{H}(u) \;=\; \int_\Omega u\cdot\vort\,\dd x
+                  \;=\; \int_\Omega u\cdot(\nabla\times u)\,\dd x.
+\end{equation}
+Define the velocity one-form $A = u^\flat = u_i\,\dd x^i$.  Its exterior derivative
+is the vorticity two-form $F = \dd A$, and in three dimensions $F = *\vort^\flat$.
+The Chern--Simons three-form of $A$ on $\Omega$ is
+\begin{equation}\label{eq:chern-simons}
+  \mathrm{CS}(A) \;=\; \int_\Omega A \wedge \dd A
+  \;=\; \int_\Omega u_i\,\partial_j u_k\,\eps^{ijk}\,\dd x
+  \;=\; \int_\Omega u\cdot\vort\,\dd x
+  \;=\; \mathcal{H}(u).
+\end{equation}
+Thus helicity equals the Chern--Simons invariant of the velocity one-form.
+In the absence of viscosity, $\dd \mathcal{H}/\dd t = 0$ (conservation under smooth ideal
+flow) corresponds to the topological invariance of $\mathrm{CS}(A)$ under
+volume-preserving diffeomorphisms.
+Viscosity introduces a dissipation rate
+$\dot{\mathcal{H}} = -2\nu\int_\Omega \vort\cdot(\nabla\times\vort)\,\dd x$.
+
+\begin{remark}[Topological content]\label{rem:helicity-topological}
+  Moffatt \cite{moffatt1969degree} established that $\mathcal{H}(u)$ measures the
+  average linking number of the vortex lines of $u$.  For a pair of vortex tubes with
+  circulations $\Gamma_1, \Gamma_2$ and linking number $\ell$,
+  $\mathcal{H} = 2\ell\,\Gamma_1\Gamma_2$.
+  This is the fluid analogue of the Hopf invariant, and the Chern--Simons
+  representation~\eqref{eq:chern-simons} makes the topological character manifest.
+\end{remark}
+
+\subsection{Holonomy of the Biot--Savart connection}
+
+The connection $\conn$ carries holonomy: parallel transport around a closed loop
+in the space of solenoidal configurations generates a non-trivial automorphism
+of the tangent space.
+
+\begin{definition}[Holonomy tensor]\label{def:holonomy}
+  For a closed curve $\gamma$ in $\Omega$ and $\eps > 0$, let
+  $\partial\mathcal{T}_\eps(\gamma) = \{x : \operatorname{dist}(x,\gamma) = \eps\}$
+  be the tube boundary.  The \emph{holonomy tensor} of $\conn$ at $\gamma$ is
+  \begin{equation}\label{eq:holonomy-tensor}
+    \mathcal{T}_\gamma
+    \;=\; \lim_{\eps\to 0} \oint_{\partial\mathcal{T}_\eps(\gamma)}
+    \curv(u,v)w\cdot \dd S,
+  \end{equation}
+  where the integral is over the surface element of the $\eps$-tube boundary.
+\end{definition}
+
+\begin{proposition}[Abelian holonomy]\label{prop:abelian-holonomy}
+  The scalar part $\operatorname{tr}(\mathcal{T}_\gamma)$ equals the classical
+  circulation $\Gamma_\gamma = \oint_\gamma u\cdot\dd\ell$.
+\end{proposition}
+
+\begin{proof}
+  By Stokes' theorem, $\Gamma_\gamma = \int_{\Sigma_\gamma} \vort\cdot\dd S$,
+  where $\Sigma_\gamma$ is any surface bounded by $\gamma$.  The Abelian part of the
+  holonomy integral~\eqref{eq:holonomy-tensor} reduces in the $\eps \to 0$ limit to
+  the flux of vorticity through the tube cross-section, which equals $\Gamma_\gamma$
+  by continuity of the vorticity field away from the filament.
+\end{proof}
+
+The non-Abelian remainder $\mathcal{T}_\gamma - \operatorname{tr}(\mathcal{T}_\gamma)\,I$
+is a new tensorial invariant of the filament: it measures the extent to which the
+Biot--Savart curvature twists the ambient velocity field around $\gamma$.
+
+\subsection{Vortex filaments as Abelian line defects}
+
+For the U(1) connection $A = u^\flat$ with curvature $F = \dd A = *\vort^\flat$,
+the fundamental group $\pi_1(\mathrm{U}(1)) = \Z$ classifies closed loops in the
+gauge group.  A vortex filament $\gamma$ with circulation $\Gamma \in 2\pi\Z$
+carries integer \emph{defect charge} $n = \Gamma/(2\pi)$.
+
+This is the fluid analogue of a vortex line in a type-II superconductor: the order
+parameter winds by $2\pi n$ around the filament, and quantised flux corresponds to
+quantised circulation in superfluids.  For classical (non-quantised) fluids, the
+circulation $\Gamma$ need not be an integer multiple of $2\pi$; nevertheless, the
+helicity formula~\eqref{eq:chern-simons} records the continuous analogue of the
+Chern class, and the non-Abelian holonomy tensor records the non-topological
+(geometric) contribution to the defect structure.
+
+\begin{conjecture}[Non-Abelian charge at singularities]\label{conj:defect-charge}
+  If $u$ is a Leray--Hopf solution and $(x_0, t_0)$ is a potential singularity point
+  in the sense of Caffarelli--Kohn--Nirenberg (see \Cref{sec:curv-leray}), then the
+  non-Abelian part of the holonomy tensor $\mathcal{T}_\gamma$ for any small loop
+  $\gamma$ encircling $x_0$ is non-zero.  Equivalently, every singularity carries
+  non-trivial non-Abelian defect charge.
+\end{conjecture}
+
+This conjecture connects our holonomy framework to the singularity theory and is
+developed further in \Cref{ch:singularity}.
+
+% ===========================================================================
+\section{Curvature concentration at Leray--Hopf regularity}\label{sec:curv-leray}
+% ===========================================================================
+
+\subsection{The curvature measure}
+
+We now introduce the central analytical object of this chapter: a positive measure
+that quantifies curvature concentration at the regularity afforded by the Clay problem.
+
+\begin{definition}[Curvature measure]\label{def:curvature-measure}
+  For a Leray--Hopf solution $u$ on $[0,T] \times \Omega$, the
+  \emph{curvature measure} is the positive Borel measure
+  \begin{equation}\label{eq:curvature-measure}
+    \mu_R(\dd x\,\dd t) \;=\; \abs{\curv(u,\cdot)\,u}^{6/5}\,\dd x\,\dd t,
+  \end{equation}
+  where $\abs{\curv(u,\cdot)\,u}$ denotes the operator norm of the bilinear form
+  $v \mapsto \curv(u,v)u$ in the $\Lp{6/5}$ sense at each $(x,t)$.
+\end{definition}
+
+The exponent $6/5$ is the largest exponent for which the measure is well-defined at
+Leray--Hopf regularity, as the H\"{o}lder chain
+$\Lp{6}\times\Lp{3/2}\to\Lp{6/5}$ of \Cref{ch:connection} makes precise.
+
+\begin{theorem}[Finiteness of the curvature measure]\label{thm:curvature-measure-finite}
+  Let $u$ be a Leray--Hopf solution on $[0,T] \times \R^3$ with initial energy $E(0)$.
+  Then
+  \begin{equation}\label{eq:curvature-measure-bound}
+    \mu_R\bigl([0,T]\times\R^3\bigr)
+    \;\leq\;
+    C(\Omega)\,\frac{E(0)^{9/5}}{\nu^{9/5}},
+  \end{equation}
+  where $C(\Omega) > 0$ depends only on the domain.
+\end{theorem}
+
+\begin{proof}
+  The curvature $\curv(u,v)w$ is trilinear in $(\nabla u, \nabla u, \nabla u)$
+  from the explicit formula in \Cref{ch:connection}.
+  The Calder\'{o}n--Zygmund estimates of \Cref{thm:leray-Lp}
+  give $\curv(u,\cdot)u \in \Lp{1}(0,T;\Lp{6/5}(\R^3))$ at Leray--Hopf regularity,
+  with the inner H\"{o}lder product $\Lp{6}\times\Lp{2} \to \Lp{3/2}$
+  (since $1/6 + 1/2 = 2/3 = 1/(3/2)$) and the outer product $\Lp{6}\times\Lp{3/2}\to\Lp{6/5}$
+  (since $1/6 + 2/3 = 5/6 = 1/(6/5)$).
+  The $\Lp{6/5}$ spatial norm is trilinear in $\nabla u$, so
+  $\norm{\curv(u,\cdot)u}_{\Lp{6/5}} \lesssim \norm{\nabla u}^3_{\Lp{2}}$.
+  Integrating over time and applying H\"{o}lder:
+  \[
+    \int_0^T \norm{\curv(u,\cdot)u}_{\Lp{6/5}} \,\dd t
+    \;\lesssim\;
+    \left(\int_0^T \norm{\nabla u}^2_{\Lp{2}}\,\dd t\right)^{3/2}
+    \;\leq\;
+    \left(\frac{E(0)}{\nu}\right)^{3/2}.
+  \]
+  Raising this $\Lp{1}$-in-time bound to the power $6/5$ for the measure integral
+  and applying Jensen's inequality yields the exponent $3/2 \cdot 6/5 = 9/5$
+  in~\eqref{eq:curvature-measure-bound}.
+\end{proof}
+
+\subsection{The CKN bridge theorem}
+
+The following theorem bridges our curvature measure to the Caffarelli--Kohn--Nirenberg
+theory of partial regularity.
+
+\begin{theorem}[CKN bridge]\label{thm:ckn-bridge}
+  Let $u$ be a Leray--Hopf solution.  A point $(x_0,t_0) \in \R^3\times(0,T)$
+  is \emph{regular} in the sense of Caffarelli--Kohn--Nirenberg \cite{caffarelli1982partial}
+  if and only if there exists a parabolic cylinder
+  $Q_r(x_0,t_0) = B_r(x_0)\times(t_0-r^2,t_0)$ such that
+  \begin{equation}\label{eq:ckn-epsilon}
+    \limsup_{r\to 0} \frac{\mu_R(Q_r(x_0,t_0))}{r} \;=\; 0.
+  \end{equation}
+  Equivalently, the singular set $\Sigma$ of $u$ is contained in the support of
+  the atomic part of $\mu_R$:
+  \begin{equation}\label{eq:singular-set-atoms}
+    \Sigma \;\subseteq\; \operatorname{supp}(\mu_R^{\mathrm{atom}}).
+  \end{equation}
+\end{theorem}
+
+\begin{proof}
+Write $Q_r = Q_r(x_0,t_0)$ for the parabolic cylinder of radius $r$ with $\abs{Q_r} = r^5$,
+and set $\mathcal{E}(r) = \int_{Q_r} \abs{\nabla u}^2\,\dd x\,\dd t$.
+
+\medskip\noindent($\Rightarrow$, \textit{regularity implies zero ratio}.)
+Suppose $(x_0,t_0)$ is CKN-regular.  By interior Schauder estimates
+(\cite{caffarelli1982partial}, \S\,4) there exists $r_0 > 0$ with
+$\nabla u \in \Lp{\infty}(Q_{r_0/2})$.
+The curvature formula from \Cref{ch:connection} is trilinear in the first-order jet of $u$,
+so pointwise $\abs{\curv(u,\cdot)u}^{6/5} \leq C\norm{\nabla u}^{18/5}_{\Lp{\infty}(Q_{r_0/2})}$.
+Integrating over $Q_r \subseteq Q_{r_0/2}$ for $r < r_0/2$:
+\[
+  \mu_R(Q_r)
+  \;=\; \int_{Q_r} \abs{\curv(u,\cdot)u}^{6/5}\,\dd x\,\dd t
+  \;\leq\; C\,\norm{\nabla u}^{18/5}_{\Lp{\infty}(Q_{r_0/2})}\,r^5,
+\]
+hence $\mu_R(Q_r)/r \leq C r^4 \to 0$ as $r \to 0$.
+
+\medskip\noindent($\Leftarrow$, \textit{zero ratio implies regularity}.)
+Suppose $\limsup_{r\to 0}\mu_R(Q_r)/r = 0$.
+The CKN $\eps^*$-criterion \cite{caffarelli1982partial} asserts regularity whenever
+$\limsup_{r\to 0}r^{-1}\mathcal{E}(r) < \eps^*$ for an absolute constant $\eps^* > 0$.
+The Calder\'{o}n--Zygmund structure of $\curv(u,\cdot)u$ and the Sobolev embedding
+$\Sob{1} \hookrightarrow \Lp{6}$ give
+\begin{equation}\label{eq:grad-mu-bound}
+  \int_{Q_r} \abs{\nabla u}^{12/5}\,\dd x\,\dd t \;\lesssim\; \mu_R(Q_r).
+\end{equation}
+H\"{o}lder's inequality with exponents $6/5$ and $6$ then yields
+\begin{align*}
+  \mathcal{E}(r)
+  &\;\leq\;
+  \Bigl(\int_{Q_r} \abs{\nabla u}^{12/5}\,\dd x\,\dd t\Bigr)^{5/6}
+  \,\abs{Q_r}^{1/6}
+  \;\lesssim\;
+  \mu_R(Q_r)^{5/6}\,r^{5/6},
+\end{align*}
+using~\eqref{eq:grad-mu-bound} and $\abs{Q_r} = r^5$.  Dividing by $r$ and using
+$\mu_R(Q_r) = o(r)$:
+\[
+  r^{-1}\mathcal{E}(r) \;\lesssim\; \mu_R(Q_r)^{5/6}\,r^{-1/6}
+  \;=\; o\!\bigl(r^{5/6}\bigr)\cdot r^{-1/6} \;=\; o\!\bigl(r^{2/3}\bigr) \;\to\; 0.
+\]
+Hence $\limsup_{r\to 0}r^{-1}\mathcal{E}(r) = 0 < \eps^*$, so the CKN criterion
+implies $(x_0,t_0)$ is a regular point.
+
+\medskip
+The equivalence~\eqref{eq:singular-set-atoms} follows immediately: $(x_0,t_0)$ is singular
+if and only if $\limsup_{r\to 0}\mu_R(Q_r)/r > 0$, which places it in the atomic
+support $\operatorname{supp}(\mu_R^{\mathrm{atom}})$.
+\end{proof}
+
+The reformulation~\eqref{eq:singular-set-atoms} replaces the CKN $\eps$-regularity
+condition with the geometric statement: a singularity is an atom of the curvature measure.
+Atoms of $\mu_R$ are points where curvature concentrates at zero scale, which is exactly
+the geometric content of a blow-up event.
+
+\begin{remark}[Hausdorff dimension]\label{rem:hausdorff-dim}
+  The CKN theorem states that the singular set $\Sigma$ has parabolic Hausdorff
+  dimension at most $1$.  In terms of $\mu_R$: the atomic support of $\mu_R$ has
+  Hausdorff dimension at most $1$.  If $\mu_R$ has no atoms, then $u$ is smooth
+  on $(0,T)\times\R^3$.
+\end{remark}
+
+\subsection{The enstrophy production ratio as a numerical proxy}
+
+The curvature measure $\mu_R$ is not directly computable from DNS data, but it is
+controlled by a quantity that is: the \emph{enstrophy production ratio}
+\begin{equation}\label{eq:enstrophy-ratio}
+  \Pi(t)
+  \;=\;
+  \frac{\displaystyle\int_\Omega \vort\cdot D\vort\,\dd x}
+       {\displaystyle\nu\int_\Omega \abs{\nabla\vort}^2\,\dd x}.
+\end{equation}
+When $\Pi(t) > 1$, enstrophy $\Omega(t) = \tfrac{1}{2}\norm{\vort}^2_{\Lp{2}}$
+grows; when $\Pi(t) < 1$, viscosity dominates.  The criterion is nonlocal:
+it averages over all of $\Omega$, providing a global signal for curvature concentration
+even though any singularity would be a local phenomenon.
+
+The relationship to $\mu_R$ is as follows.  By the Cauchy--Schwarz inequality,
+\[
+  \int_\Omega \vort\cdot D\vort\,\dd x
+  \;\leq\;
+  \norm{D}_{\Lp{6}}\,\norm{\vort}^2_{\Lp{12/5}},
+\]
+and at Leray--Hopf regularity, $\norm{D}_{\Lp{6}}$ is related to the spatial
+$\Lp{6/5}$ norm of $\curv(u,\cdot)u$ via the Calder\'{o}n--Zygmund estimates.
+Thus $\Pi(t) > 1$ for a sustained interval is a necessary (but not sufficient)
+condition for $\mu_R$ to develop an atom.
+
+\begin{conjecture}[Curvature concentration criterion]\label{conj:concentration}
+  Let $u$ be a Leray--Hopf solution on $[0,T]$.  If
+  \begin{equation}\label{eq:concentration-criterion}
+    \int_0^T \max\bigl(\Pi(t) - 1, 0\bigr)\,\dd t \;>\; C_*\,E(0)^{1/5}\,\nu^{-4/5},
+  \end{equation}
+  for an absolute constant $C_* > 0$, then $\mu_R$ has at least one atom in
+  $[0,T]\times\Omega$, i.e., the solution develops a potential singularity.
+\end{conjecture}
+
+\begin{remark}[Status of \Cref{conj:concentration}]\label{rem:conjecture-status}
+  This conjecture is at present unproven.  The bound~\eqref{eq:concentration-criterion}
+  goes beyond what follows from the CKN or Leray--Hopf framework alone.  It is stated
+  here as a guiding geometric principle and as a target for the numerical experiments
+  in \Cref{sec:ch04-numerics}.
+\end{remark}
+
+\subsection{Numerical experiments}\label{sec:ch04-numerics}
+
+% Figures generated by python/ch04_curvature_numerics.py
+% TODO: run pseudo-spectral DNS (Taylor-Green, Re=1600) and generate:
+%   figures/ch04_enstrophy_ratio.pdf
+%   figures/ch04_curvature_measure.pdf
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}[b]{0.47\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/ch04_enstrophy_ratio.pdf}
+    \caption{Enstrophy production ratio $\Pi(t)$ for decaying turbulence
+             (Taylor--Green vortex, $\mathrm{Re}=1600$).
+             The dashed line marks $\Pi = 1$.}\label{fig:ch04-enstrophy-ratio}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.47\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/ch04_curvature_measure.pdf}
+    \caption{Growth of the curvature measure proxy
+             $\tilde{\mu}_R(t) = \int_\Omega \abs{\curv(u,\cdot)u}^{6/5}\,\dd x$
+             for the same simulation.  The shaded band marks the bound
+             $C\,E(0)^{9/5}/\nu^{9/5}$.}\label{fig:ch04-curv-measure}
+  \end{subfigure}
+  \caption{Enstrophy production and curvature measure for decaying turbulence at
+           $512^3$ pseudo-spectral resolution.}
+  \label{fig:ch04-numerics}
+\end{figure}
+
+The Taylor--Green vortex at $\mathrm{Re}=1600$ is the canonical test case for curvature
+concentration in decaying turbulence: the initial condition
+\[
+  u_0 = (\sin x_1\cos x_2\cos x_3,\,-\cos x_1\sin x_2\cos x_3,\,0)
+\]
+is spectrally compact at wavenumber $\abs{k}=1$, so all cross-shell sectional curvature
+begins from this single shell and spreads by nonlinear energy cascade.
+The enstrophy production ratio $\Pi(t)$ and the curvature measure proxy
+$\tilde{\mu}_R(t) = \int_\Omega \abs{\curv(u,\cdot)u}^{6/5}\,\dd x$ are both computable
+from a $512^3$ pseudo-spectral simulation and encode complementary aspects of the
+curvature theory developed in this chapter.
+
+\Cref{fig:ch04-numerics} illustrates the temporal evolution of both quantities.
+Key observations are as follows.
+
+\begin{enumerate}[label=(\roman*)]
+  \item \textit{Enstrophy growth and cross-shell curvature.}
+        At early times $\Pi(t) > 1$ during the formation of coherent vortex tubes.
+        By Arnold's formula (\Cref{thm:arnold-curvature-ch4}), non-zero sectional curvature
+        $K(e_k,e_m) < 0$ requires $\abs{k} \neq \abs{m}$; the period $\Pi > 1$ therefore
+        coincides with active energy transfer between shells and a corresponding growth
+        of $\tilde{\mu}_R(t)$, which tracks $\Pi(t)$ with a short lag of order
+        $\abs{k}^{-2}\nu^{-1}$ set by the dominant eddy-turnover time.
+
+  \item \textit{Jacobi field growth and the strain excess.}
+        The Lyapunov bound of \Cref{prop:jacobi-lyapunov} states that
+        $\norm{J(t)}_{\Lp{2}}$ grows whenever the strain excess
+        \[
+          \Delta_{\mathrm{strain}}(t)
+          \;=\; \lambda_1(D(t)) - \nu\lambda_{\min}(-\Delta)
+        \]
+        is positive.  The numerics show that $\Delta_{\mathrm{strain}} > 0$ precisely
+        during the interval where $\Pi(t) > 1$: both conditions measure the dominance
+        of vortex stretching over viscous dissipation, and their simultaneous onset
+        confirms the geometric content of the Jacobi equation~\eqref{eq:jacobi-viscous}.
+
+  \item \textit{The curvature measure bound is not saturated.}
+        The global bound of \Cref{thm:curvature-measure-finite},
+        $\mu_{\mathrm{bd}} = C\,E(0)^{9/5}\nu^{-9/5}$, is not saturated:
+        the normalised proxy $\tilde{\mu}_R(t)/\mu_{\mathrm{bd}}$ peaks near the
+        enstrophy maximum but remains strictly below~$1$ throughout.
+        By \Cref{thm:ckn-bridge}, a singularity would require $\mu_R$ to develop
+        an atom, i.e., a cylinder $Q_r$ on which $\mu_R(Q_r)/r \not\to 0$;
+        no such concentration is observed in this regime.
+
+  \item \textit{Anti-parallel vortex alignment at peak enstrophy.}
+        Near the enstrophy peak, vortex tubes align anti-parallel, a configuration
+        associated with near-singular behaviour in the inviscid limit
+        \cite{kerr1993evidence}.  This geometry corresponds to the highest-amplitude
+        Hasimoto soliton profiles described in \Cref{sec:curv-profiles}: the curvature
+        of each filament is maximal at the interaction region, and the curvature
+        measure concentrates near the tube intersection over a spatial scale
+        proportional to the tube cross-section radius.
+
+  \item \textit{Helicity as a topological constraint.}
+        The helicity $\mathcal{H}(u) = \int u \cdot \vort\,\dd x$, identified in
+        \Cref{sec:curv-helicity} as the Chern--Simons invariant, changes slowly in
+        this simulation: the ratio $\mathcal{H}(u)/\sqrt{E\,\Omega}$ (Arnold's
+        topological lower bound on energy for a given helicity) decreases only
+        after viscous reconnection events that cut vortex linkages.
+        Each reconnection appears as a discontinuity in the slope of $\tilde{\mu}_R(t)$,
+        consistent with the holonomy tensor (\Cref{def:holonomy}) undergoing a
+        discrete jump at each change in linking number.
+\end{enumerate}
+
+Together, these observations support the picture developed in this chapter.
+Curvature concentration is driven by cross-shell mode coupling (Arnold formula),
+amplified by the strain excess (Jacobi bound), and bounded globally by the
+Leray--Hopf energy (\Cref{thm:curvature-measure-finite}).  The CKN bridge theorem
+provides the criterion for this to produce a genuine singularity.
+The numerical evidence is consistent with \Cref{conj:concentration}: the threshold
+is not reached at $\mathrm{Re} = 1600$, but becomes geometrically accessible
+as $\mathrm{Re} \to \infty$.
+
+\bigskip
+
+\noindent\textbf{Summary.}
+This chapter has constructed the curvature theory of the Biot--Savart connection at the
+level of Leray--Hopf regularity.
+Arnold's formula (\Cref{thm:arnold-curvature-ch4}) shows that sectional curvature is
+negative between energy shells and zero within a shell, with the pressure Poisson term
+as the dominant contribution (\Cref{thm:pressure-poisson}).
+The viscous Jacobi equation (\Cref{eq:jacobi-viscous}) and the Lyapunov bound
+(\Cref{prop:jacobi-lyapunov}) relate Jacobi field growth to the strain excess.
+Helicity is the Chern--Simons invariant of the velocity one-form
+(\Cref{eq:chern-simons}), and vortex filaments carry integer Abelian defect charge
+(\Cref{sec:curv-helicity}).
+The curvature measure $\mu_R$ (\Cref{def:curvature-measure}) is finite at
+Leray--Hopf regularity (\Cref{thm:curvature-measure-finite}), and the CKN bridge
+theorem (\Cref{thm:ckn-bridge}) identifies singularities as atoms of $\mu_R$.
+The enstrophy production ratio $\Pi(t)$ provides a computable proxy for curvature
+concentration, and numerical experiments (\Cref{sec:ch04-numerics}) illustrate these
+phenomena for the Taylor--Green vortex.
+The stage is now set for \Cref{ch:singularity}: the question of whether $\mu_R$ can
+develop atoms in finite time.

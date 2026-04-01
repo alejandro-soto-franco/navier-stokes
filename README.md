@@ -8,7 +8,7 @@
 [![Chapter 1](https://img.shields.io/badge/Ch_1-Foundations_%E2%9C%93-brightgreen)](#chapter-status)
 [![Chapter 2](https://img.shields.io/badge/Ch_2-Leray--Hopf_%E2%9C%93-brightgreen)](#chapter-status)
 [![Chapter 3](https://img.shields.io/badge/Ch_3-Biot--Savart_%E2%9C%93-brightgreen)](#chapter-status)
-[![Chapter 4](https://img.shields.io/badge/Ch_4-Curvature-yellow)](#chapter-status)
+[![Chapter 4](https://img.shields.io/badge/Ch_4-Curvature_%E2%9C%93-brightgreen)](#chapter-status)
 [![Chapter 5](https://img.shields.io/badge/Ch_5-Topology-yellow)](#chapter-status)
 [![Chapter 6](https://img.shields.io/badge/Ch_6-Obstruction-yellow)](#chapter-status)
 [![Chapter 7](https://img.shields.io/badge/Ch_7-Singularity-yellow)](#chapter-status)
@@ -41,7 +41,7 @@ The tracks are reconciled at chapter boundaries via sync documents in `sync/`.
 | 1 | Functional Analytic Foundations | 17 defs, 10 proved, 4 sorry | Complete | 8/8 pass | [Passed](sync/ch01-foundations.md) |
 | 2 | Leray-Hopf Weak Solutions | 8 defs, 1 proved, 1 sorry | Complete | 13/13 pass | [Passed](sync/ch02-leray-hopf.md) |
 | 3 | The Biot-Savart Connection | Stubs | Complete (64pp) | 23/23 pass | -- |
-| 4 | Curvature of the Flow | -- | In progress | Planned | -- |
+| 4 | Curvature of the Flow | -- | Draft complete | 14/14 pass | -- |
 | 5 | Topological Constraints | Stubs | In progress | Planned | -- |
 | 6 | The Obstruction Theorem | Stubs | In progress | Planned | -- |
 | 7 | Singularity Analysis | -- | In progress | Planned | -- |
@@ -71,6 +71,9 @@ The tracks are reconciled at chapter boundaries via sync documents in `sync/`.
     ch01_helmholtz_verify.py
     ch02_leray_hopf_verify.py
     ch03_biot_savart_verify.py
+    ch04_curvature_verify.py
+    ch04_figures.py         ch04 figure generator (light + dark variants)
+    plot_style.py           shared matplotlib style (LaTeX, transparent, dark mode)
   sync/                   Cross-track reconciliation documents
   numerics/               Numerical solvers (planned)
 ```
@@ -132,9 +135,21 @@ python sympy/ch01_sobolev_exponents.py      #  6 checks
 python sympy/ch01_helmholtz_verify.py        #  2 checks
 python sympy/ch02_leray_hopf_verify.py       # 13 checks
 python sympy/ch03_biot_savart_verify.py      # 23 checks
+python sympy/ch04_curvature_verify.py        # 14 checks
 ```
 
-All scripts use assert-based checks and print `[PASS]` for each verified identity. The ch03 script covers: Leray projector properties (5 test fields), Koszul formula sign consistency, Holder/Sobolev product exponents (H^1 into L^6 in R^3, product into L^{3/2}), Calderon-Zygmund kernel hypotheses, Biot-Savart HLS exponents (alpha_HLS=1, giving 1/q = 1/p - 1/3, p < 3), and stretching tensor trace identities.
+All scripts use assert-based checks and print `[PASS]` for each verified identity.
+The ch03 script covers: Leray projector properties (5 test fields), Koszul formula sign
+consistency, Holder/Sobolev product exponents (H^1 into L^6 in R^3, product into L^{3/2}),
+Calderon-Zygmund kernel hypotheses, Biot-Savart HLS exponents (alpha_HLS=1, giving
+1/q = 1/p - 1/3, p < 3), and stretching tensor trace identities.
+
+The ch04 script covers three parts: (I) pressure Poisson connection -- velocity gradient
+decomposition A=D+W, vorticity norm |omega|^2 = |A|^2 - tr(A^2), and Delta p = -tr(A^2)
+verified on four ABC fields; (II) Arnold sectional curvature -- explicit K values for
+mode pairs (1,0,0)/(0,1,0), (1,0,0)/(1,1,0), (1,1,0)/(2,1,1), same-shell degeneracy
+K=0; (III) Holder exponent chain -- 6x2->3/2, 6x3/2->6/5 as exact rationals, and the
+exponent consistency (3/2)x(6/5) = 9/5 appearing in the curvature measure bound.
 
 ## Compilation
 
@@ -186,6 +201,21 @@ recast as a forced parallel-transport equation along the flow. Curvature is comp
 via the abstract Riemann tensor and the first Bianchi identity is verified algebraically.
 Calderon-Zygmund and Hardy-Littlewood-Sobolev estimates close the Leray-Hopf regularity
 loop (BS: L^p to L^q with 1/q = 1/p - 1/3, 1 < p < 3).
+
+**Chapter 4** develops the curvature theory at Leray-Hopf regularity. Arnold's formula
+gives sectional curvature K(e_k, e_m) = -(|k|^2-|m|^2)^2/(4|k|^2|m|^2|k x m|^2) < 0
+between shells and K=0 within a shell, with the pressure Poisson term -tr(A^2) as the
+dominant contribution. The velocity gradient decomposition A=D+W identifies the pressure
+Poisson identity Delta p = |omega|^2/2 - |D|^2_F = -tr(A^2). The viscous Jacobi equation
+is derived by linearising NS around a one-parameter family of solutions; the Lyapunov bound
+relates Jacobi field growth to the strain excess Delta_strain = lambda_1(D) - nu*lambda_min(-Delta).
+Helicity is identified as the Chern-Simons invariant of the velocity one-form; the holonomy
+tensor of the Biot-Savart connection has Abelian part equal to the circulation, and vortex
+filaments carry integer defect charge. The curvature measure mu_R = |R|^{6/5} dx dt is
+finite at Leray-Hopf regularity (bound C*E(0)^{9/5}/nu^{9/5}), and the CKN bridge theorem
+(proved in full) shows (x_0,t_0) is regular iff mu_R(Q_r)/r -> 0, placing singularities
+exactly at atoms of mu_R. Numerical experiments (Taylor-Green, Re=1600, 512^3) illustrate
+all five geometric phenomena with transparent figures in both light and dark mode.
 
 ## Citation
 

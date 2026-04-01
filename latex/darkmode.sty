@@ -60,6 +60,9 @@
 \AtBeginDocument{%
   \pagecolor{darkbg}%
   \color{darkfg}%
+  % Redefine \normalcolor so that caption package, booktabs rules, and
+  % any other code that calls \normalcolor to "reset" stays in darkfg.
+  \renewcommand{\normalcolor}{\color{darkfg}}%
   \pagestyle{darkheadings}%
   \hypersetup{%
     colorlinks=true,
