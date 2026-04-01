@@ -2,54 +2,45 @@
 
 All notable changes to this project are documented here.
 
-## [0.2.9] - 2026-04-01
+## [0.3.0] - 2026-04-01
 
-### Lean: Sorry Reduction (6 -> 5, Poincare consolidated)
+### Lean: Sorry Reduction Campaign (10 -> 5)
 
-Merged `poincare_inequality` and `poincare_constant_bound_convex` (2 sorries) into a
-single `poincare_inequality_convex` theorem (1 sorry) that states the Payne-Weinberger
-bound directly: for convex bounded Omega, every u in H^1_0 satisfies
-`||u||^2_{L^2} <= (diam Omega)^2 / n * ||grad u||^2_{L^2}`.
+Halved the sorry count through three changes:
 
-Convexity implies connectedness via `Convex.isConnected`, eliminating the separate
-`IsConnected` hypothesis. The proof avoids Rellich-Kondrachov compactness entirely,
-using the 1D FTC along line segments + Cauchy-Schwarz + Fubini for the convex case.
+1. **HelmholtzProjection.lean is now fully sorry-free.** The `l2sigmaSubmodule_isSeqClosed`
+   norm bridge (converting `‖f_k - f‖_{Lp 2} → 0` to `∫ ‖⇑f_k - ⇑f‖² dμ → 0`) is
+   proved via the L2 inner product identity:
 
-Removed legacy `import Mathlib.Analysis.Convex.PathConnected` (no longer needed after
-restructuring). Updated LaTeX concordance.
+   ```
+   ‖g‖² = ⟪g, g⟫_ℝ          (real_inner_self_eq_norm_sq)
+        = ∫ ⟪g x, g x⟫_ℝ ∂μ  (L2.inner_def)
+        = ∫ ‖g x‖² ∂μ         (real_inner_self_eq_norm_sq pointwise)
+   ```
+
+   Combined with `Lp.coeFn_sub` for `⇑(f_k - f) =ᵐ ⇑f_k - ⇑f` and `rpow_natCast`
+   for the N-power/R-power bridge. Added `import Mathlib.Analysis.SpecialFunctions.Pow.Real`.
+
+2. **DivFreeSpace.lean legacy stubs removed.** Deleted `GradientFields`,
+   `helmholtz_decomposition` (sorry), `lerayProjector`, `lerayProjector_mem_l2sigma`,
+   `lerayProjector_memLp`, `lerayProjector_idempotent` (sorry), and
+   `lerayProjector_selfAdjoint` (sorry). These function-level stubs required de Rham
+   theory and were unused by any downstream file. The sorry-free Lp-level equivalents in
+   `HelmholtzProjection.lean` are authoritative. DivFreeSpace.lean is now sorry-free.
+
+3. **Poincare inequality consolidated.** Merged `poincare_inequality` and
+   `poincare_constant_bound_convex` (2 sorries) into a single
+   `poincare_inequality_convex` (1 sorry) with the explicit Payne-Weinberger bound:
+   for convex bounded Omega, `||u||^2_{L^2} <= (diam Omega)^2 / n * ||grad u||^2_{L^2}`.
+   Convexity implies connectedness via `Convex.isConnected`, eliminating the separate
+   `IsConnected` hypothesis.
 
 **Sorry count: 5** (SobolevEmbedding 2, RellichKondrachov 1, Poincare 1, Existence 1).
+All 4 Foundations sorries are in modules NOT imported by the Existence theorem's
+dependency chain, so the main result depends only on sorry-free files.
 
-## [0.2.8] - 2026-04-01
-
-### Lean: Sorry Reduction (10 -> 9, norm bridge proved)
-
-**`l2sigmaSubmodule_isSeqClosed` is now sorry-free.**
-
-The ENNReal norm bridge converting `‖f_k - f‖_{Lp 2} → 0` to `∫ ‖⇑f_k - ⇑f‖² dμ → 0`
-is proved via the L2 inner product identity:
-
-```
-‖g‖² = ⟪g, g⟫_ℝ          (real_inner_self_eq_norm_sq)
-     = ∫ ⟪g x, g x⟫_ℝ ∂μ  (L2.inner_def)
-     = ∫ ‖g x‖² ∂μ         (real_inner_self_eq_norm_sq pointwise)
-```
-
-Combined with `Lp.coeFn_sub` for the a.e. equality `⇑(f_k - f) =ᵐ ⇑f_k - ⇑f`,
-and `rpow_natCast` to bridge `ℕ`-power and `ℝ`-power.
-
-**HelmholtzProjection.lean is now fully sorry-free:** all 8 definitions and theorems
-(`l2sigmaSubmodule`, closedness, `lerayProjectorLp`, idempotence, self-adjointness,
-`helmholtz_l2_decomposition`) compile without sorry.
-
-Added `import Mathlib.Analysis.SpecialFunctions.Pow.Real` for `rpow_natCast`.
-
-### Documentation: DivFreeSpace.lean Legacy Stubs
-
-Updated docstrings for the 3 remaining function-level sorries (`helmholtz_decomposition`,
-`lerayProjector_idempotent`, `lerayProjector_selfAdjoint`) to clearly mark them as
-legacy stubs requiring de Rham theory, with pointers to the sorry-free Lp-level versions
-in `HelmholtzProjection.lean`.
+**11 proved theorems** (up from 9): added `l2sigmaSubmodule_isSeqClosed` and
+`l2sigmaSubmodule_isClosed` in HelmholtzProjection.lean.
 
 ## [0.2.7] - 2026-04-01
 
