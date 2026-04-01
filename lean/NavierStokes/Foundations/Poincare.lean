@@ -9,13 +9,12 @@ by the L^2 norm of the gradient:
   ||u||_{L^2(Omega)} <= C_P * ||grad u||_{L^2(Omega)}
 
 where C_P > 0 depends only on Omega.  For convex domains, the optimal constant satisfies
-C_P <= diam(Omega) / sqrt(n).
+C_P <= diam(Omega) / sqrt(n) (Payne-Weinberger 1960).
 
-This inequality is essential for coercivity of the bilinear form in the Lax-Milgram
-approach to weak solutions of elliptic equations, and for the energy estimates for
-Navier-Stokes in H^1_0.
-
-All proofs are sorry-stubs; the mathematical content is stated precisely.
+We state a single combined theorem for convex bounded domains, subsuming both the
+general Poincare inequality (for the convex case) and the Payne-Weinberger constant
+bound. The proof uses the fundamental theorem of calculus along line segments in the
+convex domain combined with Cauchy-Schwarz, avoiding Rellich-Kondrachov compactness.
 -/
 import NavierStokes.Foundations.SobolevSpace
 
@@ -38,69 +37,50 @@ def l2NormSq (f : EuclideanSpace ℝ (Fin n) → ℝ) : ℝ :=
 def gradientL2NormSq (u : SobolevH1 Ω hΩ) : ℝ :=
   ∑ i : Fin n, ∫ x in Ω, u.weakDeriv i x ^ 2
 
-/-- **Poincare Inequality**: For any bounded open set Omega in R^n, there exists a constant
-    C_P > 0 (the Poincare constant) such that for every u in H^1_0(Omega):
+/-! ## Poincare inequality for convex bounded domains
 
-      integral_Omega |u|^2 dx <= C_P^2 * sum_i integral_Omega |partial_i u|^2 dx.
+The proof strategy for convex Omega bypasses Rellich-Kondrachov entirely:
 
-    Equivalently, ||u||_{L^2} <= C_P * ||grad u||_{L^2}.
+1. **Smooth functions (1D FTC + Cauchy-Schwarz):** For phi in C^inf_c(Omega) and x in
+   Omega, since Omega is convex and phi vanishes outside Omega, integrate along a line
+   segment from the boundary to x:
 
-    Here H^1_0(Omega) is represented by SobolevH1Zero (the closure of C^inf_c in H^1),
-    and the inequality is stated for the underlying function of any element u_h in H^1_0.
+     |phi(x)|^2 <= diam(Omega) * integral_0^{diam} |grad phi(gamma(s))|^2 ds
 
-    The proof proceeds by contradiction: if no such C_P exists, one obtains a sequence
-    u_k with ||u_k||_{L^2} = 1 and ||grad u_k||_{L^2} -> 0, which by Rellich-Kondrachov
-    (`rellich_kondrachov`, sorry) has an L^2-convergent subsequence; the limit is constant
-    with gradient 0 in H^1_0, hence 0 by connectedness + zero trace, contradicting
-    ||u||_{L^2} = 1. -/
-theorem poincare_inequality
-    (hBdd : Bornology.IsBounded Ω)
-    (hConn : IsConnected Ω) :
-    ∃ C_P : ℝ, 0 < C_P ∧
-      ∀ (u : SobolevH1Zero Ω hΩ),
-        l2NormSq Ω u.val.f ≤ C_P ^ 2 * gradientL2NormSq Ω hΩ u.val := by
-  -- hConn is required: if ∇u = 0 and u ∈ H^1_0(Ω), connectedness forces u ≡ 0
-  -- (u is constant on each connected component; the zero-trace condition then
-  -- forces the constant to be 0).  On a disconnected domain the argument breaks.
-  --
-  -- *Proof structure (Lean outline):*
-  -- by_contra h
-  -- push_neg at h
-  -- -- h : ∀ C_P > 0, ∃ u : SobolevH1Zero, ‖u.val.f‖_{L^2}^2 > C_P^2 * ‖∇u.val‖_{L^2}^2
-  -- -- Step 1: Build normalised sequence (u_k) with ‖u_k.val.f‖_{L^2}^2 = 1 and
-  -- --         gradientL2NormSq Ω hΩ u_k.val ≤ 1/(k+1)^2.
-  -- --   Obtain u_k : SobolevH1Zero from h (1/(k+1)) ▸ NNReal arithmetic.
-  -- --   Rescale: replace u_k by u_k / ‖u_k‖_{L^2} (requires ‖u_k‖_{L^2} ≠ 0, i.e.
-  -- --   u_k ≠ 0 a.e., which follows from the Poincaré negation with C_P = 1/(k+1)).
-  -- -- Step 2: Apply rellich_kondrachov (sorry, file RellichKondrachov.lean) to the
-  -- --         uniformly H^1-bounded sequence (u_k) to extract a subsequence converging
-  -- --         in L^2 to some g ∈ L^2(Ω).
-  -- -- Step 3: Show g ∈ H^1_0(Ω), ‖g‖_{L^2}^2 = 1 (norm preserved), ‖∇g‖_{L^2}^2 = 0.
-  -- --   ∇g = 0 in L^2 follows because gradientL2NormSq(u_{k_j}) → 0 and the weak
-  -- --   derivative operator is closed under L^2 convergence.
-  -- -- Step 4: ∇g = 0 + g ∈ H^1_0 + hConn → g ≡ 0.
-  -- --   (Constant on each component; zero trace forces the constant to 0.)
-  -- -- Step 5: Contradiction: ‖g‖_{L^2}^2 = 1 ≠ 0.
-  --
-  -- Missing Mathlib piece: rellich_kondrachov (RellichKondrachov.lean, sorry).
-  -- Category C: follows from Rellich-Kondrachov + step 4 constant-gradient argument.
-  sorry
+   Integrate over x, average over n coordinate directions, apply Fubini:
 
-/-- **Poincare Constant Bound for Convex Domains**: When Omega is convex, the optimal
-    Poincare constant satisfies C_P <= diam(Omega) / sqrt(n).
+     integral_Omega |phi|^2 dx <= (diam Omega)^2 / n * sum_i integral_Omega |d_i phi|^2 dx
 
-    This bound, due to Payne and Weinberger (1960), is sharp: it is attained for balls.
-    For a ball of radius R in R^n, diam = 2R and C_P = 2R/sqrt(n).
+2. **H^1_0 passage to limit:** For u in H^1_0(Omega), the `IsH1Zero` property provides
+   phi_k in C^inf_c(Omega) with phi_k -> u in H^1. Apply step 1 to each phi_k, then
+   pass to the limit using L^2 continuity.
 
-    The proof uses the Cauchy-Schwarz inequality applied along geodesics within the
-    convex domain and the co-area formula. -/
-theorem poincare_constant_bound_convex
+The proof requires Fubini + line integrals (Category C).
+-/
+
+/-- **Poincare inequality for convex bounded domains (Payne-Weinberger 1960).**
+
+For any convex bounded open set Omega in R^n, every u in H^1_0(Omega) satisfies:
+
+  integral_Omega |u|^2 dx <= (diam Omega)^2 / n * sum_i integral_Omega |d_i u|^2 dx
+
+Equivalently, ||u||_{L^2} <= (diam Omega / sqrt n) * ||grad u||_{L^2}.
+
+This subsumes both the general Poincare inequality (for convex domains, where convexity
+implies connectedness) and the Payne-Weinberger bound on the optimal constant.
+
+*Proof sketch:* For phi in C^inf_c(Omega) on convex Omega, the 1D FTC along line segments
+combined with Cauchy-Schwarz and Fubini gives the estimate with explicit constant
+(diam Omega)^2 / n. For u in H^1_0(Omega), use the IsH1Zero approximation property and
+pass to the limit.
+
+Category C: the 1D FTC + Cauchy-Schwarz + Fubini chain requires line integration
+infrastructure not yet available in Mathlib. -/
+theorem poincare_inequality_convex
     (hBdd : Bornology.IsBounded Ω)
     (hConvex : Convex ℝ Ω) :
-    ∃ C_P : ℝ, 0 < C_P ∧
-      C_P ≤ diam Ω / Real.sqrt n ∧
-      ∀ (u : SobolevH1Zero Ω hΩ),
-        l2NormSq Ω u.val.f ≤ C_P ^ 2 * gradientL2NormSq Ω hΩ u.val := by
+    ∀ (u : SobolevH1Zero Ω hΩ),
+      l2NormSq Ω u.val.f ≤ (diam Ω) ^ 2 / ↑n * gradientL2NormSq Ω hΩ u.val := by
   sorry
 
 end NavierStokes

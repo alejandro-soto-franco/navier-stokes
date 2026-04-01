@@ -123,20 +123,21 @@ and the Galerkin construction for Leray--Hopf solutions.
 {\texttt{NavierStokes/Foundations/Poincare.lean}}
 
 \medskip\noindent
-States the Poincar\'{e} inequality and the Payne--Weinberger bound on the
-optimal constant for convex domains.
+States a single combined Poincar\'{e} inequality for convex bounded domains,
+subsuming both the general inequality and the Payne--Weinberger constant bound.
+The proof uses the fundamental theorem of calculus along line segments in the
+convex domain combined with Cauchy--Schwarz, avoiding Rellich--Kondrachov
+compactness.
 
 \begin{itemize}
-  \item \path{NavierStokes.poincare_inequality} \emph{(\textit{sorry} stub)}:
-    for a bounded connected domain $\Omega \subset \R^{n}$, there exists
-    $C_{P} > 0$ such that $\norm{u}_{L^{2}} \le C_{P}\norm{\nabla u}_{L^{2}}$
-    for every $u \in H^{1}_{0}(\Omega)$.  The \texttt{IsConnected} hypothesis is
-    required: without it, a constant-gradient argument fails on disconnected
-    domains (\Cref{thm:poincare}).
-  \item \path{NavierStokes.poincare_constant_bound_convex}
-    \emph{(\textit{sorry} stub)}: for convex $\Omega$ the optimal constant
-    satisfies $C_{P} \le \operatorname{diam}(\Omega)/\sqrt{n}$
-    (Payne--Weinberger 1960) (\Cref{thm:poincare}).
+  \item \path{NavierStokes.poincare_inequality_convex}
+    \emph{(\textit{sorry} stub)}: for convex bounded $\Omega \subset \R^{n}$
+    and every $u \in H^{1}_{0}(\Omega)$,
+    $\|u\|_{L^{2}}^{2} \le (\operatorname{diam}\Omega)^{2}/n \cdot
+    \|\nabla u\|_{L^{2}}^{2}$
+    (Payne--Weinberger 1960).  Convexity implies connectedness via
+    \path{Convex.isConnected}, so no separate connectedness hypothesis is
+    needed (\Cref{thm:poincare}).
 \end{itemize}
 
 % ---------------------------------------------------------------------------

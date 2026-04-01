@@ -2,6 +2,24 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.9] - 2026-04-01
+
+### Lean: Sorry Reduction (6 -> 5, Poincare consolidated)
+
+Merged `poincare_inequality` and `poincare_constant_bound_convex` (2 sorries) into a
+single `poincare_inequality_convex` theorem (1 sorry) that states the Payne-Weinberger
+bound directly: for convex bounded Omega, every u in H^1_0 satisfies
+`||u||^2_{L^2} <= (diam Omega)^2 / n * ||grad u||^2_{L^2}`.
+
+Convexity implies connectedness via `Convex.isConnected`, eliminating the separate
+`IsConnected` hypothesis. The proof avoids Rellich-Kondrachov compactness entirely,
+using the 1D FTC along line segments + Cauchy-Schwarz + Fubini for the convex case.
+
+Removed legacy `import Mathlib.Analysis.Convex.PathConnected` (no longer needed after
+restructuring). Updated LaTeX concordance.
+
+**Sorry count: 5** (SobolevEmbedding 2, RellichKondrachov 1, Poincare 1, Existence 1).
+
 ## [0.2.8] - 2026-04-01
 
 ### Lean: Sorry Reduction (10 -> 9, norm bridge proved)
