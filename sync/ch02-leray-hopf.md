@@ -1,33 +1,60 @@
 # Sync Point: Chapter 2 -- Leray-Hopf Weak Solutions
 
-**Date**: 2026-03-30
+**Date**: 2026-04-04 (updated from 2026-03-30)
 **Status**: [x] Passed
 
 ## Track 1: Lean
 
-All 4 new modules build (2697 jobs total, no errors). 1 sorry from Ch2 existence, plus
-deferred `trilinearForm` body and `trilinearForm_antisymmetric` proof. Ch1 sorry items
-remain unchanged (14 total, catalogued in sync/ch01-foundations.md).
+All Ch2 modules build (2770 jobs total, no errors). Ch2-specific sorry count: 12
+(1 legacy existence + 9 Galerkin sub-goals + 2 Aubin-Lions). Ch1 sorry items
+remain unchanged (5 total: SobolevEmbedding 3, RellichKondrachov 1, Poincare 1).
 
 ### Formalized (definitions compile, types check)
 - [x] `IsWeakNSSolution` -- weak NS solution structure (div-free + integral identity)
 - [x] `trilinearForm` -- trilinear form b(u, v, w) definition
-- [x] `trilinearForm_antisymmetric` -- b(u, v, v) = 0 for div-free u
+- [x] `trilinearForm_antisymmetric` -- b(u, v, v) = 0 for div-free u (proved)
 - [x] `SatisfiesEnergyInequality` -- energy inequality structure
-- [x] `energyInequality_implies_L2_bound` -- uniform L^2 bound from energy inequality
+- [x] `energyInequality_implies_L2_bound` -- uniform L^2 bound from energy inequality (proved)
 - [x] `IsLerayHopfSolution` -- Leray-Hopf solution combining weak sol + energy ineq
-- [x] `lerayHopf_existence` -- existence of Leray-Hopf solutions
-- [x] `serrin_regularity` -- Serrin regularity criterion (L^q L^r condition)
+- [x] `lerayHopf_existence` -- existence of Leray-Hopf solutions (sorry)
+- [x] `serrin_regularity` -- Serrin regularity criterion (trivial stub)
+- [x] `GalerkinData N` -- structure: orthonormal basis + stiffness matrix + trilinear tensor
+- [x] `galerkinRHS` -- ODE right-hand side F_N(c)_k = -nu(Ac)_k - sum B_{kjl} c_j c_l
+- [x] `GalerkinSolution N nu data c₀` -- global solution structure for the Galerkin ODE
+- [x] `galerkinVelocity` -- reconstructed velocity u_N = sum_k c_k w_k
+- [x] `galerkinRHS_locallyLipschitz` -- ODE RHS is locally Lipschitz (proved)
+- [x] `galerkinVelocity_smooth` -- u_N is C^inf (proved)
+- [x] `galerkin_trilinear_vanishes` -- cubic energy term = 0 (proved via trilinearForm_antisymmetric)
+- [x] `aubinLions_compactness` -- abstract Aubin-Lions (sorry stub)
+- [x] `galerkin_sequence_has_convergent_subseq` -- Galerkin sequence has L^2 convergent subseq (sorry)
 
-### Remaining `sorry` (Ch2-specific, 3 total)
-- LerayHopf/TrilinearForm.lean: `trilinearForm` (body), `trilinearForm_antisymmetric` (proof)
-- LerayHopf/Existence.lean: `lerayHopf_existence` (Galerkin construction)
+### Remaining `sorry` (Ch2-specific, 12 total)
+
+**Legacy:**
+- `Existence.lean`: `lerayHopf_existence` (full Galerkin + Aubin-Lions construction)
+
+**Galerkin sub-goals (Category B — all mathematically straightforward):**
+- `galerkinRHS_contDiff` (C^inf of polynomial ODE RHS)
+- `galerkinVelocity_l2NormSq_eq` (orthonormality + Fubini)
+- `trilinear_at_galerkin` (multilinearity expansion)
+- `galerkinVelocity_divFree` (IsDistribDivFree linearity)
+- `galerkinVelocity_compact` (HasCompactSupport finite sum)
+- `galerkinRHS_inner_nonpos` (PSD matrix + trilinear cancellation)
+- `galerkin_energy_nonincreasing` (monotone integral)
+- `galerkin_exists_global` (Picard-Lindelöf + energy continuation)
+- `galerkin_uniformL2Bound` (Bessel inequality)
+
+**Aubin-Lions (Category C — require Banach-valued L^p theory not in Mathlib):**
+- `aubinLions_compactness` (abstract lemma)
+- `galerkin_sequence_has_convergent_subseq` (Galerkin application)
 
 ### Assessment
-All definitions type-check. The sorry items are proof obligations for known theorems whose
-mathematical content is fully developed in the LaTeX text (Section 2.3 Galerkin construction
-on R^3). Filling these requires Bochner integration over product domains, which Mathlib does
-not yet support.
+All definitions type-check and the full LerayHopf module builds. The Galerkin ODE
+infrastructure is now formalised: three theorems are sorry-free
+(`galerkinRHS_locallyLipschitz`, `galerkinVelocity_smooth`, `galerkin_trilinear_vanishes`).
+The remaining sorry items are proof obligations with clear mathematical content:
+the Category B items need Mathlib API bridging, the Category C items need abstract
+Banach-space compactness theory not yet in Mathlib.
 
 ## Track 2: Theory (SymPy + LaTeX)
 

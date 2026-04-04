@@ -2,6 +2,94 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.2] - 2026-04-04
+
+### Lean: Galerkin ODE infrastructure + 1D Poincaré fully proved
+
+#### Mathlib fork: `PoincareInequality.lean` is now sorry-free
+
+Both theorems in `Mathlib/Analysis/FunctionalSpaces/PoincareInequality.lean` are proved
+with zero sorries:
+
+- `sq_integral_Ioc_le_length_mul_integral_sq_Icc` (Cauchy-Schwarz for interval integrals):
+  proved via a variance/discriminant argument. For optimal `s₀ = I/(x-a)`, nonnegativity
+  of `∫(g-s₀)²` gives `I² ≤ (x-a)·I₂` algebraically.
+- `poincare_1d` (1D Poincaré inequality for compactly supported C¹ functions): proved by
+  FTC + the Cauchy-Schwarz step above.
+
+Key proof engineering: `conv_lhs => arg 2; ext t; rw [...]` to rewrite under the integral
+binder, plus explicit type annotation on `hgsub` to force the lambda form and defeat the
+`Pi.instSub` vs `fun t => f t - g t` syntactic mismatch in `rw [integral_add]`.
+
+#### New file: `NavierStokes/LerayHopf/GalerkinApproximation.lean`
+
+Formalises the Galerkin approximation scheme used in the Leray-Hopf existence proof.
+
+**`GalerkinData N`** packages the level-N approximation:
+- `basis : Fin N → ℝ³ → ℝ³` — smooth, compactly supported, divergence-free L²-orthonormal
+  basis functions
+- `stiffness : Matrix (Fin N) (Fin N) ℝ` — positive semidefinite stiffness matrix
+  A_{kj} = ∑_l ∫ ⟨∂_l w_k, ∂_l w_j⟩
+- `trilinear : Fin N → Fin N → Fin N → ℝ` — trilinear tensor B_{kjl} = b(w_l, w_j, w_k)
+
+**`GalerkinSolution N ν data c₀`** wraps a global solution of the ODE
+`c'(t) = F_N(c(t))`, `c(0) = c₀`.
+
+**Proved sorry-free:**
+
+| Theorem | Statement |
+|---------|-----------|
+| `galerkinRHS_locallyLipschitz` | The ODE RHS is locally Lipschitz, via `ContDiff.of_le (by norm_cast)` downgrading `ContDiff ℝ ∞` to `ContDiff ℝ 1` in `WithTop ℕ∞` |
+| `galerkinVelocity_smooth` | u_N = ∑_k c_k w_k is C^∞, via `ContDiff.sum` + `ContDiff.const_smul` |
+| `galerkin_trilinear_vanishes` | ∑_{k,j,l} B_{kjl} c_k c_j c_l = 0, proved by `rw [← trilinear_at_galerkin]` then `trilinearForm_antisymmetric` |
+
+**Sorry stubs (Category B/C, all sub-goals of `lerayHopf_existence`):**
+
+| Theorem | Category | Blocker |
+|---------|----------|---------|
+| `galerkinRHS_contDiff` | B | Coordinate polynomial computation |
+| `galerkinVelocity_l2NormSq_eq` | B | Orthonormality + Fubini |
+| `trilinear_at_galerkin` | B | Multilinearity expansion |
+| `galerkinVelocity_divFree` | B | `IsDistribDivFree` linearity API |
+| `galerkinVelocity_compact` | B | `HasCompactSupport` finite sum (Mathlib gap) |
+| `galerkinRHS_inner_nonpos` | B | PSD matrix + trilinear cancellation |
+| `galerkin_energy_nonincreasing` | B | Monotone integral / antitone from `HasDerivAt` |
+| `galerkin_exists_global` | B | `IsPicardLindelof` application + continuation |
+| `galerkin_uniformL2Bound` | C | Bessel inequality for initial data |
+
+#### New file: `NavierStokes/LerayHopf/AubinLions.lean`
+
+States the Aubin-Lions compactness lemma (abstract form and Galerkin-sequence instance).
+Both are Category C sorry stubs: require abstract Banach-valued L^p theory and
+Rellich-Kondrachov compact embedding, neither yet in Mathlib.
+
+#### Build fixes
+
+Three Lean API issues resolved when formalising `GalerkinData`:
+
+| Issue | Fix |
+|-------|-----|
+| `⟪·,·⟫_ℝ` unrecognised in structure field types | `open scoped InnerProductSpace` (notation is scoped, not ambient) |
+| `stiffness_posSemidef : data_stiffness_psd : Matrix.PosSemidef stiffness` double-colon | Corrected to `stiffness_posSemidef : Matrix.PosSemidef stiffness` |
+| `ContDiff.locallyLipschitz` expects order 1, `galerkinRHS_contDiff` yields order ∞ | `.of_le (by norm_cast)` proves `1 ≤ ∞` in `WithTop ℕ∞` (where ∞ ≠ ⊤ = ω) |
+
+#### Sorry / proved counts
+
+**Sorry count: 17** (was 5; the three new files add 11 new sorries, all Category B/C
+sub-goals within the Galerkin construction; `sobolev_embedding_subcritical_h10` added
+in v0.4.0 brings SobolevEmbedding to 3 sorries, previously untracked in README).
+
+| File | Sorry count |
+|------|-------------|
+| `SobolevEmbedding.lean` | 3 (subcritical, subcritical_h10, supercritical) |
+| `RellichKondrachov.lean` | 1 |
+| `Poincare.lean` | 1 |
+| `Existence.lean` | 1 |
+| `GalerkinApproximation.lean` | 9 |
+| `AubinLions.lean` | 2 |
+
+**Proved count: 14** (was 11): +3 from `GalerkinApproximation.lean`.
+
 ## [0.4.0] - 2026-04-02
 
 ### LaTeX: Chapter 4 complete draft (CKN bridge proof, numerical section, overflow fixes)

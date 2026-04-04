@@ -1,4 +1,6 @@
 import NavierStokes.LerayHopf.WeakNSSolution
 import NavierStokes.LerayHopf.TrilinearForm
 import NavierStokes.LerayHopf.EnergyInequality
+import NavierStokes.LerayHopf.GalerkinApproximation
+import NavierStokes.LerayHopf.AubinLions
 import NavierStokes.LerayHopf.Existence

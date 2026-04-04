@@ -225,6 +225,71 @@ theorem l2sigma_closed_under_l2_convergence
   rw [h_seq_eq] at h_tendsto
   exact tendsto_nhds_unique h_tendsto tendsto_const_nhds
 
+/-! ## Stability of IsDistribDivFree under algebraic operations -/
+
+/-- Scalar multiplication by a constant preserves distributional divergence-freeness. -/
+theorem isDistribDivFree_const_smul
+    {n : ℕ}
+    (Ω : Set (EuclideanSpace ℝ (Fin n)))
+    (hΩ : IsOpen Ω)
+    (c : ℝ)
+    {u : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n)}
+    (hu : IsDistribDivFree Ω hΩ u) :
+    IsDistribDivFree Ω hΩ (c • u) := by
+  intro φ hφ hφ_supp hφ_Ω
+  have h := hu φ hφ hφ_supp hφ_Ω
+  have hrw : ∑ i : Fin n, ∫ x in Ω, (c • u) x i *
+      fderiv ℝ φ x (EuclideanSpace.single i 1) =
+      c * ∑ i : Fin n, ∫ x in Ω, u x i *
+        fderiv ℝ φ x (EuclideanSpace.single i 1) := by
+    rw [Finset.mul_sum]
+    congr 1; ext i
+    rw [← integral_const_mul]
+    congr 1; ext x
+    simp only [Pi.smul_apply, PiLp.smul_apply, smul_eq_mul]; ring
+  rw [hrw, h, mul_zero]
+
+/-- A pointwise finite sum of distributionally divergence-free functions is divergence-free,
+    provided the summands are integrable enough to swap sum and integral.
+    Here we phrase this via `MemLp 2` which is standard in the Galerkin setting. -/
+theorem isDistribDivFree_finset_sum
+    {n : ℕ}
+    (Ω : Set (EuclideanSpace ℝ (Fin n)))
+    (hΩ : IsOpen Ω)
+    {ι : Type*}
+    (s : Finset ι)
+    {f : ι → EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n)}
+    (hmem : ∀ i ∈ s, MemLp (f i) 2 (volume.restrict Ω))
+    (hf : ∀ i ∈ s, IsDistribDivFree Ω hΩ (f i)) :
+    IsDistribDivFree Ω hΩ (∑ i ∈ s, f i) := by
+  intro φ hφ hφ_supp hφ_Ω
+  -- The test function derivative
+  have hg : ∀ k : Fin n, MemLp
+      (fun x => fderiv ℝ φ x (EuclideanSpace.single k 1)) 2 (volume.restrict Ω) :=
+    fun k => (hφ.continuous_fderiv (by simp)).clm_apply continuous_const
+      |>.memLp_of_hasCompactSupport (hφ_supp.fderiv_apply (𝕜 := ℝ) (EuclideanSpace.single k 1))
+  -- The sum: ∑ i, ∫ (∑_j f_j x) i * ∂_i φ = ∑ i ∑_j ∫ (f_j x) i * ∂_i φ
+  have hswap : ∑ i : Fin n, ∫ x in Ω, (∑ j ∈ s, f j) x i *
+      fderiv ℝ φ x (EuclideanSpace.single i 1) =
+      ∑ j ∈ s, ∑ i : Fin n, ∫ x in Ω, (f j) x i *
+        fderiv ℝ φ x (EuclideanSpace.single i 1) := by
+    -- (∑ j ∈ s, f j) x i = ∑ j ∈ s, f j x i by Finset.sum_apply + linearity of projection
+    have hproj : ∀ (g : ι → EuclideanSpace ℝ (Fin n)) (i : Fin n),
+        (∑ j ∈ s, g j) i = ∑ j ∈ s, g j i := fun g i =>
+      map_sum (EuclideanSpace.proj (𝕜 := ℝ) i) _ s
+    simp_rw [Finset.sum_apply, hproj]
+    simp_rw [Finset.sum_mul]
+    rw [Finset.sum_comm]
+    congr 1; ext i
+    rw [integral_finset_sum]
+    intro j hj
+    exact ((hmem j hj).continuousLinearMap_comp
+      (EuclideanSpace.proj (𝕜 := ℝ) i)).integrable_mul (hg i)
+  rw [hswap]
+  apply Finset.sum_eq_zero
+  intro j hj
+  exact hf j hj φ hφ hφ_supp hφ_Ω
+
 /-! ## Note on Helmholtz decomposition and Leray projector
 
 The function-level Helmholtz decomposition (`u = w + grad p` with `w` divergence-free

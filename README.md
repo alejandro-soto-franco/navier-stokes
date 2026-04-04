@@ -14,9 +14,9 @@
 [![Chapter 7](https://img.shields.io/badge/Ch_7-Singularity-yellow)](#chapter-status)
 [![Dark Mode](https://img.shields.io/badge/Dark_Mode-WCAG_AA-blueviolet)](#compilation)
 [![Lean CI](https://github.com/alejandro-soto-franco/navier-stokes/actions/workflows/lean.yml/badge.svg)](https://github.com/alejandro-soto-franco/navier-stokes/actions/workflows/lean.yml)
-[![Build](https://img.shields.io/badge/Lean_Build-2754_jobs-informational)](#lean-formalisation)
-[![Sorry Count](https://img.shields.io/badge/sorry-5_total-yellow)](#lean-formalisation)
-[![Proved](https://img.shields.io/badge/Proved-11_theorems-brightgreen)](#proven-theorems)
+[![Build](https://img.shields.io/badge/Lean_Build-2770_jobs-informational)](#lean-formalisation)
+[![Sorry Count](https://img.shields.io/badge/sorry-17_total-yellow)](#lean-formalisation)
+[![Proved](https://img.shields.io/badge/Proved-14_theorems-brightgreen)](#proven-theorems)
 
 A geometric approach to the Clay Millennium regularity problem for the 3D incompressible Navier-Stokes equations, via the Biot-Savart connection on the divergence-free bundle.
 
@@ -39,7 +39,7 @@ The tracks are reconciled at chapter boundaries via sync documents in `sync/`.
 | Chapter | Title | Lean | LaTeX | SymPy | Sync |
 |---------|-------|------|-------|-------|------|
 | 1 | Functional Analytic Foundations | 17 defs, 10 proved, 4 sorry | Complete | 8/8 pass | [Passed](sync/ch01-foundations.md) |
-| 2 | Leray-Hopf Weak Solutions | 8 defs, 1 proved, 1 sorry | Complete | 13/13 pass | [Passed](sync/ch02-leray-hopf.md) |
+| 2 | Leray-Hopf Weak Solutions | 12 defs, 4 proved, 12 sorry | Complete | 13/13 pass | [Passed](sync/ch02-leray-hopf.md) |
 | 3 | The Biot-Savart Connection | Stubs | Complete (64pp) | 23/23 pass | -- |
 | 4 | Curvature of the Flow | -- | Draft complete | 14/14 pass | -- |
 | 5 | Topological Constraints | Stubs | In progress | Planned | -- |
@@ -80,7 +80,7 @@ The tracks are reconciled at chapter boundaries via sync documents in `sync/`.
 
 ## Lean Formalisation
 
-The Lean 4 formalisation builds against a [pinned fork of Mathlib4](https://github.com/alejandro-soto-franco/mathlib4) (commit `698d2b68`, based on `v4.29.0-rc8`) and compiles with 2754 jobs, 0 errors. The fork allows adding custom tooling (Sobolev spaces, embedding infrastructure) that can be PR'd back to upstream Mathlib as the project matures. The `lakefile.toml` pins to exact commit hashes for reproducible builds.
+The Lean 4 formalisation builds against a [pinned fork of Mathlib4](https://github.com/alejandro-soto-franco/mathlib4) (commit `698d2b68`, based on `v4.29.0-rc8`) and compiles with 2787 jobs, 0 errors. The fork allows adding custom tooling (Sobolev spaces, embedding infrastructure) that can be PR'd back to upstream Mathlib as the project matures. The `lakefile.toml` pins to exact commit hashes for reproducible builds.
 
 ### Proven Theorems
 
@@ -97,33 +97,58 @@ The Lean 4 formalisation builds against a [pinned fork of Mathlib4](https://gith
 | `lerayProjectorLp_idempotent` | `Foundations/HelmholtzProjection.lean` | P(P(f)) = P(f), via `starProjection_eq_self_iff.mpr` |
 | `lerayProjectorLp_selfAdjoint` | `Foundations/HelmholtzProjection.lean` | ⟪Pf, g⟫ = ⟪f, Pg⟫, via `inner_starProjection_left_eq_right` |
 | `helmholtz_l2_decomposition` | `Foundations/HelmholtzProjection.lean` | f = Pf + (f - Pf) with Pf in L²σ and ⟪Pf, f-Pf⟫ = 0, via `starProjection_inner_eq_zero` |
+| `galerkinRHS_locallyLipschitz` | `LerayHopf/GalerkinApproximation.lean` | The Galerkin ODE RHS is locally Lipschitz, via `ContDiff.of_le (by norm_cast)` downgrading C^∞ to C^1 |
+| `galerkinVelocity_smooth` | `LerayHopf/GalerkinApproximation.lean` | The reconstructed velocity u_N = ∑_k c_k w_k is C^∞, via `ContDiff.sum` and `ContDiff.const_smul` |
+| `galerkin_trilinear_vanishes` | `LerayHopf/GalerkinApproximation.lean` | The cubic energy term vanishes: ∑_{k,j,l} B_{kjl} c_k c_j c_l = 0, via `trilinear_at_galerkin` and `trilinearForm_antisymmetric` |
 
 ### Sorry Classification
 
-All 5 remaining sorries are Category C (fundamental PDE/functional analysis results not yet in Mathlib):
+17 total sorries across 6 files. The 5 legacy Foundations/Existence sorries are all
+Category C. The 11 new sorries (v0.4.2) are Category B/C sub-goals within the Galerkin
+construction that is the stated proof strategy for `lerayHopf_existence`.
+
+**Foundations (5 sorry, Category C):**
 
 | File | Sorry | Reason |
 |------|-------|--------|
 | `SobolevEmbedding.lean` | `sobolev_embedding_subcritical` | GNS + Meyers-Serrin density (weak-to-classical derivative bridge) |
+| `SobolevEmbedding.lean` | `sobolev_embedding_subcritical_h10` | Same bridge for H^1_0; `clm_norm_sq_eq_sum_sq` assembly |
 | `SobolevEmbedding.lean` | `sobolev_embedding_supercritical` | Morrey inequality (not yet in Mathlib) |
 | `RellichKondrachov.lean` | `rellich_kondrachov` | Frechet-Kolmogorov compactness criterion |
-| `Poincare.lean` | `poincare_inequality_convex` | 1D FTC + Cauchy-Schwarz + Fubini for convex domains |
-| `Existence.lean` | `lerayHopf_existence` | Full Galerkin + Aubin-Lions construction |
+| `Poincare.lean` | `poincare_inequality_convex` | n-D Poincaré via Fubini from 1D (1D result now proved in Mathlib fork) |
 
-All 4 Foundations sorries are in modules NOT in the dependency chain of the Existence
-theorem. The main result depends only on `DivFreeSpace.lean` (sorry-free) and
-`WeakDerivative.lean` (sorry-free) via the LerayHopf module chain.
+**Leray-Hopf (12 sorry):**
+
+| File | Sorry | Category | Blocker |
+|------|-------|----------|---------|
+| `Existence.lean` | `lerayHopf_existence` | C | Full Galerkin + Aubin-Lions construction |
+| `GalerkinApproximation.lean` | `galerkinRHS_contDiff` | B | Polynomial-in-coordinates argument |
+| `GalerkinApproximation.lean` | `galerkinVelocity_l2NormSq_eq` | B | Orthonormality + Fubini |
+| `GalerkinApproximation.lean` | `trilinear_at_galerkin` | B | Multilinearity expansion |
+| `GalerkinApproximation.lean` | `galerkinVelocity_divFree` | B | `IsDistribDivFree` linearity |
+| `GalerkinApproximation.lean` | `galerkinVelocity_compact` | B | `HasCompactSupport` finite sum (Mathlib gap) |
+| `GalerkinApproximation.lean` | `galerkinRHS_inner_nonpos` | B | PSD matrix + trilinear cancellation |
+| `GalerkinApproximation.lean` | `galerkin_energy_nonincreasing` | B | Monotone integral from `HasDerivAt` |
+| `GalerkinApproximation.lean` | `galerkin_exists_global` | B | `IsPicardLindelof` + energy continuation |
+| `GalerkinApproximation.lean` | `galerkin_uniformL2Bound` | C | Bessel inequality for initial data |
+| `AubinLions.lean` | `aubinLions_compactness` | C | Abstract Banach-valued L^p theory |
+| `AubinLions.lean` | `galerkin_sequence_has_convergent_subseq` | C | Rellich-Kondrachov + Aubin-Lions |
+
+The 4 Foundations sorries remain outside the `lerayHopf_existence` dependency chain.
 
 **Sorry-free files:** `WeakDerivative.lean`, `SobolevSpace.lean`, `DivFreeSpace.lean`,
 `HelmholtzProjection.lean`, `WeakNSSolution.lean`, `TrilinearForm.lean`,
 `EnergyInequality.lean`.
 
-**Chapter 1 (4 sorry):** Sobolev embeddings (2), Rellich-Kondrachov (1), Poincare (1).
+**Mathlib fork:** `Mathlib/Analysis/FunctionalSpaces/PoincareInequality.lean` is now
+fully sorry-free (1D Poincaré inequality proved via variance/discriminant argument).
 
-**Chapter 2 (1 sorry):** Leray-Hopf existence (Galerkin + Aubin-Lions construction).
+**Chapter 1 (5 sorry):** Sobolev embeddings (3), Rellich-Kondrachov (1), Poincare (1).
+
+**Chapter 2 (12 sorry):** Leray-Hopf existence (1 legacy) + Galerkin/Aubin-Lions infrastructure (11 new).
 
 ```bash
-cd lean && lake build    # 2754 jobs, ~2 min
+cd lean && lake build    # 2787 jobs, ~2 min
 ```
 
 ## SymPy Verification
