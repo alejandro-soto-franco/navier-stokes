@@ -3,19 +3,19 @@
 [![Lean 4](https://img.shields.io/badge/Lean_4-v4.29.0--rc8-blue?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyTDIgMjJoMjBMMTIgMnoiLz48L3N2Zz4=)](https://leanprover.github.io/)
 [![Mathlib](https://img.shields.io/badge/Mathlib4-v4.29.0--rc8_(fork)-blue)](https://github.com/alejandro-soto-franco/mathlib4)
 [![SymPy](https://img.shields.io/badge/SymPy-verified-brightgreen?logo=python&logoColor=white)](https://www.sympy.org/)
+[![Cadabra2](https://img.shields.io/badge/Cadabra2-2.3.0-blueviolet?logo=python&logoColor=white)](https://cadabra.science/)
 [![LaTeX](https://img.shields.io/badge/LaTeX-book_class-orange?logo=latex&logoColor=white)](https://www.latex-project.org/)
 [![License](https://img.shields.io/badge/License-All_Rights_Reserved-red)](https://github.com/alejandro-soto-franco/navier-stokes/blob/master/LICENSE)
 [![Chapter 1](https://img.shields.io/badge/Ch_1-Foundations_%E2%9C%93-brightgreen)](#chapter-status)
 [![Chapter 2](https://img.shields.io/badge/Ch_2-Leray--Hopf_%E2%9C%93-brightgreen)](#chapter-status)
 [![Chapter 3](https://img.shields.io/badge/Ch_3-Biot--Savart_%E2%9C%93-brightgreen)](#chapter-status)
 [![Chapter 4](https://img.shields.io/badge/Ch_4-Curvature_%E2%9C%93-brightgreen)](#chapter-status)
-[![Chapter 5](https://img.shields.io/badge/Ch_5-Topology-yellow)](#chapter-status)
-[![Chapter 6](https://img.shields.io/badge/Ch_6-Obstruction-yellow)](#chapter-status)
-[![Chapter 7](https://img.shields.io/badge/Ch_7-Singularity-yellow)](#chapter-status)
+[![Chapter 5](https://img.shields.io/badge/Ch_5-Determination_%E2%9C%93-brightgreen)](#chapter-status)
+[![Chapter 6](https://img.shields.io/badge/Ch_6-Singularity-yellow)](#chapter-status)
 [![Dark Mode](https://img.shields.io/badge/Dark_Mode-WCAG_AA-blueviolet)](#compilation)
 [![Lean CI](https://github.com/alejandro-soto-franco/navier-stokes/actions/workflows/lean.yml/badge.svg)](https://github.com/alejandro-soto-franco/navier-stokes/actions/workflows/lean.yml)
 [![Build](https://img.shields.io/badge/Lean_Build-2770_jobs-informational)](#lean-formalisation)
-[![Sorry Count](https://img.shields.io/badge/sorry-17_total-yellow)](#lean-formalisation)
+[![Sorry Count](https://img.shields.io/badge/sorry-23_total-yellow)](#lean-formalisation)
 [![Proved](https://img.shields.io/badge/Proved-14_theorems-brightgreen)](#proven-theorems)
 
 A geometric-analytic approach to the Clay Millennium regularity problem for the 3D incompressible Navier-Stokes equations, via the Biot-Savart connection on the divergence-free bundle.
@@ -29,8 +29,10 @@ Every chapter is developed simultaneously along three parallel verification trac
 | Track | Tool | Purpose |
 |-------|------|---------|
 | **Formal verification** | Lean 4 + Mathlib | Type-checked definitions, theorem statements, and proofs |
-| **Theory** | LaTeX + SymPy | Self-contained mathematical narrative with symbolic cross-checks |
+| **Theory** | LaTeX + SymPy + Cadabra2 | Self-contained mathematical narrative with symbolic cross-checks |
 | **Numerics** | Python/Rust | Computational verification of geometric predictions (later chapters) |
+
+The symbolic track uses two complementary tools. **SymPy** handles coordinate-based checks: Sobolev exponents, example-field identities, Leray projector algebra, Hölder/HLS exponents. **Cadabra2** handles abstract-index tensor algebra: structure-constant symmetries, Koszul formula manipulation, non-holonomic torsion conditions, and (from Chapter 5 onward) differential-form computations. All scripts run under a single pinned conda environment (`environment.yml`).
 
 The tracks are reconciled at chapter boundaries via sync documents in `sync/`.
 
@@ -40,11 +42,10 @@ The tracks are reconciled at chapter boundaries via sync documents in `sync/`.
 |---------|-------|------|-------|-------|------|
 | 1 | Functional Analytic Foundations | 17 defs, 10 proved, 4 sorry | Complete | 8/8 pass | [Passed](sync/ch01-foundations.md) |
 | 2 | Leray-Hopf Weak Solutions | 12 defs, 4 proved, 12 sorry | Complete | 13/13 pass | [Passed](sync/ch02-leray-hopf.md) |
-| 3 | The Biot-Savart Connection | Stubs | Complete | 23/23 pass | -- |
+| 3 | The Biot-Savart Connection | Stubs | Complete (64pp) | 23/23 + 5LC pass | -- |
 | 4 | Curvature of the Flow | -- | Draft complete | 14/14 pass | -- |
-| 5 | Topological Constraints | Stubs | In progress | Planned | -- |
-| 6 | The Obstruction Theorem | Stubs | In progress | Planned | -- |
-| 7 | Singularity Analysis | -- | In progress | Planned | -- |
+| 5 | The Topological Determination | 4 stubs | Complete | 3C + 5S pass | -- |
+| 6 | The Singularity Analysis | -- | In progress | Planned | -- |
 
 ## Repository Structure
 
@@ -66,12 +67,16 @@ The tracks are reconciled at chapter boundaries via sync documents in `sync/`.
       BiotSavart/          Ch3: Biot-Savart connection (stubs)
       Topology/            Ch5: Topological constraints (stubs)
       Obstruction/         Ch6: Obstruction theorem (stubs)
+  environment.yml         Pinned conda environment (Python 3.9, cadabra2 2.3.0, sympy, numpy, matplotlib, scipy)
   sympy/                  Symbolic verification scripts
     ch01_sobolev_exponents.py
     ch01_helmholtz_verify.py
     ch02_leray_hopf_verify.py
     ch03_biot_savart_verify.py
+    ch03_lc_cadabra.py      Cadabra2+SymPy: Levi-Civita uniqueness proof (fills ch03 check 13)
     ch04_curvature_verify.py
+    ch05_topology_cadabra.py  Cadabra2: differential form identities (d^2=0, Chern-Simons, dissipation)
+    ch05_topology_verify.py   SymPy: Beltrami helicity, Arnold bound, Freedman-He, local density
     ch04_figures.py         ch04 figure generator (light + dark variants)
     plot_style.py           shared matplotlib style (LaTeX, transparent, dark mode)
   sync/                   Cross-track reconciliation documents
@@ -103,9 +108,10 @@ The Lean 4 formalisation builds against a [pinned fork of Mathlib4](https://gith
 
 ### Sorry Classification
 
-17 total sorries across 6 files. The 5 legacy Foundations/Existence sorries are all
-Category C. The 11 new sorries (v0.4.2) are Category B/C sub-goals within the Galerkin
-construction that is the stated proof strategy for `lerayHopf_existence`.
+23 total sorries across 10 files. The 5 legacy Foundations/Existence sorries are all
+Category C. The 11 Galerkin sorries (v0.4.2) are Category B/C sub-goals. The 6 new
+Ch5 Topology sorries (v0.5.0) are Category C definition/theorem stubs for helicity,
+Arnold bound, Freedman-He, and the topological regularity criterion.
 
 **Foundations (5 sorry, Category C):**
 
@@ -147,13 +153,21 @@ fully sorry-free (1D Poincaré inequality proved via variance/discriminant argum
 
 **Chapter 2 (12 sorry):** Leray-Hopf existence (1 legacy) + Galerkin/Aubin-Lions infrastructure (11 new).
 
+**Chapter 5 (6 sorry):** Helicity definition (2), conservation/dissipation (2), Arnold/Freedman-He bounds (2), topological regularity criterion (2).
+
 ```bash
 cd lean && lake build    # 2787 jobs, ~2 min
 ```
 
-## SymPy Verification
+## Symbolic Verification
 
-Each chapter has one or more Python scripts that symbolically verify the key identities and estimates from the LaTeX text.
+All scripts run under the pinned conda environment:
+
+```bash
+conda activate navier-stokes   # Python 3.9, cadabra2 2.3.0, sympy 1.14, numpy, matplotlib, scipy
+```
+
+### SymPy scripts (coordinate-based)
 
 ```bash
 python sympy/ch01_sobolev_exponents.py      #  6 checks
@@ -161,13 +175,54 @@ python sympy/ch01_helmholtz_verify.py        #  2 checks
 python sympy/ch02_leray_hopf_verify.py       # 13 checks
 python sympy/ch03_biot_savart_verify.py      # 23 checks
 python sympy/ch04_curvature_verify.py        # 14 checks
+python sympy/ch05_topology_verify.py        #  5 checks (T-4 to T-8)
 ```
 
 All scripts use assert-based checks and print `[PASS]` for each verified identity.
 The ch03 script covers: Leray projector properties (5 test fields), Koszul formula sign
-consistency, Holder/Sobolev product exponents (H^1 into L^6 in R^3, product into L^{3/2}),
-Calderon-Zygmund kernel hypotheses, Biot-Savart HLS exponents (alpha_HLS=1, giving
+consistency, Hölder/Sobolev product exponents (H^1 into L^6 in R^3, product into L^{3/2}),
+Calderón-Zygmund kernel hypotheses, Biot-Savart HLS exponents (alpha_HLS=1, giving
 1/q = 1/p - 1/3, p < 3), and stretching tensor trace identities.
+
+### Cadabra2 scripts (abstract-index tensor algebra)
+
+```bash
+python sympy/ch03_lc_cadabra.py             # 5 LC checks (Cadabra + SymPy)
+python sympy/ch05_topology_cadabra.py       # 3 checks (T-1 to T-3)
+```
+
+`ch03_lc_cadabra.py` fills the one un-executed claim in ch03 ("Koszul formula: follows from
+metric compatibility + torsion-freeness") with a concrete two-tool proof:
+
+| Check | Tool | Statement |
+|-------|------|-----------|
+| LC-1 | Cadabra2 | `C_{kij} + C_{kji} = 0` (structure-constant antisymmetry, abstract) |
+| LC-2 | Cadabra2 | Koszul ansatz `2Γ_{kij} = C_{kij} - C_{ijk} + C_{jki}` |
+| LC-3 | Cadabra2 | Non-holonomic torsion-free: `Γ_{kij} - Γ_{kji} = C_{kij}` |
+| LC-4 | SymPy | IBP: Koszul integrand - 2(u.∇)v.w = sum of 3 total divergences (5 triples) |
+| LC-5 | SymPy | Metric compatibility: u.∇(v.w) = (∇_u v).w + v.(∇_u w) (5 triples) |
+
+**Scope boundary:** Cadabra handles abstract claims valid for any right-invariant metric on
+any Lie group (LC-1 to LC-3). SymPy handles the L^2 metric on SDiff(T^3) specifically, where
+the divergence-free constraint enters via integration by parts (LC-4, LC-5).
+
+`ch05_topology_cadabra.py` verifies the differential form identities underpinning Chapter 5:
+
+| Check | Tool | Statement |
+|-------|------|-----------|
+| T-1 | Cadabra2 | `div(curl A) = 0` (Bianchi identity d^2 = 0, contracted with epsilon) |
+| T-2 | Cadabra2 | `epsilon * sym(dA) = 0` (exterior derivative antisymmetry) |
+| T-3 | Cadabra2 | `omega.(curl omega) != |omega|^2` (dissipation has indefinite sign) |
+
+`ch05_topology_verify.py` verifies the energy-helicity landscape on explicit Beltrami fields:
+
+| Check | Tool | Statement |
+|-------|------|-----------|
+| T-4 | SymPy | Helicity density `h = lambda |u|^2` for Beltrami eigenmodes (2 fields) |
+| T-5 | SymPy | Dissipation rate `omega.(curl omega) = lambda^3 |u|^2` (2 fields) |
+| T-6 | SymPy | Arnold bound `E >= |H|/(2*lambda_1)`, equality at lambda_1 |
+| T-7 | SymPy | Freedman-He exponent 3/4 > naive 1/2 (rational arithmetic) |
+| T-8 | SymPy | Local helicity density sign structure (linked vs. mixed) |
 
 The ch04 script covers three parts: (I) pressure Poisson connection -- velocity gradient
 decomposition A=D+W, vorticity norm |omega|^2 = |A|^2 - tr(A^2), and Delta p = -tr(A^2)
@@ -241,6 +296,18 @@ finite at Leray-Hopf regularity (bound C*E(0)^{9/5}/nu^{9/5}), and the CKN bridg
 (proved in full) shows (x_0,t_0) is regular iff mu_R(Q_r)/r -> 0, placing singularities
 exactly at atoms of mu_R. Numerical experiments (Taylor-Green, Re=1600, 512^3) illustrate
 all five geometric phenomena with transparent figures in both light and dark mode.
+
+**Chapter 5** constructs the topological determination: a systematic investigation of
+whether vortex line topology constrains curvature concentration enough to prevent
+singularities. The differential form framework (velocity one-form A = u-flat, helicity
+as Chern-Simons invariant) is established, followed by the energy-helicity landscape
+(Arnold bound, Freedman-He crossing number bound). The topological dichotomy separates
+potential singularities into helicity-constrained and helicity-free cases. The rate
+competition between viscous reconnection (timescale delta^2/nu) and curvature concentration
+(timescale 1/Delta_strain) yields a scale-independent time budget T_delta <= C*E(0)/nu^3.
+The chapter concludes with a new conditional regularity criterion: if reconnection dominance
+holds at every scale, the solution is smooth. The gap between this conditional result and
+unconditional regularity is precisely identified.
 
 ## Citation
 

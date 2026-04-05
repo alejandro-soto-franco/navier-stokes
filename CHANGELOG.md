@@ -2,6 +2,123 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.0] - 2026-04-05
+
+### Chapter 5: The Topological Determination
+
+Complete new chapter (5 sections, ~570 lines LaTeX) constructing a systematic
+investigation of whether vortex line topology constrains curvature concentration.
+
+#### Chapter restructuring
+
+Collapsed Ch5/Ch6/Ch7 into Ch5/Ch6:
+- Ch5 "Topological Invariants" (stub) -> "The Topological Determination" (complete)
+- Ch6 "The Incompressibility Obstruction" (stub) -> "The Singularity Analysis" (absorbs old Ch7)
+- Ch7 "The Singularity Result" removed from main.tex
+- Ch4 forward reference updated to point to `ch:determination`
+
+#### LaTeX sections
+
+| Section | Title | Content |
+|---------|-------|---------|
+| 5.1 | Differential form framework | A = u-flat, F = dA, helicity as Chern-Simons, Cartan formula, superhelicity |
+| 5.2 | Energy-helicity landscape | Arnold bound E >= |H|/(2 lambda_1), Freedman-He E >= C c(L)^{3/4}, local helicity density |
+| 5.3 | Topological structure of concentration | Concentration hypothesis, topological dichotomy (D1: linked, D2: unlinked), analysis of both cases |
+| 5.4 | Reconnection vs. concentration rates | Reconnection timescale delta^2/nu, concentration timescale 1/Delta_strain, critical balance, energy-limited strain excess |
+| 5.5 | The determination | Constraint chain theorem, identified gap, conditional regularity criterion (reconnection dominance => smoothness), summary table |
+
+#### New symbolic verification
+
+`ch05_topology_cadabra.py` (3 Cadabra2 checks):
+- T-1: div(curl A) = 0 (Bianchi identity, d^2 = 0)
+- T-2: Exterior derivative antisymmetry (epsilon contracted)
+- T-3: omega.(curl omega) != |omega|^2 (indefinite sign of helicity dissipation)
+
+`ch05_topology_verify.py` (5 SymPy checks):
+- T-4: Helicity density h = lambda |u|^2 for ABC Beltrami eigenmodes
+- T-5: Dissipation rate omega.(curl omega) = lambda^3 |u|^2
+- T-6: Arnold bound equality on lambda_1 eigenmodes
+- T-7: Freedman-He exponent 3/4 > naive 1/2 (rational arithmetic)
+- T-8: Local helicity density sign structure (Beltrami vs. non-Beltrami)
+
+#### Lean 4 formalisation stubs (6 new sorries)
+
+- `Topology/HelicityDef.lean`: helicity definition and density
+- `Topology/HelicityConservation.lean`: Euler conservation, NS dissipation rate
+- `Topology/EnergyHelicityBound.lean`: Arnold bound, Freedman-He bound
+- `Topology/ConcentrationTopology.lean`: reconnection dominance, topological regularity criterion, constraint chain
+
+#### Bibliography
+
+8 new entries: Freedman-He 1991, Enciso-Peralta-Salas 2012, Etnyre-Ghrist 2000,
+Komendarczyk 2006, Kida-Takaoka 1994, Hussain-Duraisamy 2011, Constantin-Iyer 2008,
+Constantin-Procaccia 1993.
+
+#### Key mathematical results
+
+- **Topological dichotomy** (Proposition 5.4): singularity is either helicity-constrained (D1) or helicity-free (D2)
+- **Rate balance** (Proposition 5.5): concentration requires delta^2 Delta_strain > nu
+- **Energy-limited strain excess** (Proposition 5.6): time-averaged excess bounded by E(0)/(nu delta^4)
+- **Constraint chain** (Theorem 5.6): four constraints on any potential singularity
+- **Topological regularity criterion** (Theorem 5.7, new): reconnection dominance at every scale implies smoothness
+- **Identified gap**: does reconnection dominance hold unconditionally?
+
+## [0.4.3] - 2026-04-05
+
+### Tooling: Cadabra2 integration + unified Python environment
+
+#### New: `environment.yml` (pinned conda environment)
+
+All symbolic scripts now run under a single reproducible conda environment:
+
+```bash
+conda env create -f environment.yml
+conda activate navier-stokes
+```
+
+| Package | Version | Role |
+|---------|---------|------|
+| Python | 3.9 | runtime (cadabra2 upper bound) |
+| cadabra2 | 2.3.0 | abstract-index tensor algebra |
+| sympy | 1.14 | coordinate-based symbolic checks |
+| numpy | 2.0.2 | numerical verification |
+| matplotlib | 3.9.4 | figure generation |
+| scipy | 1.13.1 | supporting numerics |
+
+Environment sourced from `conda-forge`. cadabra2 is not on PyPI; conda-forge is the only
+supported install path (max Python 3.9 for the pre-built wheel).
+
+#### New file: `sympy/ch03_lc_cadabra.py`
+
+Fills check 13 from `ch03_biot_savart_verify.py`, which was previously a comment with no
+computation: _"Koszul formula: follows from metric compatibility + torsion-freeness."_
+
+The file provides a two-tool proof (5 checks total, all passing):
+
+**Cadabra2 (abstract index, valid for any Lie group with right-invariant metric):**
+- `LC-1`: `C_{kij} + C_{kji} = 0` via `TableauSymmetry` + `canonicalise` + `collect_terms`.
+- `LC-2`: Koszul ansatz `2Γ_{kij} = C_{kij} - C_{ijk} + C_{jki}` constructed abstractly.
+- `LC-3`: Non-holonomic torsion-free condition `Γ_{kij} - Γ_{kji} = C_{kij}` verified.
+  (Corrects the common error of writing `Γ_{kij} = Γ_{kji}`, which only holds on
+  coordinate/holonomic frames where all Lie brackets vanish.)
+
+**SymPy (specific to L^2 metric on SDiff(T^3)):**
+- `LC-4`: Pointwise identity `Koszul - 2(u.∇)v.w = -div(u·vw) - div(v·uw) + div(w·uv)`
+  verified on 5 divergence-free example triples. The RHS is a sum of three total divergences;
+  integrating over T^3 (no boundary) gives `∇_u v = P[(u.∇)v]`.
+- `LC-5`: Metric compatibility via Leibniz rule `u.∇(v.w) = (∇_u v).w + v.(∇_u w)` on 5 triples.
+
+Key mathematical note from this work: the witness for the Koszul IBP step is a _sum_ of three
+total divergences `div(A·(B.C))`, not a single one. The identity
+`div(u·(v.w)) = (u.∇)v.w + (u.∇)w.v` (for div-free u) is the building block, and three
+cyclic applications reduce the full Koszul integrand to the advection term.
+
+#### Cadabra2 scope note
+
+Cadabra's `integrate_by_parts` is reserved for Chapter 5 (helicity section):
+`H = ∫ A ∧ dA`, Cartan formula `ℒ_u = d∘ι_u + ι_u∘d`, `dH/dt = 0` under Euler flow.
+These are inherently abstract-form computations that SymPy cannot express naturally.
+
 ## [0.4.2] - 2026-04-04
 
 ### Lean: Galerkin ODE infrastructure + 1D Poincaré fully proved
