@@ -91,3 +91,112 @@ which is always non-positive.
 The indefinite sign of $\dot{\mathcal{H}}$ is a key feature: helicity can be
 \emph{created} by viscous reconnection events that change the linking number of
 vortex lines.  This is the mechanism explored in \Cref{sec:det-reconnection}.
+
+% ===========================================================================
+\section{The energy-helicity landscape}\label{sec:det-landscape}
+% ===========================================================================
+
+The helicity $\mathcal{H}$ and energy $E$ are not independent: topological
+lower bounds on energy constrain the landscape of states accessible to the
+Navier--Stokes evolution.  This section assembles these constraints.
+
+\subsection{Arnold's energy-helicity bound}\label{sec:det-arnold-bound}
+
+\begin{theorem}[Arnold bound {\cite{arnold1966,arnoldKhesin1998}}]\label{thm:arnold-bound}
+  Let $u \in \Lsig(\mathbb{T}^3)$ be divergence-free with $\nabla u \in \Lp{2}$.
+  Let $\lambda_1 > 0$ be the smallest positive eigenvalue of $\curl$ on
+  $\mathbb{T}^3$ (i.e., the smallest $\lambda$ with $\curl\,e = \lambda\,e$,
+  $\divergence e = 0$).  Then
+  \begin{equation}\label{eq:arnold-bound}
+    E(u) \;=\; \tfrac{1}{2}\norm{u}_{\Lp{2}}^2
+    \;\geq\; \frac{\abs{\mathcal{H}(u)}}{2\lambda_1}.
+  \end{equation}
+\end{theorem}
+
+\begin{proof}
+  Expand $u$ in eigenfunctions of $\curl$: $u = \sum_k \hat{u}_k e_k$ with
+  $\curl\,e_k = \lambda_k e_k$, $\abs{\lambda_k} \geq \lambda_1 > 0$.
+  Then $E = \frac{1}{2}\sum_k\abs{\hat{u}_k}^2$ and
+  $\mathcal{H} = \sum_k\lambda_k\abs{\hat{u}_k}^2$.
+  Since $\abs{\lambda_k} \geq \lambda_1$:
+  \[
+    \abs{\mathcal{H}}
+    \;\leq\; \sum_k \abs{\lambda_k}\abs{\hat{u}_k}^2
+    \;\leq\; \lambda_{\max}\sum_k\abs{\hat{u}_k}^2
+    \;=\; 2\lambda_{\max}\,E.
+  \]
+  This upper bound on $\abs{\mathcal{H}}$ is not what we need.  The
+  \emph{lower} bound on $E$ given $\mathcal{H}$ follows by variational
+  argument: minimise $E = \frac{1}{2}\sum\abs{\hat{u}_k}^2$ subject to
+  $\sum\lambda_k\abs{\hat{u}_k}^2 = H$ (fixed helicity).
+  The minimiser concentrates all weight on the eigenmode with the smallest
+  $\abs{\lambda_k}$, giving the Beltrami field $\curl\,u = \pm\lambda_1 u$
+  with $E_{\min} = \abs{H}/(2\lambda_1)$.  This establishes~\eqref{eq:arnold-bound},
+  with equality precisely for Beltrami eigenmodes
+  (\cite{arnoldKhesin1998}, Theorem~III.1.2).
+\end{proof}
+
+\begin{corollary}[Helicity bounds enstrophy concentration]\label{cor:helicity-enstrophy}
+  If $\abs{\mathcal{H}(u(t))}$ remains bounded away from zero on $[0,T]$, then
+  $E(u(t)) \geq c > 0$ on $[0,T]$.  Since energy dissipation is
+  $\dot{E} = -\nu\,\Omega$ (where $\Omega = \norm{\vort}_{\Lp{2}}^2$ is the enstrophy),
+  the enstrophy is bounded on average:
+  \begin{equation}\label{eq:avg-enstrophy-bound}
+    \frac{1}{T}\int_0^T \Omega(t)\,\dd t
+    \;\leq\; \frac{E(0) - c}{\nu\,T}.
+  \end{equation}
+\end{corollary}
+
+\subsection{Freedman--He crossing number bound}\label{sec:det-freedman-he}
+
+A deeper topological constraint comes from the crossing number of vortex lines.
+
+\begin{theorem}[Freedman--He {\cite{freedmanHe1991}}]\label{thm:freedman-he}
+  Let $u \in \Lsig(\R^3)$ be a smooth divergence-free field whose vortex lines
+  form a link $L$ with crossing number $c(L)$.  Then
+  \begin{equation}\label{eq:freedman-he}
+    E(u) \;\geq\; C_{\mathrm{FH}}\,c(L)^{3/4},
+  \end{equation}
+  where $C_{\mathrm{FH}} > 0$ is a universal constant.
+\end{theorem}
+
+This bound is topological: $c(L)$ is a link invariant.  Its consequence for
+the Navier--Stokes evolution is that any concentration mechanism that
+increases the effective crossing number of vortex lines must simultaneously
+inject energy at the rate~\eqref{eq:freedman-he} requires.  Since the
+Navier--Stokes evolution only dissipates energy ($\dot{E} \leq 0$), the
+crossing number is bounded above by the initial energy:
+\begin{equation}\label{eq:crossing-energy-constraint}
+  c(L(t)) \;\leq\; \Bigl(\frac{E(0)}{C_{\mathrm{FH}}}\Bigr)^{4/3}
+  \qquad\text{for all } t \geq 0.
+\end{equation}
+
+\begin{remark}[Crossing number vs.\ concentration]\label{rem:crossing-concentration}
+  The bound~\eqref{eq:crossing-energy-constraint} is the first indication that
+  topology constrains concentration.  The curvature measure $\mu_R$ from
+  \Cref{def:curvature-measure} concentrates when vortex structures are compressed
+  to small scales.  But compressing linked vortex tubes increases their crossing
+  number (or requires reconnection to unlink them), and both mechanisms face
+  energetic or dissipative costs.
+  This is the fork that drives the investigation in \Cref{sec:det-concentration}.
+\end{remark}
+
+\subsection{The local helicity density}\label{sec:det-local-helicity}
+
+For pointwise analysis, define the \emph{local helicity density}
+\begin{equation}\label{eq:local-helicity}
+  h(x,t) \;=\; u(x,t)\cdot\vort(x,t) \;=\; A\wedge\dd A\Big|_x,
+\end{equation}
+so that $\mathcal{H}(u) = \int h\,\dd x$.  Unlike $\abs{u}^2$ (energy density)
+or $\abs{\vort}^2$ (enstrophy density), the helicity density $h$ carries a sign.
+
+At a point of curvature concentration (where $\mu_R$ is large), the local helicity
+density characterises the topology of the concentrating structure:
+\begin{itemize}
+  \item $h(x) \neq 0$: vortex lines through $x$ are linked or knotted
+    (\cite{moffatt1969degree}), and the concentration event involves
+    topologically non-trivial filaments.
+  \item $h(x) = 0$: vortex lines through $x$ are unlinked.  Concentration can
+    proceed without topological obstruction from helicity, but may still be
+    constrained by the crossing number bound (\Cref{thm:freedman-he}).
+\end{itemize}
