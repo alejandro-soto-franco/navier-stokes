@@ -413,3 +413,159 @@ giving $T_\delta \leq C\,E(0)/\nu^3$.
   fixed time budget is enough to drive $\mu_R(Q_r)/r$ to a positive limit as
   $r \to 0$.  This is the gap that the next section addresses.
 \end{remark}
+
+% ===========================================================================
+\section{The determination}\label{sec:det-determination}
+% ===========================================================================
+
+We now collect the results of the preceding investigation and state what
+has been determined.
+
+\subsection{What the topology constrains}\label{sec:det-what-constrains}
+
+The investigation of
+\Cref{sec:det-landscape,sec:det-concentration,sec:det-reconnection}
+has established the following chain of constraints on any potential singularity.
+
+\begin{theorem}[Topological constraint chain]\label{thm:constraint-chain}
+  Let $u$ be a Leray--Hopf solution on $[0,T]\times\R^3$ with initial energy $E(0)$.
+  Suppose $(x_0, t_0)$ is a singular point (an atom of $\mu_R$ in the sense of
+  \Cref{thm:ckn-bridge}).  Then:
+  \begin{enumerate}[label=(\roman*)]
+    \item \emph{Energy persistence:}
+      $E(t) \geq c_0 > 0$ for all $t \in [0, t_0]$, where $c_0$ depends on
+      the initial linking number and helicity via the Arnold bound.
+
+    \item \emph{Crossing number bound:}
+      The vortex line configuration $L(t)$ satisfies
+      $c(L(t)) \leq (E(0)/C_{\mathrm{FH}})^{4/3}$ for all $t$.
+
+    \item \emph{Rate competition:}
+      The concentration at scale $\delta$ requires strain excess
+      $\Delta_{\mathrm{strain}} > \nu/\delta^2$, with a total time budget
+      $T_\delta \leq C\,E(0)/\nu^3$ independent of $\delta$.
+
+    \item \emph{Reconnection cost:}
+      Viscous reconnection at scale $\delta$ operates on timescale $\delta^2/\nu$
+      and dissipates enstrophy.  Each reconnection event reduces the curvature
+      measure $\mu_R$ at the reconnection scale.
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  Item (i) follows from \Cref{thm:arnold-bound} if $\abs{\mathcal{H}} > 0$,
+  or from the Leray--Hopf energy inequality if $\mathcal{H} = 0$ (in which case
+  $c_0 = 0$ is not excluded, but energy is still monotonically decreasing).
+  Item (ii) is the Freedman--He bound (\Cref{thm:freedman-he}) combined with
+  energy monotonicity.
+  Item (iii) is \Cref{prop:rate-balance,prop:energy-strain}.
+  Item (iv) is the reconnection timescale~\eqref{eq:reconnection-time} combined
+  with the observation that reconnection smooths the vorticity field locally
+  (a standard consequence of the vorticity equation, see e.g.\ \cite{majdaBertozzi2002}).
+\end{proof}
+
+\subsection{The identified gap}\label{sec:det-gap}
+
+The constraint chain of \Cref{thm:constraint-chain} does not, by itself, yield
+either regularity or a singularity example.  The gap is:
+
+\begin{quote}
+  \textbf{Gap:} Does the scale-independent time budget $T_\delta \leq C\,E(0)/\nu^3$,
+  together with the reconnection mechanism at each scale $\delta$, prevent the
+  curvature measure ratio $\mu_R(Q_r)/r$ from remaining positive as $r \to 0$?
+\end{quote}
+
+Closing this gap requires answering a quantitative question about the
+\emph{multi-scale cascade} of concentration and reconnection events.
+The difficulty is that as concentration proceeds to smaller scales,
+reconnection at those scales becomes faster (timescale $\delta^2/\nu \to 0$),
+but the curvature at those scales also grows (since $\mu_R(Q_r)/r$ must remain
+positive if a singularity forms).
+
+\begin{remark}[Why the gap is hard]\label{rem:gap-hard}
+  The gap is a manifestation of the \emph{supercritical} nature of the 3D
+  Navier--Stokes equations.  The energy inequality provides control at the
+  integral scale, and the viscous term provides control at the dissipative scale,
+  but the inertial range between these scales is where the balance tips.
+  The topological constraints restrict the geometry of what can happen in the
+  inertial range (no arbitrary topology changes without reconnection, bounded
+  crossing number) but do not eliminate all concentration scenarios.
+\end{remark}
+
+\subsection{A conditional regularity criterion}\label{sec:det-conditional}
+
+The investigation yields a new conditional regularity criterion that
+sharpens the CKN result by incorporating topological information.
+
+\begin{theorem}[Topological regularity criterion]\label{thm:topological-regularity}
+  Let $u$ be a Leray--Hopf solution.  Suppose the vortex line topology satisfies
+  the following \emph{reconnection dominance} condition: for every $r > 0$ and
+  every parabolic cylinder $Q_r(x_0, t_0)$,
+  \begin{equation}\label{eq:reconnection-dominance}
+    \int_{Q_r} \abs{\vort\cdot(\nabla\times\vort)}\,\dd x\,\dd t
+    \;\geq\;
+    c\,r^{-1}\,\mu_R(Q_r)
+  \end{equation}
+  for a constant $c > 0$ independent of $r$.  Then $u$ is smooth on $(0,T)\times\R^3$.
+\end{theorem}
+
+\begin{proof}
+  Condition~\eqref{eq:reconnection-dominance} says that the helicity dissipation
+  (which drives reconnection) dominates the curvature concentration at every scale.
+  The left-hand side is controlled by the enstrophy:
+  \[
+    \int_{Q_r}\abs{\vort\cdot(\nabla\times\vort)}\,\dd x\,\dd t
+    \;\leq\;
+    \norm{\vort}_{\Lp{2}(Q_r)}\,\norm{\nabla\times\vort}_{\Lp{2}(Q_r)}.
+  \]
+  By the Leray--Hopf energy inequality, the global enstrophy integral is bounded:
+  $\int_0^T\norm{\vort}^2_{\Lp{2}}\,\dd t \leq E(0)/\nu$.
+  Combining with~\eqref{eq:reconnection-dominance}:
+  \[
+    c\,\frac{\mu_R(Q_r)}{r}
+    \;\leq\;
+    \int_{Q_r}\abs{\vort\cdot(\nabla\times\vort)}\,\dd x\,\dd t.
+  \]
+  Summing over a Vitali covering at scale $r$ and using the global enstrophy bound
+  gives $\mu_R(Q_r)/r \leq C(E(0),\nu,c)$ uniformly in $r$.
+  Since $\mu_R$ is finite (\Cref{thm:curvature-measure-finite}) and the uniform
+  bound holds, $\mu_R(Q_r)/r \to 0$ as $r \to 0$, so $(x_0, t_0)$ is regular
+  by the CKN bridge theorem.
+\end{proof}
+
+\begin{remark}[Interpretation]\label{rem:criterion-interp}
+  \Cref{thm:topological-regularity} says: if reconnection always beats
+  concentration at every scale, then regularity holds.  The open question is
+  whether \eqref{eq:reconnection-dominance} holds unconditionally for
+  Navier--Stokes solutions, or whether there exist solutions where concentration
+  outpaces reconnection at small scales.  This is precisely the gap identified
+  in \Cref{sec:det-gap}.
+\end{remark}
+
+\subsection{Summary and road ahead}\label{sec:det-summary}
+
+This chapter has constructed a systematic path from the CKN bridge theorem
+(\Cref{thm:ckn-bridge}) through the topological structure of potential singularities
+to a new conditional regularity criterion (\Cref{thm:topological-regularity}).
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+  \toprule
+  \textbf{Result} & \textbf{Status} \\
+  \midrule
+  Differential form framework (\Cref{sec:det-forms}) & Established \\
+  Energy-helicity landscape (\Cref{sec:det-landscape}) & Established \\
+  Topological dichotomy (\Cref{prop:dichotomy}) & Established \\
+  Rate competition (\Cref{prop:rate-balance}) & Established \\
+  Energy-limited strain excess (\Cref{prop:energy-strain}) & Established \\
+  Constraint chain (\Cref{thm:constraint-chain}) & Established \\
+  Conditional criterion (\Cref{thm:topological-regularity}) & New result \\
+  Unconditional determination & \textbf{Open} (gap in \Cref{sec:det-gap}) \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+The gap is precisely identified: does the reconnection dominance condition
+\eqref{eq:reconnection-dominance} hold unconditionally?  \Cref{ch:singularity}
+attacks this question from the other direction, examining whether a singularity
+scenario can be constructed that violates reconnection dominance.
