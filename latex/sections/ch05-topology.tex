@@ -200,3 +200,108 @@ density characterises the topology of the concentrating structure:
     proceed without topological obstruction from helicity, but may still be
     constrained by the crossing number bound (\Cref{thm:freedman-he}).
 \end{itemize}
+
+% ===========================================================================
+\section{Topological structure of concentration}\label{sec:det-concentration}
+% ===========================================================================
+
+This section is the investigative core of the chapter.  We assume that the
+curvature measure $\mu_R$ develops an atom (in the sense of \Cref{thm:ckn-bridge})
+and trace the topological consequences of that assumption.
+
+\subsection{The concentration hypothesis}\label{sec:det-hypothesis}
+
+\begin{assumption}[Concentration]\label{ass:concentration}
+  There exists a Leray--Hopf solution $u$ and a point $(x_0, t_0)$ such that
+  \begin{equation}\label{eq:concentration-hypothesis}
+    \limsup_{r\to 0} \frac{\mu_R(Q_r(x_0,t_0))}{r} \;>\; 0,
+  \end{equation}
+  where $Q_r$ is the parabolic cylinder of \Cref{thm:ckn-bridge}.
+\end{assumption}
+
+By the CKN bridge theorem, this is equivalent to $(x_0, t_0)$ being a singular
+point.  Our strategy: derive consequences of \Cref{ass:concentration} until we
+either reach a contradiction (proving regularity) or construct a consistent
+scenario (identifying a singularity mechanism or a gap).
+
+\subsection{Vortex line topology near a concentration point}\label{sec:det-vortex-topology}
+
+Near a point of curvature concentration, the vortex lines (integral curves of
+$\vort$) must organise into one of the following geometric configurations:
+
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Knotted concentration:} A single vortex tube carrying non-trivial
+    knot type concentrates to a point.  The Freedman--He bound
+    (\Cref{thm:freedman-he}) requires $E \geq C\,c(L)^{3/4}$, so the knot
+    complexity is bounded by the initial energy.
+
+  \item \textbf{Linked concentration:} Two or more vortex tubes with non-trivial
+    linking number are compressed together.  The helicity $\mathcal{H}$ records the
+    linking via Moffatt's formula, and the Arnold bound (\Cref{thm:arnold-bound})
+    prevents the energy from vanishing while linking persists.
+
+  \item \textbf{Anti-parallel approach:} Vortex tubes approach each other in an
+    anti-parallel configuration (as in the Taylor--Green scenario of
+    \Cref{sec:ch04-numerics}).  This configuration has zero linking number but
+    large local strain, and is the primary candidate for curvature concentration
+    from the numerical evidence.
+\end{enumerate}
+
+\begin{proposition}[Topological dichotomy]\label{prop:dichotomy}
+  Under \Cref{ass:concentration}, exactly one of the following holds at $(x_0, t_0)$:
+  \begin{enumerate}[label=(D\arabic*)]
+    \item \label{item:D1}
+      \textbf{Topologically non-trivial concentration:}
+      $\int_{Q_r(x_0,t_0)} \abs{h(x,t)}\,\dd x\,\dd t > 0$ for all sufficiently
+      small $r$, where $h = u\cdot\vort$ is the local helicity density.
+      The concentrating structure carries persistent helicity.
+
+    \item \label{item:D2}
+      \textbf{Topologically trivial concentration:}
+      $\int_{Q_r(x_0,t_0)} h(x,t)\,\dd x\,\dd t \to 0$ as $r \to 0$, but
+      $\mu_R(Q_r)/r \not\to 0$.  The concentrating structure is locally unlinked
+      (zero net helicity at the singular point), though it may still have non-trivial
+      crossing number.
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  This is a partition: either the integral of $\abs{h}$ persists or it does not.
+  The content is that both cases are a priori possible, and each leads to a
+  different analytical path.
+\end{proof}
+
+\subsection{Analysis of case \ref{item:D1}: helicity-constrained concentration}
+
+If the concentrating structure carries persistent helicity, then the Arnold bound
+(\Cref{thm:arnold-bound}) gives $E(t) \geq c > 0$ for all $t \leq t_0$.
+Moreover, the helicity dissipation formula (\Cref{prop:helicity-evolution})
+gives
+\begin{equation}\label{eq:helicity-dissip-at-concentration}
+  \dot{\mathcal{H}} = -2\nu\int \vort\cdot(\nabla\times\vort)\,\dd x.
+\end{equation}
+For the helicity to remain non-zero as $(x_0, t_0)$ is approached, the
+helicity dissipation rate must not destroy the helicity faster than the
+concentration proceeds.  This is a rate competition: see \Cref{sec:det-reconnection}.
+
+\subsection{Analysis of case \ref{item:D2}: helicity-free concentration}
+
+If the concentrating structure has zero net helicity, the topological constraints
+from helicity are absent.  However, the Freedman--He bound still applies to the
+crossing number of the vortex line configuration.  The question becomes: can
+anti-parallel vortex tubes concentrate curvature to a point without reconnecting?
+
+If reconnection occurs, the crossing number can decrease, which loosens the
+Freedman--He constraint.  The reconnection rate is controlled by viscosity
+(see \Cref{sec:det-reconnection}).  If reconnection does not occur, the vortex
+tubes must compress their cross-section to zero while maintaining finite
+circulation, which requires $\abs{\vort}$ to blow up on a set of vanishing
+cross-section.
+
+\begin{remark}[The anti-parallel scenario]\label{rem:anti-parallel}
+  The anti-parallel configuration is the primary focus of case \ref{item:D2}.
+  Numerics (\Cref{sec:ch04-numerics}) show that anti-parallel approach is the
+  dominant mode of enstrophy production at moderate Reynolds numbers.  The
+  question is whether the viscous reconnection that terminates this approach
+  is fast enough to prevent curvature concentration from forming an atom.
+\end{remark}
