@@ -18,7 +18,7 @@
 [![Sorry Count](https://img.shields.io/badge/sorry-17_total-yellow)](#lean-formalisation)
 [![Proved](https://img.shields.io/badge/Proved-14_theorems-brightgreen)](#proven-theorems)
 
-A geometric approach to the Clay Millennium regularity problem for the 3D incompressible Navier-Stokes equations, via the Biot-Savart connection on the divergence-free bundle.
+A geometric-analytic approach to the Clay Millennium regularity problem for the 3D incompressible Navier-Stokes equations, via the Biot-Savart connection on the divergence-free bundle.
 
 **Author:** Alejandro José Soto Franco
 
