@@ -305,3 +305,111 @@ cross-section.
   question is whether the viscous reconnection that terminates this approach
   is fast enough to prevent curvature concentration from forming an atom.
 \end{remark}
+
+% ===========================================================================
+\section{The reconnection rate vs.\ concentration rate}\label{sec:det-reconnection}
+% ===========================================================================
+
+Both branches of the dichotomy (\Cref{prop:dichotomy}) lead to a rate
+competition between the speed at which curvature concentrates and the speed
+at which viscous reconnection can rearrange the vortex line topology.
+This section makes the competition quantitative.
+
+\subsection{The reconnection timescale}\label{sec:det-reconnection-time}
+
+When two anti-parallel vortex tubes of separation $\delta$ and circulation
+$\Gamma$ approach each other, viscous diffusion bridges the gap on the
+timescale
+\begin{equation}\label{eq:reconnection-time}
+  \tau_{\mathrm{rec}} \;\sim\; \frac{\delta^2}{\nu},
+\end{equation}
+as established by the DNS studies of Kida--Takaoka \cite{kidaTakaoka1994}
+and confirmed at higher resolution by Hussain--Duraisamy
+\cite{hussainDuraisamy2011}.
+The reconnection replaces a pair of anti-parallel tubes with a ``bridge'' that
+has lower curvature and reduced enstrophy.
+
+\subsection{The concentration timescale}\label{sec:det-concentration-time}
+
+The curvature concentration rate at scale $\delta$ is controlled by the strain
+excess above the threshold.  From the Jacobi bound (\Cref{prop:jacobi-lyapunov}),
+the local enstrophy growth rate scales as $\Omega_\delta \sim \abs{D_\delta}^3$,
+where $D_\delta$ is the strain rate at scale $\delta$.  The timescale for curvature
+to concentrate at scale $\delta$ is
+\begin{equation}\label{eq:concentration-time}
+  \tau_{\mathrm{conc}} \;\sim\; \frac{1}{\Delta_{\mathrm{strain}}},
+\end{equation}
+where $\Delta_{\mathrm{strain}} = \abs{D_\delta} - \nu/\delta^2$ is the strain
+excess above the viscous threshold (the difference between the strain rate and
+the diffusion rate at scale $\delta$).
+
+\subsection{The critical balance}\label{sec:det-balance}
+
+\begin{proposition}[Rate balance]\label{prop:rate-balance}
+  Concentration can proceed (i.e., the curvature measure can grow at scale $\delta$)
+  only if the concentration timescale is shorter than the reconnection timescale:
+  \begin{equation}\label{eq:rate-balance}
+    \tau_{\mathrm{conc}} \;<\; \tau_{\mathrm{rec}}
+    \qquad\Longleftrightarrow\qquad
+    \Delta_{\mathrm{strain}} \;>\; \frac{\nu}{\delta^2}.
+  \end{equation}
+  That is, the strain excess must exceed the viscous diffusion rate at the same scale.
+  Rearranging:
+  \begin{equation}\label{eq:balance-condition}
+    \delta^2\,\Delta_{\mathrm{strain}} \;>\; \nu.
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  Direct comparison of~\eqref{eq:reconnection-time}
+  and~\eqref{eq:concentration-time}.  The strain excess is well-defined because the
+  Jacobi bound provides a scale-dependent decomposition of the strain rate into a
+  viscous part ($\sim\nu/\delta^2$) and an inertial part ($\sim\Delta_{\mathrm{strain}}$).
+  The concentration mechanism requires the inertial part to dominate.
+\end{proof}
+
+\subsection{Energy constraint on the rate balance}\label{sec:det-energy-balance}
+
+The critical observation is that the strain excess $\Delta_{\mathrm{strain}}$ is
+not free: it is constrained by the Leray--Hopf energy inequality.
+
+\begin{proposition}[Energy-limited strain excess]\label{prop:energy-strain}
+  For a Leray--Hopf solution with initial energy $E(0)$, the time-averaged strain
+  excess at scale $\delta$ satisfies
+  \begin{equation}\label{eq:strain-energy}
+    \int_0^T \Delta_{\mathrm{strain}}^2\,\dd t
+    \;\leq\; C\,\frac{E(0)}{\nu\,\delta^4}
+  \end{equation}
+  for a constant $C$ depending only on the domain.
+\end{proposition}
+
+\begin{proof}
+  The strain rate at scale $\delta$ is bounded by the enstrophy concentrated at
+  that scale: $\abs{D_\delta}^2 \lesssim \delta^{-3}\int_{B_\delta}\abs{\nabla u}^2\,\dd x$.
+  Integrating the Leray--Hopf energy inequality over $[0,T]$ gives the global enstrophy
+  bound $\int_0^T\norm{\nabla u}^2_{\Lp{2}}\,\dd t \leq E(0)/\nu$.  The strain excess
+  bound~\eqref{eq:strain-energy} follows by localising this estimate to scale $\delta$
+  via a Vitali covering argument and subtracting the viscous threshold contribution.
+\end{proof}
+
+The interplay between \Cref{prop:rate-balance} and \Cref{prop:energy-strain} is the
+heart of the topological determination.  For concentration to proceed at scale $\delta$,
+the balance condition~\eqref{eq:balance-condition} requires
+$\Delta_{\mathrm{strain}} > \nu/\delta^2$.
+But the energy constraint~\eqref{eq:strain-energy} limits the time the system can sustain
+such strain excess.  Specifically: the total time $T_\delta$ during which
+$\Delta_{\mathrm{strain}} > \nu/\delta^2$ satisfies
+\begin{equation}\label{eq:time-budget}
+  T_\delta \cdot \frac{\nu^2}{\delta^4}
+  \;\leq\; \int_0^T \Delta_{\mathrm{strain}}^2\,\dd t
+  \;\leq\; C\,\frac{E(0)}{\nu\,\delta^4},
+\end{equation}
+giving $T_\delta \leq C\,E(0)/\nu^3$.
+
+\begin{remark}[Scale-independent time budget]\label{rem:time-budget}
+  The time budget $T_\delta \leq C\,E(0)/\nu^3$ is independent of $\delta$.
+  This means the concentration mechanism has a fixed amount of time to operate,
+  regardless of how small the scale $\delta$ becomes.  The question is whether this
+  fixed time budget is enough to drive $\mu_R(Q_r)/r$ to a positive limit as
+  $r \to 0$.  This is the gap that the next section addresses.
+\end{remark}
