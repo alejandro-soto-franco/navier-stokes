@@ -1,1 +1,93 @@
 \chapter{The Topological Determination}\label{ch:determination}
+
+This chapter constructs a systematic path from the curvature measure $\mu_R$ of
+\Cref{ch:curvature} through the topological structure of potential singularities
+to a new conditional regularity criterion.  Each section is a node in an
+investigation: the mathematics at each stage determines the direction of the next.
+The chapter concludes with a precisely identified gap whose resolution would settle
+the regularity question.
+
+% ===========================================================================
+\section{The differential form framework}\label{sec:det-forms}
+% ===========================================================================
+
+We begin by establishing the differential-geometric objects that serve as the
+language for the topological investigation.  Everything in this section is
+neutral: it follows from the definitions and standard identities, with no
+regularity hypothesis beyond the Leray--Hopf class.
+
+\subsection{Velocity and vorticity as differential forms}
+
+Let $u$ be a Leray--Hopf solution on $[0,T]\times\R^3$ (or $\mathbb{T}^3$).
+Define the \emph{velocity one-form}
+\begin{equation}\label{eq:velocity-one-form}
+  A \;=\; u^\flat \;=\; u_i\,\dd x^i,
+\end{equation}
+and the \emph{vorticity two-form}
+\begin{equation}\label{eq:vorticity-two-form}
+  F \;=\; \dd A \;=\; \tfrac{1}{2}\,(\partial_i u_j - \partial_j u_i)\,
+  \dd x^i \wedge \dd x^j.
+\end{equation}
+In three dimensions, the Hodge dual gives $F = *\vort^\flat$, recovering the
+vorticity vector $\vort = \nabla\times u$.  The divergence-free condition
+$\divergence u = 0$ is $\delta A = 0$ (co-closure), and the Bianchi identity
+$\dd F = \dd^2 A = 0$ encodes $\divergence\vort = 0$.
+
+\subsection{Helicity as a Chern--Simons invariant}\label{sec:det-helicity-cs}
+
+Recall from \Cref{sec:curv-helicity} that the helicity
+\begin{equation}\label{eq:det-helicity}
+  \mathcal{H}(u) \;=\; \int_\Omega A\wedge \dd A
+  \;=\; \int_\Omega u\cdot\vort\,\dd x
+\end{equation}
+is the Chern--Simons functional of $A$.  For smooth ideal flow
+($\nu = 0$), the Cartan formula gives the helicity evolution:
+
+\begin{proposition}[Helicity evolution]\label{prop:helicity-evolution}
+  Let $u$ be a smooth solution of the Navier--Stokes equations with viscosity
+  $\nu \geq 0$.  Then
+  \begin{equation}\label{eq:helicity-evolution}
+    \frac{\dd}{\dd t}\mathcal{H}(u)
+    \;=\; -2\nu\int_\Omega \vort\cdot(\nabla\times\vort)\,\dd x.
+  \end{equation}
+  In particular, $\mathcal{H}$ is conserved when $\nu = 0$.
+\end{proposition}
+
+\begin{proof}
+  Compute $\partial_t(u\cdot\vort)$ using the Navier--Stokes momentum equation
+  $\partial_t u + (u\cdot\nabla)u = -\nabla p + \nu\Delta u$ and the vorticity
+  equation $\partial_t\vort + (u\cdot\nabla)\vort = (\vort\cdot\nabla)u + \nu\Delta\vort$.
+  After integration by parts (using $\divergence u = 0$ and either periodic or
+  decay boundary conditions), all nonlinear terms cancel, leaving~\eqref{eq:helicity-evolution}.
+  The Euler case $\nu = 0$ gives $\dot{\mathcal{H}} = 0$.
+\end{proof}
+
+\begin{remark}[Cartan formula interpretation]\label{rem:cartan-helicity}
+  In the language of forms: $\partial_t A = \dd\phi + \nu\,\delta\dd A$ for a
+  gauge function $\phi$ (the modified Bernoulli pressure).  Then
+  $\partial_t(A\wedge\dd A) = \dd(\phi\wedge\dd A) + 2\nu\,(\delta\dd A)\wedge\dd A$
+  up to exact terms.  Integrating, the exact term vanishes (no boundary), and
+  the dissipation rate is $-2\nu\int\vort\cdot(\nabla\times\vort)\,\dd x$
+  as stated.
+\end{remark}
+
+\subsection{The helicity dissipation rate and its sign}\label{sec:det-helicity-dissip}
+
+The dissipation rate $\dot{\mathcal{H}} = -2\nu\int\vort\cdot(\nabla\times\vort)\,\dd x$
+has indefinite sign: $\vort\cdot(\nabla\times\vort)$ is not pointwise non-negative.
+This is in contrast with the energy dissipation rate $-2\nu\int\abs{\vort}^2\,\dd x$,
+which is always non-positive.
+
+\begin{definition}[Superhelicity]\label{def:superhelicity}
+  The \emph{superhelicity} is
+  \begin{equation}\label{eq:superhelicity}
+    \mathcal{H}_2(u) \;=\; \int_\Omega \vort\cdot(\nabla\times\vort)\,\dd x.
+  \end{equation}
+  On $\mathbb{T}^3$ or for decaying fields with a single helical handedness,
+  $\mathcal{H}_2 = \norm{\vort}_{\Lp{2}}^2 = \Omega(t)$ (the enstrophy), but in
+  general $\mathcal{H}_2$ and $\Omega$ differ by the sign structure of $\vort$.
+\end{definition}
+
+The indefinite sign of $\dot{\mathcal{H}}$ is a key feature: helicity can be
+\emph{created} by viscous reconnection events that change the linking number of
+vortex lines.  This is the mechanism explored in \Cref{sec:det-reconnection}.
