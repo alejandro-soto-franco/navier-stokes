@@ -40,7 +40,7 @@ The tracks are reconciled at chapter boundaries via sync documents in `sync/`.
 |---------|-------|------|-------|-------|------|
 | 1 | Functional Analytic Foundations | 17 defs, 10 proved, 4 sorry | Complete | 8/8 pass | [Passed](sync/ch01-foundations.md) |
 | 2 | Leray-Hopf Weak Solutions | 12 defs, 4 proved, 12 sorry | Complete | 13/13 pass | [Passed](sync/ch02-leray-hopf.md) |
-| 3 | The Biot-Savart Connection | Stubs | Complete (64pp) | 23/23 pass | -- |
+| 3 | The Biot-Savart Connection | Stubs | Complete | 23/23 pass | -- |
 | 4 | Curvature of the Flow | -- | Draft complete | 14/14 pass | -- |
 | 5 | Topological Constraints | Stubs | In progress | Planned | -- |
 | 6 | The Obstruction Theorem | Stubs | In progress | Planned | -- |
