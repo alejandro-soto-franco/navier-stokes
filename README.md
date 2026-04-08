@@ -92,19 +92,19 @@ The Lean 4 formalisation builds against a [pinned fork of Mathlib4](https://gith
 | Theorem | File | Description |
 |---------|------|-------------|
 | `weakPartialDeriv_unique` | `Foundations/WeakDerivative.lean` | Weak partial derivatives are unique a.e., via the fundamental lemma of the calculus of variations |
-| `sobolevConjugate_gt` | `Foundations/SobolevEmbedding.lean` | The Sobolev conjugate exponent p* > p for 1 <= p < n |
-| `sobolevConjugate_inv` | `Foundations/SobolevEmbedding.lean` | The dimensional relation 1/p* = 1/p - 1/n |
-| `sobolevH1InnerProduct_comm` | `Foundations/SobolevSpace.lean` | Symmetry of the H^1 inner product |
-| `l2sigma_closed_under_l2_convergence` | `Foundations/DivFreeSpace.lean` | L²σ is closed under L² convergence, via Holder (Cauchy-Schwarz) and `tendsto_nhds_unique` |
-| `trilinearForm_antisymmetric` | `LerayHopf/TrilinearForm.lean` | b(u,v,v) = 0 for distributionally divergence-free u and smooth compactly-supported v, via per-component test functions phi_k = v_k^2 |
-| `l2sigmaSubmodule_isSeqClosed` | `Foundations/HelmholtzProjection.lean` | Sequential closedness of L²σ; norm bridge via `L2.inner_def` and `real_inner_self_eq_norm_sq` |
-| `l2sigmaSubmodule_isClosed` | `Foundations/HelmholtzProjection.lean` | Topological closedness of L²σ via sequential closedness and metric structure of L² |
-| `lerayProjectorLp_idempotent` | `Foundations/HelmholtzProjection.lean` | P(P(f)) = P(f), via `starProjection_eq_self_iff.mpr` |
-| `lerayProjectorLp_selfAdjoint` | `Foundations/HelmholtzProjection.lean` | ⟪Pf, g⟫ = ⟪f, Pg⟫, via `inner_starProjection_left_eq_right` |
-| `helmholtz_l2_decomposition` | `Foundations/HelmholtzProjection.lean` | f = Pf + (f - Pf) with Pf in L²σ and ⟪Pf, f-Pf⟫ = 0, via `starProjection_inner_eq_zero` |
-| `galerkinRHS_locallyLipschitz` | `LerayHopf/GalerkinApproximation.lean` | The Galerkin ODE RHS is locally Lipschitz, via `ContDiff.of_le (by norm_cast)` downgrading C^∞ to C^1 |
-| `galerkinVelocity_smooth` | `LerayHopf/GalerkinApproximation.lean` | The reconstructed velocity u_N = ∑_k c_k w_k is C^∞, via `ContDiff.sum` and `ContDiff.const_smul` |
-| `galerkin_trilinear_vanishes` | `LerayHopf/GalerkinApproximation.lean` | The cubic energy term vanishes: ∑_{k,j,l} B_{kjl} c_k c_j c_l = 0, via `trilinear_at_galerkin` and `trilinearForm_antisymmetric` |
+| `sobolevConjugate_gt` | `Foundations/SobolevEmbedding.lean` | The Sobolev conjugate exponent $p^* > p$ for $1 \leq p < n$ |
+| `sobolevConjugate_inv` | `Foundations/SobolevEmbedding.lean` | The dimensional relation $1/p^* = 1/p - 1/n$ |
+| `sobolevH1InnerProduct_comm` | `Foundations/SobolevSpace.lean` | Symmetry of the $H^1$ inner product |
+| `l2sigma_closed_under_l2_convergence` | `Foundations/DivFreeSpace.lean` | $L^2_\sigma$ is closed under $L^2$ convergence, via Hölder (Cauchy-Schwarz) and `tendsto_nhds_unique` |
+| `trilinearForm_antisymmetric` | `LerayHopf/TrilinearForm.lean` | $b(u,v,v) = 0$ for distributionally divergence-free $u$ and smooth compactly-supported $v$, via per-component test functions $\phi_k = v_k^2$ |
+| `l2sigmaSubmodule_isSeqClosed` | `Foundations/HelmholtzProjection.lean` | Sequential closedness of $L^2_\sigma$; norm bridge via `L2.inner_def` and `real_inner_self_eq_norm_sq` |
+| `l2sigmaSubmodule_isClosed` | `Foundations/HelmholtzProjection.lean` | Topological closedness of $L^2_\sigma$ via sequential closedness and metric structure of $L^2$ |
+| `lerayProjectorLp_idempotent` | `Foundations/HelmholtzProjection.lean` | $P(P(f)) = P(f)$, via `starProjection_eq_self_iff.mpr` |
+| `lerayProjectorLp_selfAdjoint` | `Foundations/HelmholtzProjection.lean` | $\langle Pf, g \rangle = \langle f, Pg \rangle$, via `inner_starProjection_left_eq_right` |
+| `helmholtz_l2_decomposition` | `Foundations/HelmholtzProjection.lean` | $f = Pf + (f - Pf)$ with $Pf \in L^2_\sigma$ and $\langle Pf, f - Pf \rangle = 0$, via `starProjection_inner_eq_zero` |
+| `galerkinRHS_locallyLipschitz` | `LerayHopf/GalerkinApproximation.lean` | The Galerkin ODE RHS is locally Lipschitz, via `ContDiff.of_le (by norm_cast)` downgrading $C^\infty$ to $C^1$ |
+| `galerkinVelocity_smooth` | `LerayHopf/GalerkinApproximation.lean` | The reconstructed velocity $u_N = \sum_k c_k w_k$ is $C^\infty$, via `ContDiff.sum` and `ContDiff.const_smul` |
+| `galerkin_trilinear_vanishes` | `LerayHopf/GalerkinApproximation.lean` | The cubic energy term vanishes: $\sum_{k,j,\ell} B_{kj\ell}\, c_k c_j c_\ell = 0$, via `trilinear_at_galerkin` and `trilinearForm_antisymmetric` |
 
 ### Sorry Classification
 
@@ -118,10 +118,10 @@ Arnold bound, Freedman-He, and the topological regularity criterion.
 | File | Sorry | Reason |
 |------|-------|--------|
 | `SobolevEmbedding.lean` | `sobolev_embedding_subcritical` | GNS + Meyers-Serrin density (weak-to-classical derivative bridge) |
-| `SobolevEmbedding.lean` | `sobolev_embedding_subcritical_h10` | Same bridge for H^1_0; `clm_norm_sq_eq_sum_sq` assembly |
+| `SobolevEmbedding.lean` | `sobolev_embedding_subcritical_h10` | Same bridge for $H^1_0$; `clm_norm_sq_eq_sum_sq` assembly |
 | `SobolevEmbedding.lean` | `sobolev_embedding_supercritical` | Morrey inequality (not yet in Mathlib) |
-| `RellichKondrachov.lean` | `rellich_kondrachov` | Frechet-Kolmogorov compactness criterion |
-| `Poincare.lean` | `poincare_inequality_convex` | n-D Poincaré via Fubini from 1D (1D result now proved in Mathlib fork) |
+| `RellichKondrachov.lean` | `rellich_kondrachov` | Fréchet-Kolmogorov compactness criterion |
+| `Poincare.lean` | `poincare_inequality_convex` | $n$-D Poincaré via Fubini from 1D (1D result now proved in Mathlib fork) |
 
 **Leray-Hopf (12 sorry):**
 
@@ -137,7 +137,7 @@ Arnold bound, Freedman-He, and the topological regularity criterion.
 | `GalerkinApproximation.lean` | `galerkin_energy_nonincreasing` | B | Monotone integral from `HasDerivAt` |
 | `GalerkinApproximation.lean` | `galerkin_exists_global` | B | `IsPicardLindelof` + energy continuation |
 | `GalerkinApproximation.lean` | `galerkin_uniformL2Bound` | C | Bessel inequality for initial data |
-| `AubinLions.lean` | `aubinLions_compactness` | C | Abstract Banach-valued L^p theory |
+| `AubinLions.lean` | `aubinLions_compactness` | C | Abstract Banach-valued $L^p$ theory |
 | `AubinLions.lean` | `galerkin_sequence_has_convergent_subseq` | C | Rellich-Kondrachov + Aubin-Lions |
 
 The 4 Foundations sorries remain outside the `lerayHopf_existence` dependency chain.
@@ -149,7 +149,7 @@ The 4 Foundations sorries remain outside the `lerayHopf_existence` dependency ch
 **Mathlib fork:** `Mathlib/Analysis/FunctionalSpaces/PoincareInequality.lean` is now
 fully sorry-free (1D Poincaré inequality proved via variance/discriminant argument).
 
-**Chapter 1 (5 sorry):** Sobolev embeddings (3), Rellich-Kondrachov (1), Poincare (1).
+**Chapter 1 (5 sorry):** Sobolev embeddings (3), Rellich-Kondrachov (1), Poincaré (1).
 
 **Chapter 2 (12 sorry):** Leray-Hopf existence (1 legacy) + Galerkin/Aubin-Lions infrastructure (11 new).
 
@@ -180,9 +180,9 @@ python sympy/ch05_topology_verify.py        #  5 checks (T-4 to T-8)
 
 All scripts use assert-based checks and print `[PASS]` for each verified identity.
 The ch03 script covers: Leray projector properties (5 test fields), Koszul formula sign
-consistency, Hölder/Sobolev product exponents (H^1 into L^6 in R^3, product into L^{3/2}),
-Calderón-Zygmund kernel hypotheses, Biot-Savart HLS exponents (alpha_HLS=1, giving
-1/q = 1/p - 1/3, p < 3), and stretching tensor trace identities.
+consistency, Hölder/Sobolev product exponents ($H^1$ into $L^6$ in $\mathbb{R}^3$, product into $L^{3/2}$),
+Calderón-Zygmund kernel hypotheses, Biot-Savart HLS exponents ($\alpha_{\text{HLS}} = 1$, giving
+$1/q = 1/p - 1/3$, $p < 3$), and stretching tensor trace identities.
 
 ### Cadabra2 scripts (abstract-index tensor algebra)
 
@@ -196,40 +196,40 @@ metric compatibility + torsion-freeness") with a concrete two-tool proof:
 
 | Check | Tool | Statement |
 |-------|------|-----------|
-| LC-1 | Cadabra2 | `C_{kij} + C_{kji} = 0` (structure-constant antisymmetry, abstract) |
-| LC-2 | Cadabra2 | Koszul ansatz `2Γ_{kij} = C_{kij} - C_{ijk} + C_{jki}` |
-| LC-3 | Cadabra2 | Non-holonomic torsion-free: `Γ_{kij} - Γ_{kji} = C_{kij}` |
-| LC-4 | SymPy | IBP: Koszul integrand - 2(u.∇)v.w = sum of 3 total divergences (5 triples) |
-| LC-5 | SymPy | Metric compatibility: u.∇(v.w) = (∇_u v).w + v.(∇_u w) (5 triples) |
+| LC-1 | Cadabra2 | $C_{kij} + C_{kji} = 0$ (structure-constant antisymmetry, abstract) |
+| LC-2 | Cadabra2 | Koszul ansatz $2\Gamma_{kij} = C_{kij} - C_{ijk} + C_{jki}$ |
+| LC-3 | Cadabra2 | Non-holonomic torsion-free: $\Gamma_{kij} - \Gamma_{kji} = C_{kij}$ |
+| LC-4 | SymPy | IBP: Koszul integrand $- 2(u \cdot \nabla)v \cdot w$ = sum of 3 total divergences (5 triples) |
+| LC-5 | SymPy | Metric compatibility: $u \cdot \nabla(v \cdot w) = (\nabla_u v) \cdot w + v \cdot (\nabla_u w)$ (5 triples) |
 
 **Scope boundary:** Cadabra handles abstract claims valid for any right-invariant metric on
-any Lie group (LC-1 to LC-3). SymPy handles the L^2 metric on SDiff(T^3) specifically, where
+any Lie group (LC-1 to LC-3). SymPy handles the $L^2$ metric on $\mathrm{SDiff}(\mathbb{T}^3)$ specifically, where
 the divergence-free constraint enters via integration by parts (LC-4, LC-5).
 
 `ch05_topology_cadabra.py` verifies the differential form identities underpinning Chapter 5:
 
 | Check | Tool | Statement |
 |-------|------|-----------|
-| T-1 | Cadabra2 | `div(curl A) = 0` (Bianchi identity d^2 = 0, contracted with epsilon) |
-| T-2 | Cadabra2 | `epsilon * sym(dA) = 0` (exterior derivative antisymmetry) |
-| T-3 | Cadabra2 | `omega.(curl omega) != |omega|^2` (dissipation has indefinite sign) |
+| T-1 | Cadabra2 | $\mathrm{div}(\mathrm{curl}\, A) = 0$ (Bianchi identity $\mathrm{d}^2 = 0$, contracted with $\epsilon$) |
+| T-2 | Cadabra2 | $\epsilon \cdot \mathrm{sym}(\mathrm{d}A) = 0$ (exterior derivative antisymmetry) |
+| T-3 | Cadabra2 | $\omega \cdot (\mathrm{curl}\, \omega) \neq \lvert\omega\rvert^2$ (dissipation has indefinite sign) |
 
 `ch05_topology_verify.py` verifies the energy-helicity landscape on explicit Beltrami fields:
 
 | Check | Tool | Statement |
 |-------|------|-----------|
-| T-4 | SymPy | Helicity density `h = lambda |u|^2` for Beltrami eigenmodes (2 fields) |
-| T-5 | SymPy | Dissipation rate `omega.(curl omega) = lambda^3 |u|^2` (2 fields) |
-| T-6 | SymPy | Arnold bound `E >= |H|/(2*lambda_1)`, equality at lambda_1 |
-| T-7 | SymPy | Freedman-He exponent 3/4 > naive 1/2 (rational arithmetic) |
+| T-4 | SymPy | Helicity density $h = \lambda \lvert u\rvert^2$ for Beltrami eigenmodes (2 fields) |
+| T-5 | SymPy | Dissipation rate $\omega \cdot (\mathrm{curl}\, \omega) = \lambda^3 \lvert u\rvert^2$ (2 fields) |
+| T-6 | SymPy | Arnold bound $E \geq \lvert H\rvert / (2\lambda_1)$, equality at $\lambda_1$ |
+| T-7 | SymPy | Freedman-He exponent $3/4 > 1/2$ (rational arithmetic) |
 | T-8 | SymPy | Local helicity density sign structure (linked vs. mixed) |
 
-The ch04 script covers three parts: (I) pressure Poisson connection -- velocity gradient
-decomposition A=D+W, vorticity norm |omega|^2 = |A|^2 - tr(A^2), and Delta p = -tr(A^2)
-verified on four ABC fields; (II) Arnold sectional curvature -- explicit K values for
-mode pairs (1,0,0)/(0,1,0), (1,0,0)/(1,1,0), (1,1,0)/(2,1,1), same-shell degeneracy
-K=0; (III) Holder exponent chain -- 6x2->3/2, 6x3/2->6/5 as exact rationals, and the
-exponent consistency (3/2)x(6/5) = 9/5 appearing in the curvature measure bound.
+The ch04 script covers three parts: (I) pressure Poisson connection: velocity gradient
+decomposition $A = D + W$, vorticity norm $\lvert\omega\rvert^2 = \lvert A\rvert^2 - \mathrm{tr}(A^2)$, and $\Delta p = -\mathrm{tr}(A^2)$
+verified on four ABC fields; (II) Arnold sectional curvature: explicit $K$ values for
+mode pairs $(1,0,0)/(0,1,0)$, $(1,0,0)/(1,1,0)$, $(1,1,0)/(2,1,1)$, same-shell degeneracy
+$K = 0$; (III) Hölder exponent chain: $6 \times 2 \to 3/2$, $6 \times 3/2 \to 6/5$ as exact rationals, and the
+exponent consistency $(3/2) \times (6/5) = 9/5$ appearing in the curvature measure bound.
 
 ## Compilation
 
@@ -262,49 +262,49 @@ constraints obstruct finite-time blowup.
 
 **Chapter 1** establishes the functional analytic foundations: Sobolev spaces, embedding
 theorems, the Helmholtz decomposition, and the Leray projector. The whole-space Helmholtz
-decomposition on R^n is handled via the Riesz potential and Fourier multiplier
+decomposition on $\mathbb{R}^n$ is handled via the Riesz potential and Fourier multiplier
 characterisation of the Leray projector.
 
-**Chapter 2** develops Leray-Hopf weak solutions on R^3: the weak formulation,
+**Chapter 2** develops Leray-Hopf weak solutions on $\mathbb{R}^3$: the weak formulation,
 trilinear form antisymmetry, Galerkin approximation via Gram-Schmidt on
-C_c^infty intersect L^2_sigma, the energy inequality, Serrin's regularity criterion,
+$C_c^\infty \cap L^2_\sigma$, the energy inequality, Serrin's regularity criterion,
 and the connection to Fefferman's Clay formulation (Problems A through D).
 
 **Chapter 3** constructs the Biot-Savart connection on the divergence-free bundle.
-The Biot-Savart map (curl composed with minus the inverse Laplacian) is shown to be
-torsion-free and metric-compatible with respect to the L^2 metric, establishing it as
+The Biot-Savart map ($\mathrm{curl} \circ (-\Delta)^{-1}$) is shown to be
+torsion-free and metric-compatible with respect to the $L^2$ metric, establishing it as
 the Levi-Civita connection of the divergence-free bundle. All geometric identities
 (Koszul formula, torsion, metric compatibility) are understood in the distributional
 sense at Leray-Hopf regularity: at this regularity the connection takes values in
-L^{3/2}_sigma, which is strictly smaller than L^2_sigma. The vorticity equation is
+$L^{3/2}_\sigma$, which is strictly smaller than $L^2_\sigma$. The vorticity equation is
 recast as a forced parallel-transport equation along the flow. Curvature is computed
 via the abstract Riemann tensor and the first Bianchi identity is verified algebraically.
-Calderon-Zygmund and Hardy-Littlewood-Sobolev estimates close the Leray-Hopf regularity
-loop (BS: L^p to L^q with 1/q = 1/p - 1/3, 1 < p < 3).
+Calderón-Zygmund and Hardy-Littlewood-Sobolev estimates close the Leray-Hopf regularity
+loop (BS: $L^p \to L^q$ with $1/q = 1/p - 1/3$, $1 < p < 3$).
 
 **Chapter 4** develops the curvature theory at Leray-Hopf regularity. Arnold's formula
-gives sectional curvature K(e_k, e_m) = -(|k|^2-|m|^2)^2/(4|k|^2|m|^2|k x m|^2) < 0
-between shells and K=0 within a shell, with the pressure Poisson term -tr(A^2) as the
-dominant contribution. The velocity gradient decomposition A=D+W identifies the pressure
-Poisson identity Delta p = |omega|^2/2 - |D|^2_F = -tr(A^2). The viscous Jacobi equation
+gives sectional curvature $K(e_k, e_m) = -(|k|^2 - |m|^2)^2 / (4|k|^2 |m|^2 |k \times m|^2) < 0$
+between shells and $K = 0$ within a shell, with the pressure Poisson term $-\mathrm{tr}(A^2)$ as the
+dominant contribution. The velocity gradient decomposition $A = D + W$ identifies the pressure
+Poisson identity $\Delta p = |\omega|^2/2 - |D|^2_F = -\mathrm{tr}(A^2)$. The viscous Jacobi equation
 is derived by linearising NS around a one-parameter family of solutions; the Lyapunov bound
-relates Jacobi field growth to the strain excess Delta_strain = lambda_1(D) - nu*lambda_min(-Delta).
+relates Jacobi field growth to the strain excess $\Delta_{\text{strain}} = \lambda_1(D) - \nu \lambda_{\min}(-\Delta)$.
 Helicity is identified as the Chern-Simons invariant of the velocity one-form; the holonomy
 tensor of the Biot-Savart connection has Abelian part equal to the circulation, and vortex
-filaments carry integer defect charge. The curvature measure mu_R = |R|^{6/5} dx dt is
-finite at Leray-Hopf regularity (bound C*E(0)^{9/5}/nu^{9/5}), and the CKN bridge theorem
-(proved in full) shows (x_0,t_0) is regular iff mu_R(Q_r)/r -> 0, placing singularities
-exactly at atoms of mu_R. Numerical experiments (Taylor-Green, Re=1600, 512^3) illustrate
+filaments carry integer defect charge. The curvature measure $\mu_R = |R|^{6/5}\, \mathrm{d}x\, \mathrm{d}t$ is
+finite at Leray-Hopf regularity (bound $C \cdot E(0)^{9/5} / \nu^{9/5}$), and the CKN bridge theorem
+(proved in full) shows $(x_0, t_0)$ is regular iff $\mu_R(Q_r)/r \to 0$, placing singularities
+exactly at atoms of $\mu_R$. Numerical experiments (Taylor-Green, $Re = 1600$, $512^3$) illustrate
 all five geometric phenomena with transparent figures in both light and dark mode.
 
 **Chapter 5** constructs the topological determination: a systematic investigation of
 whether vortex line topology constrains curvature concentration enough to prevent
-singularities. The differential form framework (velocity one-form A = u-flat, helicity
+singularities. The differential form framework (velocity one-form $A = u^\flat$, helicity
 as Chern-Simons invariant) is established, followed by the energy-helicity landscape
 (Arnold bound, Freedman-He crossing number bound). The topological dichotomy separates
 potential singularities into helicity-constrained and helicity-free cases. The rate
-competition between viscous reconnection (timescale delta^2/nu) and curvature concentration
-(timescale 1/Delta_strain) yields a scale-independent time budget T_delta <= C*E(0)/nu^3.
+competition between viscous reconnection (timescale $\delta^2/\nu$) and curvature concentration
+(timescale $1/\Delta_{\text{strain}}$) yields a scale-independent time budget $T_\delta \leq C \cdot E(0)/\nu^3$.
 The chapter concludes with a new conditional regularity criterion: if reconnection dominance
 holds at every scale, the solution is smooth. The gap between this conditional result and
 unconditional regularity is precisely identified.
