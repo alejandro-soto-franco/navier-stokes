@@ -11,14 +11,15 @@ by the L^2 norm of the gradient:
 where C_P > 0 depends only on Omega.  For convex domains, the optimal constant satisfies
 C_P <= diam(Omega) / sqrt(n) (Payne-Weinberger 1960).
 
-We state a single combined theorem for convex bounded domains, subsuming both the
-general Poincare inequality (for the convex case) and the Payne-Weinberger constant
-bound. The proof uses the fundamental theorem of calculus along line segments in the
-convex domain combined with Cauchy-Schwarz, avoiding Rellich-Kondrachov compactness.
+The proof is structured as:
+  1. `poincare_slice`: per-direction bound via Fubini + `poincare_1d` (sorry: Fubini step)
+  2. `poincare_smooth`: average over n directions (proved, uses `poincare_slice`)
+  3. `poincare_inequality_convex`: H^1_0 limit passage (sorry: approximation argument)
 -/
 import NavierStokes.Foundations.SobolevSpace
+import Mathlib.Analysis.FunctionalSpaces.PoincareInequality
 
-open MeasureTheory Measure TopologicalSpace Metric
+open MeasureTheory Measure TopologicalSpace Metric Set
 open scoped ENNReal NNReal ContDiff
 
 noncomputable section
@@ -37,26 +38,75 @@ def l2NormSq (f : EuclideanSpace ℝ (Fin n) → ℝ) : ℝ :=
 def gradientL2NormSq (u : SobolevH1 Ω hΩ) : ℝ :=
   ∑ i : Fin n, ∫ x in Ω, u.weakDeriv i x ^ 2
 
-/-! ## Poincare inequality for convex bounded domains
+/-! ## Poincare inequality for smooth compactly supported functions
 
-The proof strategy for convex Omega bypasses Rellich-Kondrachov entirely:
+The 1D Poincare inequality (`MeasureTheory.poincare_1d`) gives, for each coordinate
+slice through a convex bounded domain:
 
-1. **Smooth functions (1D FTC + Cauchy-Schwarz):** For phi in C^inf_c(Omega) and x in
-   Omega, since Omega is convex and phi vanishes outside Omega, integrate along a line
-   segment from the boundary to x:
+  integral |phi|^2 dx_i <= L_i^2 * integral |d_i phi|^2 dx_i
 
-     |phi(x)|^2 <= diam(Omega) * integral_0^{diam} |grad phi(gamma(s))|^2 ds
+where L_i is the width of Omega in direction i (at most diam Omega).
 
-   Integrate over x, average over n coordinate directions, apply Fubini:
+Fubini over the remaining coordinates and averaging over n directions yields:
 
-     integral_Omega |phi|^2 dx <= (diam Omega)^2 / n * sum_i integral_Omega |d_i phi|^2 dx
-
-2. **H^1_0 passage to limit:** For u in H^1_0(Omega), the `IsH1Zero` property provides
-   phi_k in C^inf_c(Omega) with phi_k -> u in H^1. Apply step 1 to each phi_k, then
-   pass to the limit using L^2 continuity.
-
-The proof requires Fubini + line integrals (Category C).
+  integral_Omega |phi|^2 <= (diam Omega)^2 / n * sum_i integral_Omega |d_i phi|^2
 -/
+
+/-- For each coordinate direction i, the 1D Poincare inequality gives:
+    ∫_Ω |φ|² ≤ diam(Ω)² * ∫_Ω |∂_i φ|²
+    This uses Fubini to decompose the n-dimensional integral into 1D slices,
+    applying `MeasureTheory.poincare_1d` to each slice.
+
+    The decomposition uses `MeasurableEquiv.piFinSuccAbove` to split
+    `(Fin n → ℝ) ≃ᵐ ℝ × (Fin (n-1) → ℝ)` (isolating coordinate i),
+    then `setIntegral_prod` (Fubini) to integrate the inner 1D slice.
+    On each slice, φ has compact support inside a 1D interval of length ≤ diam(Ω),
+    so `poincare_1d` applies with constant diam(Ω)². -/
+private theorem poincare_slice
+    (hBdd : Bornology.IsBounded Ω)
+    (hConvex : Convex ℝ Ω)
+    (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+    (hφ : ContDiff ℝ ∞ φ)
+    (hsupp : tsupport φ ⊆ Ω)
+    (i : Fin n) :
+    l2NormSq Ω φ ≤ (diam Ω) ^ 2 *
+      ∫ x in Ω, (fderiv ℝ φ x (EuclideanSpace.single i 1)) ^ 2 := by
+  -- Fubini decomposition:
+  -- 1. Use MeasurableEquiv.piFinSuccAbove to write ℝ^n = ℝ × ℝ^{n-1}
+  -- 2. The set Ω decomposes into fibers Ω_{x_{-i}} = {t : (x_1,...,t,...,x_n) ∈ Ω}
+  -- 3. By Fubini: ∫_Ω |φ|² = ∫_{ℝ^{n-1}} (∫_{Ω_{x_{-i}}} |φ(x_i, x_{-i})|² dx_i) dx_{-i}
+  -- 4. On each fiber: φ has compact support, fiber is convex (width ≤ diam Ω)
+  -- 5. Apply poincare_1d: ∫_{fiber} |φ|² ≤ diam(Ω)² * ∫_{fiber} |∂_i φ|²
+  -- 6. Integrate back over x_{-i}: ∫_Ω |φ|² ≤ diam(Ω)² * ∫_Ω |∂_i φ|²
+  sorry
+
+/-- Poincare inequality for smooth compactly supported functions on a bounded convex
+    domain. Averages the per-direction bound from `poincare_slice` over n directions. -/
+private theorem poincare_smooth
+    (hn : 0 < n)
+    (hBdd : Bornology.IsBounded Ω)
+    (hConvex : Convex ℝ Ω)
+    (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+    (hφ : ContDiff ℝ ∞ φ)
+    (hsupp : tsupport φ ⊆ Ω) :
+    l2NormSq Ω φ ≤ (diam Ω) ^ 2 / ↑n * ∑ i : Fin n,
+      ∫ x in Ω, (fderiv ℝ φ x (EuclideanSpace.single i 1)) ^ 2 := by
+  have hn_pos : (0 : ℝ) < ↑n := Nat.cast_pos.mpr hn
+  -- Sum the per-direction bounds
+  have hsum : ↑n * l2NormSq Ω φ ≤ (diam Ω) ^ 2 * ∑ i : Fin n,
+      ∫ x in Ω, (fderiv ℝ φ x (EuclideanSpace.single i 1)) ^ 2 := by
+    calc ↑n * l2NormSq Ω φ
+        = ∑ _ : Fin n, l2NormSq Ω φ := by simp [Finset.sum_const, Finset.card_fin]
+      _ ≤ ∑ i : Fin n, (diam Ω) ^ 2 *
+            ∫ x in Ω, (fderiv ℝ φ x (EuclideanSpace.single i 1)) ^ 2 :=
+          Finset.sum_le_sum fun i _ => poincare_slice Ω hBdd hConvex φ hφ hsupp i
+      _ = (diam Ω) ^ 2 * ∑ i : Fin n,
+            ∫ x in Ω, (fderiv ℝ φ x (EuclideanSpace.single i 1)) ^ 2 :=
+          by rw [← Finset.mul_sum]
+  -- Divide both sides by n
+  rwa [div_mul_eq_mul_div, le_div_iff₀ hn_pos, mul_comm]
+
+/-! ## Poincare inequality for H^1_0 via limit passage -/
 
 /-- **Poincare inequality for convex bounded domains (Payne-Weinberger 1960).**
 
@@ -66,21 +116,16 @@ For any convex bounded open set Omega in R^n, every u in H^1_0(Omega) satisfies:
 
 Equivalently, ||u||_{L^2} <= (diam Omega / sqrt n) * ||grad u||_{L^2}.
 
-This subsumes both the general Poincare inequality (for convex domains, where convexity
-implies connectedness) and the Payne-Weinberger bound on the optimal constant.
-
-*Proof sketch:* For phi in C^inf_c(Omega) on convex Omega, the 1D FTC along line segments
-combined with Cauchy-Schwarz and Fubini gives the estimate with explicit constant
-(diam Omega)^2 / n. For u in H^1_0(Omega), use the IsH1Zero approximation property and
-pass to the limit.
-
-Category C: the 1D FTC + Cauchy-Schwarz + Fubini chain requires line integration
-infrastructure not yet available in Mathlib. -/
+The proof applies `poincare_smooth` to the smooth approximants from `IsH1Zero` and
+passes to the limit. -/
 theorem poincare_inequality_convex
     (hBdd : Bornology.IsBounded Ω)
     (hConvex : Convex ℝ Ω) :
     ∀ (u : SobolevH1Zero Ω hΩ),
       l2NormSq Ω u.val.f ≤ (diam Ω) ^ 2 / ↑n * gradientL2NormSq Ω hΩ u.val := by
+  intro ⟨u, hu⟩
+  -- Approximate u by smooth φ_k via IsH1Zero, apply poincare_smooth to each φ_k,
+  -- pass to the limit using L^2 norm continuity.
   sorry
 
 end NavierStokes

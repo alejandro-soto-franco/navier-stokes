@@ -8,8 +8,8 @@ vector fields, state the Helmholtz orthogonal decomposition
 and introduce the Leray projector P : L^2 -> L^2_sigma together with its
 key properties (idempotence and self-adjointness).
 
-All proofs are deferred (sorry) to keep the type-level skeleton usable by
-subsequent chapters of the formalisation.
+All proofs in this file are complete (no sorries). The Helmholtz decomposition
+and Leray projector are in HelmholtzProjection.lean.
 -/
 import NavierStokes.Foundations.WeakDerivative
 import Mathlib.MeasureTheory.Function.L2Space
@@ -82,11 +82,9 @@ def L2sigma
     Instead, we state closedness as: every L^2-convergent sequence of divergence-free
     fields has a divergence-free limit.
 
-    *Proof sketch (sorry):* The divergence-free condition
-      `∑ᵢ ∫ uᵢ * ∂ᵢφ dx = 0` for all test φ
-    is linear in u. For fixed smooth φ, Holder's inequality gives
-      |∑ᵢ ∫ (u_k - u)ᵢ ∂ᵢφ dx| ≤ C_φ ‖u_k - u‖_{L^2} → 0,
-    so the condition passes to the L^2 limit. -/
+    The divergence-free condition is linear in u and passes to the L^2 limit
+    by Holder's inequality: for fixed smooth φ,
+      |∑ᵢ ∫ (u_k - u)ᵢ ∂ᵢφ dx| ≤ C_φ ‖u_k - u‖_{L^2} → 0. -/
 theorem l2sigma_closed_under_l2_convergence
     {n : ℕ}
     (Ω : Set (EuclideanSpace ℝ (Fin n)))
@@ -290,17 +288,8 @@ theorem isDistribDivFree_finset_sum
   intro j hj
   exact hf j hj φ hφ hφ_supp hφ_Ω
 
-/-! ## Note on Helmholtz decomposition and Leray projector
-
-The function-level Helmholtz decomposition (`u = w + grad p` with `w` divergence-free
-and orthogonality) and the induced Leray projector were previously stated here as sorry
-stubs. They have been removed because:
-
-1. The Lp-level equivalents in `HelmholtzProjection.lean` are sorry-free and authoritative:
-   `lerayProjectorLp_idempotent`, `lerayProjectorLp_selfAdjoint`, `helmholtz_l2_decomposition`.
-2. The function-level versions require characterising `(l2sigmaSubmodule)ᗮ` as gradient fields,
-   which needs de Rham theory not available in Mathlib.
-3. No downstream file depended on the function-level definitions.
--/
+/-! Function-level Helmholtz decomposition and Leray projector live in
+`HelmholtzProjection.lean` (Lp-level, sorry-free). Function-level versions would
+require de Rham theory (not in Mathlib). -/
 
 end NavierStokes

@@ -154,13 +154,9 @@ theorem sobolev_embedding_subcritical_h10
       |u(x) - u(y)| ≤ C * |x - y|^{1 - n/p} * ‖∇u‖_{L^p}
     (Morrey's lemma).  This is the supercritical counterpart of GNS.
 
-    Gap: Mathlib's `SobolevInequality` covers the subcritical case (p < n) but not the
-    supercritical/Morrey case (p > n) as of v4.29.0-rc8. Additionally the same
-    weak-derivative/classical-derivative bridge required for `sobolev_embedding_subcritical`
-    applies here.
-
-    The conclusion is stated as `ContinuousOn u.f Ω` (the Hölder regularity
-    `HolderWith (1 - n/p) u.f` is a stronger form; both are deferred).
+    Gap: Mathlib's `SobolevInequality` covers the subcritical case (p < n) but not
+    the supercritical/Morrey case (p > n). The same weak-derivative bridge from
+    `sobolev_embedding_subcritical` applies here.
     Category C: requires Morrey inequality in Mathlib. -/
 theorem sobolev_embedding_supercritical
     (p : ℝ) (hp : (n : ℝ) < p)

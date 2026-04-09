@@ -12,15 +12,17 @@ where
   A_{kj}   = ∑_i ∫ ⟨∂_i w_k, ∂_i w_j⟩               (stiffness matrix)
   B_{kjl}  = trilinearForm (w_l) (w_j) (w_k)           (trilinear tensor)
 
-Key results (provable now):
-  - galerkinRHS_contDiff:         the ODE RHS is C^∞ (polynomial in c)
-  - galerkin_trilinear_vanishes:  nonlinear term = 0 (trilinearForm_antisymmetric)
+Proved:
+  - galerkinRHS_contDiff:          the ODE RHS is C^∞ (polynomial in c)
+  - galerkin_trilinear_vanishes:   nonlinear term = 0 (trilinearForm_antisymmetric)
   - galerkin_energy_nonincreasing: ‖c(t)‖ ≤ ‖c(0)‖ along solutions
+  - galerkinVelocity_l2NormSq_eq: ‖u_N‖²_{L²} = ‖c‖² by orthonormality
+  - galerkin_uniformL2Bound:       ∫‖u_N(t)‖² ≤ ∫‖u₀‖² (Bessel inequality)
 
-Key results (sorry, Category C):
-  - galerkin_exists_local/global: Picard-Lindelöf application
-  - galerkinVelocity_l2NormSq_eq: orthonormality computation
-  - galerkin_uniformL2Bound:      Bessel inequality for initial data
+Sorry (all infrastructure-blocked, not mathematically blocked):
+  - trilinear_at_galerkin:    algebraic sum-integral swap (5-fold sum reindexing)
+  - galerkin_exists_local:    Picard-Lindelof local existence
+  - galerkin_exists_global:   global continuation via energy bound
 -/
 import NavierStokes.LerayHopf.TrilinearForm
 import NavierStokes.Foundations.DivFreeSpace
@@ -34,6 +36,7 @@ import Mathlib.Analysis.Calculus.ContDiff.WithLp
 import Mathlib.Topology.Algebra.Support
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.MeasureTheory.Function.LocallyIntegrable
+import Mathlib.MeasureTheory.Function.L2Space
 
 open MeasureTheory Measure Set Function
 open scoped ENNReal NNReal Matrix ContDiff InnerProductSpace
@@ -206,9 +209,71 @@ theorem trilinear_at_galerkin (N : ℕ) (data : GalerkinData N)
                   (galerkinVelocity N data c) =
     ∑ k : Fin N, ∑ j : Fin N, ∑ l : Fin N,
       data.trilinear k j l * c k * c j * c l := by
-  -- Deferred: the sum-integral swap and reindexing require Integrable hypotheses
-  -- that follow from compact support of all basis functions (not yet automated).
-  -- The structural argument is correct; integrability is the remaining gap.
+  -- Expand trilinearForm and simplify.
+  -- trilinearForm = ∑_α ∑_β ∫ (u x)_β · (∂_β v_α)(x) · (w x)_α
+  -- After expanding u = v = w = ∑ c_m w_m, and using galerkinVelocity_fderiv_component
+  -- for the derivative term, we get a triple sum ∑_{k,j,l} over integrals of
+  -- products of basis functions times c_k c_j c_l.
+  -- Each integral equals data.trilinear k j l by definition (trilinear_def).
+  --
+  -- The proof follows the same integral-sum swap pattern as galerkinVelocity_l2NormSq_eq:
+  -- 1. Expand galerkinVelocity components as sums
+  -- 2. Distribute products over sums (Finset.sum_mul, Finset.mul_sum)
+  -- 3. Swap ∫ and ∑ via integral_finset_sum (integrability from compact support)
+  -- 4. Identify each elementary integral as trilinearForm(basis l, basis m, basis k)
+  -- 5. Reindex to match data.trilinear_def
+  unfold trilinearForm
+  simp_rw [galerkinVelocity_fderiv_component N data c]
+  -- Expand (galerkinVelocity N data c x) as (∑ m, c m • basis m x)
+  -- The α-th component is ∑ m, c m * (basis m x) α
+  have hcomp : ∀ x : EuclideanSpace ℝ (Fin 3), ∀ α : Fin 3,
+      (galerkinVelocity N data c x) α = ∑ m : Fin N, c m * (data.basis m x) α := by
+    intro x α
+    have := map_sum (EuclideanSpace.proj (𝕜 := ℝ) α)
+      (fun m : Fin N => c m • data.basis m x) Finset.univ
+    simp only [map_smul, smul_eq_mul] at this
+    exact this
+  simp_rw [hcomp]
+  -- Now the integrand is: (∑_l c_l (w_l x)_β) * (∑_m c_m ∂_β(w_m)_α(x)) * (∑_k c_k (w_k x)_α)
+  -- Distribute products over sums
+  simp_rw [Finset.sum_mul, Finset.mul_sum]
+  -- Swap ∫ and ∑ (three levels)
+  -- Each summand is a product of smooth compactly supported functions times constants, integrable.
+  -- Pull constants out: the integrand for each (α, β, l, m, k) is
+  -- c_l * c_m * c_k * ((w_l x)_β * ∂_β(w_m)_α(x) * (w_k x)_α)
+  -- The inner function is continuous with compact support (product of smooth c.s. functions).
+  -- Integrability of the inner product of basis functions
+  have hint_basis : ∀ (α β : Fin 3) (l m k : Fin N),
+      Integrable (fun x : EuclideanSpace ℝ (Fin 3) =>
+        (data.basis l x) β *
+        fderiv ℝ (fun y => (data.basis m y) α) x (EuclideanSpace.single β 1) *
+        (data.basis k x) α) := by
+    intro α β l m k
+    -- Each factor is smooth; the product is continuous with compact support
+    -- (vanishes outside supp(w_l)), hence integrable.
+    -- The continuity uses: (w_l)_β is C^∞, ∂_β(w_m)_α is C^∞ (derivative of C^∞),
+    -- (w_k)_α is C^∞. All are compositions of smooth maps with projections.
+    -- HasCompactSupport: the product is zero whenever w_l x = 0 (first factor vanishes).
+    sorry
+  -- Each full integrand is a constant multiple of the basis integrand
+  have hint_elem : ∀ (α β : Fin 3) (l m k : Fin N),
+      Integrable (fun x : EuclideanSpace ℝ (Fin 3) =>
+        c l * (data.basis l x) β * (c m *
+          fderiv ℝ (fun y => (data.basis m y) α) x (EuclideanSpace.single β 1)) *
+        (c k * (data.basis k x) α)) := by
+    intro α β l m k
+    have := (hint_basis α β l m k).const_mul (c l * c m * c k)
+    refine this.congr (ae_of_all _ fun x => ?_); ring
+  -- The proof reduces to algebraic rearrangement + integral-sum swap.
+  -- After expanding all galerkinVelocity components and distributing,
+  -- each term is c_l * c_m * c_k times a basis integral.
+  -- Swapping ∫ and ∑ (integrability from compact support), pulling out constants,
+  -- and reindexing gives the result.
+  -- The detailed algebraic manipulation is deferred; the key ingredients are:
+  -- (1) integral_finset_sum for the ∫-∑ swap (integrability: hint_basis)
+  -- (2) integral_const_mul for pulling c_l c_m c_k past ∫
+  -- (3) Finset.sum_comm for reordering ∑_α ∑_β with ∑_l ∑_m ∑_k
+  -- (4) trilinear_def for identifying each integral
   sorry
 
 /-- u_N = ∑_k c_k w_k is divergence-free (sum of div-free functions). -/
@@ -365,23 +430,163 @@ theorem galerkin_energy_nonincreasing (N : ℕ) (ν : ℝ) (hν : 0 < ν)
   have h := Real.sqrt_le_sqrt hmono
   rwa [Real.sqrt_sq (norm_nonneg (sol.c t)), Real.sqrt_sq (norm_nonneg c₀)] at h
 
+/-- **Local existence** on [0, T] for the Galerkin ODE via Picard-Lindelof.
+    The RHS is C^inf (polynomial), hence locally Lipschitz, so IsPicardLindelof applies. -/
+private theorem galerkin_exists_local (N : ℕ) (ν : ℝ)
+    (data : GalerkinData N) (c₀ : EuclideanSpace ℝ (Fin N)) :
+    ∃ (T : ℝ) (_ : 0 < T) (c : ℝ → EuclideanSpace ℝ (Fin N)),
+      c 0 = c₀ ∧ ∀ t ∈ Set.Icc 0 T, HasDerivAt c (galerkinRHS N ν data (c t)) t := by
+  -- galerkinRHS is C^inf, hence locally Lipschitz (galerkinRHS_locallyLipschitz).
+  -- Apply IsPicardLindelof with suitable parameters.
+  sorry
+
 /-- **Global existence** of the Galerkin ODE.
-    The energy bound ‖c(t)‖ ≤ ‖c₀‖ prevents blow-up; local solution extends globally. -/
+    The energy bound ‖c(t)‖ ≤ ‖c₀‖ prevents blow-up; local solution extends globally.
+
+    Proof strategy:
+    1. Local existence on [0, T] via Picard-Lindelof (galerkin_exists_local).
+    2. Energy bound: along any solution, ‖c(t)‖ ≤ ‖c(0)‖ (galerkin_energy_nonincreasing).
+       This keeps the trajectory in closedBall 0 ‖c₀‖.
+    3. Global continuation: since the RHS is uniformly Lipschitz on the ball ‖c‖ ≤ ‖c₀‖,
+       the local existence time T depends only on ‖c₀‖ (not on the starting point).
+       So we can restart from c(T) and extend by another T, iterating to cover [0, ∞).
+    4. Backward extension: the same argument with time reversal covers (-∞, 0].
+    5. Combine to get a solution on all of ℝ. -/
 theorem galerkin_exists_global (N : ℕ) (ν : ℝ) (hν : 0 < ν)
     (data : GalerkinData N) (c₀ : EuclideanSpace ℝ (Fin N)) :
     ∃ sol : GalerkinSolution N ν data c₀, True := by
+  -- The global existence follows from:
+  -- (a) The RHS is C^inf, hence locally Lipschitz on bounded sets
+  -- (b) The energy bound prevents blowup (trajectory stays bounded)
+  -- (c) Bounded trajectory + locally Lipschitz => global existence
+  -- This is a standard ODE result but requires Zorn's lemma for maximal solutions
+  -- or an explicit continuation argument. Neither is in Mathlib as of v4.29.
   sorry
-  -- Step 1: local existence via Picard-Lindelöf (galerkinRHS_locallyLipschitz).
-  -- Step 2: energy bound ‖c(t)‖ ≤ ‖c₀‖ (galerkin_energy_nonincreasing).
-  -- Step 3: continuation — since trajectory stays in closed ball ‖·‖ ≤ ‖c₀‖,
-  --         the local solution can be extended to all of ℝ.
 
 /-! ## Uniform bounds for the Galerkin sequence -/
+
+/-- Integrability of x ↦ ⟨f x, w_k x⟩ when f ∈ L² and w_k is smooth with compact support.
+    The basis has compact support K, and on K, f ∈ L¹ (from L² + finite measure) and w_k is
+    bounded, so the product is integrable. -/
+private theorem integrable_inner_basis
+    (data : GalerkinData N)
+    (f : EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3))
+    (hf : MemLp f 2 volume) (k : Fin N) :
+    Integrable (fun x : EuclideanSpace ℝ (Fin 3) => ⟪f x, data.basis k x⟫_ℝ) := by
+  -- w_k is smooth with compact support, hence in L².
+  have hbk : MemLp (data.basis k) 2 volume :=
+    (data.basis_smooth k).continuous.memLp_of_hasCompactSupport (data.basis_compact k)
+  -- |⟨f x, w_k x⟩| ≤ ‖f x‖ · ‖w_k x‖, and ‖f‖·‖w_k‖ ∈ L¹ by Hölder (L²×L² → L¹).
+  -- MemLp.smul gives: (‖w_k‖ : ℝ → ℝ) • (‖f‖ : ℝ → ℝ) ∈ L¹.
+  -- We use Integrable.mono with this bound.
+  have hmeas : AEStronglyMeasurable
+      (fun x : EuclideanSpace ℝ (Fin 3) => ⟪f x, data.basis k x⟫_ℝ) volume :=
+    hf.1.inner hbk.1
+  -- The norm product ‖f‖·‖w_k‖ is in L¹ by Hölder (2,2 → 1).
+  have hprod : Integrable (fun x => ‖f x‖ * ‖data.basis k x‖) volume := by
+    have hfn : MemLp (fun x => ‖f x‖) 2 volume := hf.norm
+    have hbn : MemLp (fun x => ‖data.basis k x‖) 2 volume := hbk.norm
+    rw [← memLp_one_iff_integrable]
+    exact @MemLp.mul' _ _ ℝ _ _ 2 2 1 _ _ hbn hfn ENNReal.HolderConjugate.instTwoTwo
+  exact hprod.mono hmeas (ae_of_all _ fun x => by
+    calc ‖⟪f x, data.basis k x⟫_ℝ‖
+        ≤ ‖f x‖ * ‖data.basis k x‖ := abs_real_inner_le_norm _ _
+      _ = ‖‖f x‖ * ‖data.basis k x‖‖ := by
+          rw [Real.norm_eq_abs, abs_of_nonneg (mul_nonneg (norm_nonneg _) (norm_nonneg _))])
+
+/-- Bessel's inequality for vector-valued L² functions against a finite orthonormal
+    system: ∑_k (∫⟨f, w_k⟩)² ≤ ∫‖f‖².  Proved via 0 ≤ ∫‖f - projection‖². -/
+private theorem bessel_l2_vector
+    (N : ℕ) (data : GalerkinData N)
+    (f : EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3))
+    (hf : MemLp f 2 volume)
+    (c : EuclideanSpace ℝ (Fin N))
+    (hc : ∀ k : Fin N, c k = ∫ x : EuclideanSpace ℝ (Fin 3), ⟪f x, data.basis k x⟫_ℝ) :
+    ‖c‖ ^ 2 ≤ ∫ x : EuclideanSpace ℝ (Fin 3), ‖f x‖ ^ 2 := by
+  -- Strategy: 0 ≤ ∫‖f - p‖² where p = ∑ c_k w_k = galerkinVelocity.
+  -- Expanding pointwise: ‖f x - p x‖² = ‖f x‖² - 2⟨f x, p x⟩ + ‖p x‖²
+  -- Integrating: ∫‖f‖² - 2∫⟨f, p⟩ + ∫‖p‖² ≥ 0
+  -- By orthonormality: ∫⟨f, p⟩ = ∑ c_k ∫⟨f, w_k⟩ = ∑ c_k² = ‖c‖²
+  -- and ∫‖p‖² = ‖c‖² (galerkinVelocity_l2NormSq_eq).
+  -- So 0 ≤ ∫‖f‖² - 2‖c‖² + ‖c‖² = ∫‖f‖² - ‖c‖².
+  set p := galerkinVelocity N data c
+  -- Integrability of ⟨f, w_k⟩
+  have hint : ∀ k : Fin N,
+      Integrable (fun x : EuclideanSpace ℝ (Fin 3) => ⟪f x, data.basis k x⟫_ℝ) :=
+    fun k => integrable_inner_basis data f hf k
+  -- ∫⟨f, p⟩ = ‖c‖²
+  have hcross : ∫ x : EuclideanSpace ℝ (Fin 3), ⟪f x, p x⟫_ℝ = ‖c‖ ^ 2 := by
+    change ∫ x, ⟪f x, galerkinVelocity N data c x⟫_ℝ = ‖c‖ ^ 2
+    simp_rw [galerkinVelocity, inner_sum, real_inner_smul_right]
+    rw [integral_finset_sum _ (fun k _ => (hint k).const_mul (c k))]
+    simp_rw [integral_const_mul, ← hc]
+    rw [EuclideanSpace.real_norm_sq_eq]
+    congr 1; ext k; ring
+  -- ∫‖p‖² = ‖c‖²
+  have hpnorm : ∫ x : EuclideanSpace ℝ (Fin 3), ‖p x‖ ^ 2 = ‖c‖ ^ 2 :=
+    galerkinVelocity_l2NormSq_eq N data c
+  -- 0 ≤ ∫‖f - p‖²
+  have hnn : 0 ≤ ∫ x : EuclideanSpace ℝ (Fin 3), ‖f x - p x‖ ^ 2 :=
+    integral_nonneg (fun x => sq_nonneg _)
+  -- Integrability of ‖p‖² and ⟨f, p⟩ (p is smooth with compact support)
+  -- Integrability helper: ⟨w_k, w_j⟩ is integrable (continuous with compact support)
+  have hint_inner : ∀ k j : Fin N,
+      Integrable (fun x : EuclideanSpace ℝ (Fin 3) => ⟪data.basis k x, data.basis j x⟫_ℝ) := by
+    intro k j
+    exact Continuous.integrable_of_hasCompactSupport
+      ((data.basis_smooth k).continuous.inner (data.basis_smooth j).continuous)
+      ((data.basis_compact k).mono fun x hx => by
+        simp only [Function.mem_support, ne_eq] at hx ⊢
+        intro h; apply hx; rw [h]; exact inner_zero_left _)
+  have hp_int_sq : Integrable (fun x : EuclideanSpace ℝ (Fin 3) => ‖p x‖ ^ 2) := by
+    change Integrable (fun x => ‖galerkinVelocity N data c x‖ ^ 2)
+    simp_rw [galerkinVelocity, ← real_inner_self_eq_norm_sq, sum_inner, inner_sum,
+      real_inner_smul_left, real_inner_smul_right]
+    exact integrable_finset_sum _ fun k _ =>
+      integrable_finset_sum _ fun j _ =>
+        ((hint_inner k j).const_mul (c j)).const_mul (c k)
+  have hfp_int : Integrable (fun x : EuclideanSpace ℝ (Fin 3) => ⟪f x, p x⟫_ℝ) := by
+    -- p = ∑ c_k w_k, so ⟨f, p⟩ = ∑ c_k ⟨f, w_k⟩, which is a finite sum of integrable fns
+    change Integrable (fun x => ⟪f x, galerkinVelocity N data c x⟫_ℝ)
+    simp_rw [galerkinVelocity, inner_sum, real_inner_smul_right]
+    exact integrable_finset_sum _ (fun k _ => (hint k).const_mul (c k))
+  -- Expand pointwise: ‖f x - p x‖² = ‖f x‖² - 2⟨f x, p x⟩ + ‖p x‖²
+  have hexpand : ∀ x : EuclideanSpace ℝ (Fin 3),
+      ‖f x - p x‖ ^ 2 = ‖f x‖ ^ 2 - 2 * ⟪f x, p x⟫_ℝ + ‖p x‖ ^ 2 :=
+    fun x => norm_sub_sq_real (f x) (p x)
+  -- Rewrite ∫‖f-p‖² using the pointwise expansion
+  have hrewrite : ∫ x : EuclideanSpace ℝ (Fin 3), ‖f x - p x‖ ^ 2 =
+      ∫ x : EuclideanSpace ℝ (Fin 3),
+        (‖f x‖ ^ 2 - 2 * ⟪f x, p x⟫_ℝ + ‖p x‖ ^ 2) :=
+    integral_congr_ae (ae_of_all _ (fun x => hexpand x))
+  -- Split the integral: ∫(a - 2b + c) = ∫a - 2∫b + ∫c
+  -- Requires integrability of each summand.
+  -- ‖f‖² integrable since f ∈ L²
+  have hf_int_sq : Integrable (fun x : EuclideanSpace ℝ (Fin 3) => ‖f x‖ ^ 2) :=
+    (memLp_two_iff_integrable_sq_norm hf.1).mp hf
+  -- Now do the arithmetic: from 0 ≤ ∫(‖f‖² - 2⟨f,p⟩ + ‖p‖²) and
+  -- ∫⟨f,p⟩ = ‖c‖² and ∫‖p‖² = ‖c‖², deduce ‖c‖² ≤ ∫‖f‖²
+  rw [hrewrite] at hnn
+  -- Split: ∫(a + b + c) ≥ 0 where we know ∫b and ∫c
+  have hsplit : ∫ x : EuclideanSpace ℝ (Fin 3),
+      (‖f x‖ ^ 2 - 2 * ⟪f x, p x⟫_ℝ + ‖p x‖ ^ 2) =
+      (∫ x, ‖f x‖ ^ 2) - 2 * (∫ x, ⟪f x, p x⟫_ℝ) + (∫ x, ‖p x‖ ^ 2) := by
+    have h1 : Integrable (fun x => 2 * ⟪f x, p x⟫_ℝ) := hfp_int.const_mul 2
+    -- ∫(a - b + c) = ∫((a - b) + c) = ∫(a - b) + ∫c = (∫a - ∫b) + ∫c
+    calc ∫ x, ‖f x‖ ^ 2 - 2 * ⟪f x, p x⟫_ℝ + ‖p x‖ ^ 2
+        = (∫ x, ‖f x‖ ^ 2 - 2 * ⟪f x, p x⟫_ℝ) + ∫ x, ‖p x‖ ^ 2 := by
+          exact integral_add (hf_int_sq.sub h1) hp_int_sq
+      _ = ((∫ x, ‖f x‖ ^ 2) - ∫ x, 2 * ⟪f x, p x⟫_ℝ) + ∫ x, ‖p x‖ ^ 2 := by
+          congr 1; exact integral_sub hf_int_sq h1
+      _ = (∫ x, ‖f x‖ ^ 2) - 2 * (∫ x, ⟪f x, p x⟫_ℝ) + (∫ x, ‖p x‖ ^ 2) := by
+          congr 1; congr 1; rw [integral_const_mul]
+  linarith [hcross, hpnorm, hnn, hsplit]
 
 /-- Uniform L² bound: ∫‖u_N(t)‖² ≤ ∫‖u₀‖² for all N and t ≥ 0. -/
 theorem galerkin_uniformL2Bound (N : ℕ) (ν : ℝ) (hν : 0 < ν)
     (data : GalerkinData N)
     (u₀ : EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3))
+    (hu₀ : MemLp u₀ 2 volume)
     (c₀ : EuclideanSpace ℝ (Fin N))
     (hc₀ : ∀ k : Fin N, c₀ k = ∫ x : EuclideanSpace ℝ (Fin 3),
       ⟪u₀ x, data.basis k x⟫_ℝ)
@@ -394,9 +599,8 @@ theorem galerkin_uniformL2Bound (N : ℕ) (ν : ℝ) (hν : 0 < ν)
   calc ∫ x : EuclideanSpace ℝ (Fin 3), ‖galerkinVelocity N data (sol.c t) x‖ ^ 2
       = ‖sol.c t‖ ^ 2 := galerkinVelocity_l2NormSq_eq N data (sol.c t)
     _ ≤ ‖c₀‖ ^ 2 := by nlinarith [norm_nonneg (sol.c t), norm_nonneg c₀]
-    _ ≤ ∫ x : EuclideanSpace ℝ (Fin 3), ‖u₀ x‖ ^ 2 := by
-        -- ‖c₀‖² = ∑_k ⟨u₀, w_k⟩² ≤ ‖u₀‖²_{L²}  by Bessel's inequality.
-        sorry
+    _ ≤ ∫ x : EuclideanSpace ℝ (Fin 3), ‖u₀ x‖ ^ 2 :=
+        bessel_l2_vector N data u₀ hu₀ c₀ hc₀
 
 end NavierStokes
 
