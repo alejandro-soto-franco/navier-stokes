@@ -249,12 +249,44 @@ theorem trilinear_at_galerkin (N : ℕ) (data : GalerkinData N)
         fderiv ℝ (fun y => (data.basis m y) α) x (EuclideanSpace.single β 1) *
         (data.basis k x) α) := by
     intro α β l m k
-    -- Each factor is smooth; the product is continuous with compact support
-    -- (vanishes outside supp(w_l)), hence integrable.
-    -- The continuity uses: (w_l)_β is C^∞, ∂_β(w_m)_α is C^∞ (derivative of C^∞),
-    -- (w_k)_α is C^∞. All are compositions of smooth maps with projections.
-    -- HasCompactSupport: the product is zero whenever w_l x = 0 (first factor vanishes).
-    sorry
+    -- Each component (basis l x) β = EuclideanSpace.proj β (basis l x) is a smooth
+    -- composition; its derivative is the fderiv of a smooth composition. We show the
+    -- product is continuous with compact support (dominated by supp(basis l)), then
+    -- apply Continuous.integrable_of_hasCompactSupport.
+    have hn_pos : (∞ : WithTop ℕ∞) ≠ 0 := by decide
+    -- Smooth component extractors: (basis _ x) α/β as C^∞ scalar functions.
+    have hcd_l : ContDiff ℝ ∞ (fun x : EuclideanSpace ℝ (Fin 3) => (data.basis l x) β) :=
+      (EuclideanSpace.proj (𝕜 := ℝ) β).contDiff.comp (data.basis_smooth l)
+    have hcd_k : ContDiff ℝ ∞ (fun x : EuclideanSpace ℝ (Fin 3) => (data.basis k x) α) :=
+      (EuclideanSpace.proj (𝕜 := ℝ) α).contDiff.comp (data.basis_smooth k)
+    have hcd_m : ContDiff ℝ ∞ (fun y : EuclideanSpace ℝ (Fin 3) => (data.basis m y) α) :=
+      (EuclideanSpace.proj (𝕜 := ℝ) α).contDiff.comp (data.basis_smooth m)
+    -- fderiv of a C^∞ function is continuous; applying it to a fixed vector is continuous.
+    have hc_mderiv : Continuous (fun x : EuclideanSpace ℝ (Fin 3) =>
+        fderiv ℝ (fun y => (data.basis m y) α) x (EuclideanSpace.single β 1)) :=
+      (hcd_m.continuous_fderiv hn_pos).clm_apply continuous_const
+    -- Continuity of the full triple product.
+    have hcont : Continuous (fun x : EuclideanSpace ℝ (Fin 3) =>
+        (data.basis l x) β *
+        fderiv ℝ (fun y => (data.basis m y) α) x (EuclideanSpace.single β 1) *
+        (data.basis k x) α) :=
+      (hcd_l.continuous.mul hc_mderiv).mul hcd_k.continuous
+    -- Compact support: the first factor vanishes wherever basis l does, so the
+    -- product has support inside supp(basis l), which is compact.
+    have hsupp_l : HasCompactSupport
+        (fun x : EuclideanSpace ℝ (Fin 3) => (data.basis l x) β) := by
+      have hproj_zero : (fun v : EuclideanSpace ℝ (Fin 3) => v β) (0 : _) = 0 := by simp
+      exact (data.basis_compact l).comp_left (g := fun v => v β) hproj_zero
+    have hsupp :
+        HasCompactSupport (fun x : EuclideanSpace ℝ (Fin 3) =>
+          (data.basis l x) β *
+          fderiv ℝ (fun y => (data.basis m y) α) x (EuclideanSpace.single β 1) *
+          (data.basis k x) α) := by
+      -- (f * g) * h has compact support when f does.
+      exact (hsupp_l.mul_right (f' := fun x =>
+          fderiv ℝ (fun y => (data.basis m y) α) x (EuclideanSpace.single β 1))).mul_right
+        (f' := fun x => (data.basis k x) α)
+    exact hcont.integrable_of_hasCompactSupport hsupp
   -- Each full integrand is a constant multiple of the basis integrand
   have hint_elem : ∀ (α β : Fin 3) (l m k : Fin N),
       Integrable (fun x : EuclideanSpace ℝ (Fin 3) =>
