@@ -468,9 +468,19 @@ private theorem galerkin_exists_local (N : ℕ) (ν : ℝ)
     (data : GalerkinData N) (c₀ : EuclideanSpace ℝ (Fin N)) :
     ∃ (T : ℝ) (_ : 0 < T) (c : ℝ → EuclideanSpace ℝ (Fin N)),
       c 0 = c₀ ∧ ∀ t ∈ Set.Icc 0 T, HasDerivAt c (galerkinRHS N ν data (c t)) t := by
-  -- galerkinRHS is C^inf, hence locally Lipschitz (galerkinRHS_locallyLipschitz).
-  -- Apply IsPicardLindelof with suitable parameters.
-  sorry
+  -- galerkinRHS is C^∞ (galerkinRHS_contDiff), so in particular ContDiffAt ℝ 1 at c₀.
+  -- Apply the C^1 Picard-Lindelof variant in Mathlib to get a solution on an open
+  -- interval Ioo (-ε) ε with α 0 = c₀, then restrict to Icc 0 (ε/2) ⊂ Ioo (-ε) ε.
+  have hf : ContDiffAt ℝ 1 (galerkinRHS N ν data) c₀ :=
+    ((galerkinRHS_contDiff N ν data).contDiffAt).of_le (by norm_cast)
+  obtain ⟨α, hα0, ε, hε, hαderiv⟩ :=
+    hf.exists_forall_mem_closedBall_exists_eq_forall_mem_Ioo_hasDerivAt₀ 0
+  refine ⟨ε / 2, half_pos hε, α, hα0, ?_⟩
+  intro t ht
+  apply hαderiv
+  refine ⟨?_, ?_⟩
+  · linarith [ht.1, hε]
+  · linarith [ht.2, hε]
 
 /-- **Global existence** of the Galerkin ODE.
     The energy bound ‖c(t)‖ ≤ ‖c₀‖ prevents blow-up; local solution extends globally.
