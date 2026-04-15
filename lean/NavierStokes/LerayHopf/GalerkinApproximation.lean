@@ -27,7 +27,6 @@ Sorry (all infrastructure-blocked, not mathematically blocked):
 import NavierStokes.LerayHopf.TrilinearForm
 import NavierStokes.Foundations.DivFreeSpace
 import Mathlib.Analysis.ODE.PicardLindelof
-import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.LinearAlgebra.Matrix.PosDef
 import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.Analysis.InnerProductSpace.PiL2

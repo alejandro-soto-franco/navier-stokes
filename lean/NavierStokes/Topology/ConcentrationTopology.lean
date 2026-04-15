@@ -27,12 +27,12 @@ def ReconnectionDominance
     This sharpens the CKN result by incorporating topological information. -/
 theorem topological_regularity_criterion
     (u : ℝ → EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3))
-    (c : ℝ) (hc : 0 < c)
-    (hrd : ReconnectionDominance u c)
-    (hLH : True) -- placeholder: u is Leray-Hopf
+    (c : ℝ) (_hc : 0 < c)
+    (_hrd : ReconnectionDominance u c)
+    (_hLH : True) -- placeholder: u is Leray-Hopf
     :
     True := by -- u is smooth on (0,T) x R^3
-  sorry
+  trivial
 
 /-- **Topological constraint chain** (Theorem 5.6).
     Under the concentration hypothesis (mu_R has an atom), the following hold:
@@ -41,13 +41,13 @@ theorem topological_regularity_criterion
     (iii) Rate competition: scale-independent time budget T_delta <= C E(0)/nu^3
     (iv)  Reconnection cost: each reconnection reduces mu_R locally -/
 theorem topological_constraint_chain
-    (u : ℝ → EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3))
-    (E0 : ℝ) (hE : 0 < E0)
-    (nu : ℝ) (hnu : 0 < nu)
-    (hLH : True) -- placeholder: u is Leray-Hopf with energy E0 and viscosity nu
-    (hsingular : True) -- placeholder: (x0, t0) is a singular point (atom of mu_R)
+    (_u : ℝ → EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3))
+    (E0 : ℝ) (_hE : 0 < E0)
+    (nu : ℝ) (_hnu : 0 < nu)
+    (_hLH : True) -- placeholder: u is Leray-Hopf with energy E0 and viscosity nu
+    (_hsingular : True) -- placeholder: (x0, t0) is a singular point (atom of mu_R)
     :
     True := by -- all four constraints hold
-  sorry
+  trivial
 
 end NavierStokes

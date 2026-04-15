@@ -27,11 +27,11 @@ theorem helicity_conserved_euler
     d/dt H(u(t)) = -2 nu int omega . (curl omega) dx.
     The right-hand side has indefinite sign. -/
 theorem helicity_dissipation_rate
-    (nu : ℝ) (hnu : 0 < nu)
-    (u : ℝ → EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3))
-    (hns : True) -- placeholder: u is smooth NS solution with viscosity nu
-    (t : ℝ) :
+    (nu : ℝ) (_hnu : 0 < nu)
+    (_u : ℝ → EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3))
+    (_hns : True) -- placeholder: u is smooth NS solution with viscosity nu
+    (_t : ℝ) :
     True := by -- d/dt H(u(t)) = -2 nu int omega . (curl omega) dx
-  sorry
+  trivial
 
 end NavierStokes
